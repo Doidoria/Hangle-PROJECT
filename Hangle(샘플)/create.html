@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/create.css">
+    
+    <script src="./js/main.js" defer></script> 
+    
+    <title>hangle · Untitled Notebook</title>
+    
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar" aria-label="왼쪽 내비게이션">
+            <a class="logo" aria-label="hangle 로고 및 홈으로 이동" href="#">
+                <span class="dot" aria-hidden="true"></span>
+                <span class="name">Hangle</span>
+            </a>
+            <a class="nav-create active" href="/">
+                <img src="./image/+.png" alt="만들기" style="width: 14px;">Notebook
+            </a>
+            <nav class="nav-group">
+                <a class="nav-item" href="#">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 1 0 0-10H7a5 5 0 1 0 0 10V4Z"/></svg>
+                    <span>대회</span>
+                </a>
+                <a class="nav-item" href="#">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+                    <span>커뮤니티</span>
+                </a>
+            </nav>
+        </aside>
+        <header class="topbar" aria-label="상단바">
+            <div class="notebook-title">Untitled Notebook</div>
+            <div class="top-actions">
+                <button class="btn save-btn">저장 버튼</button>
+                <button id="themeToggle" class="toggle" aria-label="다크 모드 전환">
+                    <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    <span id="modeLabel">다크</span>
+                </button>
+                <button id="profileBtn" class="profile-btn" aria-label="프로필로 이동">
+                    <div class="avatar">T</div>
+                </button>
+            </div>
+        </header>
+        <main class="main">
+            <div class="main-notebook-editor-placeholder">
+                <h2>환영합니다!</h2>
+                <p>여기에 Jupyter 노트북 셀이 로드됩니다. 코드를 작성하고 실행해보세요.</p>
+                <p>오른쪽 사이드바에서 데이터셋을 연결하거나 설정을 변경할 수 있습니다.</p>
+            </div>
+        </main>
+        <aside class="right-sidebar" aria-label="노트북 설정 및 데이터">
+            <div class="sidebar-panel">
+                <div class="sidebar-header">
+                    <h4>Notebook</h4>
+                </div>
+            </div>
+            <div class="sidebar-panel">
+                <div class="sidebar-header" aria-expanded="true" aria-controls="input-content">
+                    <h4>Input</h4>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 15l7-7 7 7"/></svg>
+                </div>
+                <div id="input-content" class="sidebar-content">
+                    <div class="input-buttons">
+                        <button class="btn">
+                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"><path d="M12 5v14M5 12h14"/></svg>
+                            Add Input
+                        </button>
+                        <button class="btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 13V3"/></svg>
+                            Upload
+                        </button>
+                    </div>
+                    <div class="no-input">
+                        <div class="no-input-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="#2563EB" stroke="none">
+                                <path d="M25 10 L55 10 L55 40 L25 40 Z" opacity="0.8"/>
+                                <path d="M45 30 L75 30 L75 60 L45 60 Z" opacity="0.6"/>
+                                <path d="M25 50 L55 50 L55 80 L25 80 Z" opacity="0.4"/>
+                            </svg>
+                        </div>
+                        <h4>No input attached</h4>
+                        <p class="muted">Attach a hangle dataset, model, or competition</p>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-panel">
+                <div class="sidebar-header" aria-expanded="true" aria-controls="output-content">
+                    <h4>Output</h4>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 15l7-7 7 7"/></svg>
+                </div>
+                <div id="output-content" class="sidebar-content">
+                    <div class="output-path">
+                        <span style="margin-right: 8px;">▶</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                        /kaggle/working
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>

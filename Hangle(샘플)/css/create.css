@@ -1,0 +1,112 @@
+.layout {
+    display: grid;
+    grid-template-columns: 240px 1fr 300px;
+    grid-template-rows: 60px 1fr;
+    height: 100vh;
+    overflow: hidden;
+}
+.sidebar {
+    grid-column: 1 / 2; grid-row: 1 / 3;
+    border-right: 1px solid var(--border);
+}
+.topbar {
+    grid-column: 2 / 4;
+    grid-row: 1 / 2;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background: var(--background);
+}
+
+/* 탑바 노트북 제목/저장 버튼 */
+.topbar .notebook-title {font-weight: 600;font-size: 1.1em;}
+.topbar .top-actions {
+    display: flex;align-items: center;gap: 10px;}
+.topbar .save-btn {
+    background: var(--primary);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* 메인 */
+.main {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    padding: 20px;
+    overflow-y: auto;
+    background: var(--background-alt);
+}
+.main-notebook-editor-placeholder {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--muted);
+    font-size: 1.1em;
+}
+
+/* 오른쪽 사이드바 */
+.right-sidebar {
+    grid-column: 3 / 4;
+    grid-row: 2 / 3;
+    border-left: 1px solid var(--border);
+    background: var(--surface);
+    overflow-y: auto;
+}
+.sidebar-panel {padding: 15px;border-bottom: 1px solid var(--border);}
+.sidebar-panel:last-child {border-bottom: none;}
+
+/* 마지막 패널 하단 보더 제거 */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+.sidebar-header h4 {margin: 0;font-weight: 600;font-size: 1.1em;}
+.sidebar-content {padding-top: 10px;}
+.input-buttons {display: flex;gap: 10px;margin-bottom: 20px;}
+.input-buttons .btn {
+    flex-grow: 1;
+    padding: 8px 15px;
+    border: 1px solid var(--border);
+    background: var(--background);
+    color: var(--text);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+.no-input {
+    text-align: center;
+    padding: 20px 0;
+    color: var(--muted);
+}
+.no-input-icon svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+    fill: #2563EB;
+    stroke: none;
+}
+.no-input h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+}
+.no-input p {margin: 5px 0 0; font-size: 14px;}
+.output-path {
+    display: flex;
+    align-items: center;
+    font-family: monospace;
+    font-size: 13px;
+    color: var(--muted);
+    padding-top: 5px;
+}
+.output-path svg {margin-right: 5px;}
+
