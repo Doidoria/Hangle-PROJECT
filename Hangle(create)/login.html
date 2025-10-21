@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="./css/login.css">
+
+  <!-- main JS -->
+  <script src="./js/main.js" defer></script>
+
+  <title>hangle · 로그인</title>
+</head>
+<body>
+  <div class="layout">
+
+    <!-- ===== Main ===== -->
+    <main>
+      <div class="login-container">
+        <div class="logo" aria-label="로고">
+          <span class="name">Hangle</span>
+        </div>
+        <form action="/" method="POST" class="login-wrap"> 
+            <div class="input-group">
+                <label for="username">아이디 (이메일)</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">로그인</button>
+        </form>
+        <div class="divider">OR</div>
+        <a href="#" class="social-login-button kakao-login">
+          <img src="./image/icon_Kakao.png" alt="카카오"> 카카오 로그인
+        </a>
+        <a href="#" class="social-login-button naver-login">
+          <img src="./image/icon_Naver.png" alt="네이버"> 네이버 로그인
+        </a>
+        <a href="#" class="social-login-button google-login">
+          <img src="./image/icon_Google.png" alt="구글"> 구글 로그인
+        </a>
+      </div>
+    </main>
+
+  </div>
+</body>
+</html>

@@ -8,23 +8,7 @@
     border-right: 1px solid var(--border);
     padding: 12px 12px 16px;
 }
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 900;
-    font-size: 22px;
-    letter-spacing: .2px;
-    padding: 12px 10px 16px;
-    margin-bottom: 6px;
-    color: var(--logo);
-}
-.logo .dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 999px;
-    background: var(--primary)
-}
+
 .nav-group {margin-top: 8px}
 .nav-item {
     display: flex;

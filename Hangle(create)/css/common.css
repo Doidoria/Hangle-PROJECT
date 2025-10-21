@@ -53,3 +53,22 @@ body{margin: 0; background: var(--bg); color: var(--text);
         "sidebar footer";
     min-height: 100vh;
 }
+
+/* ========= Logo ========= */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: .2px;
+    padding: 12px 10px 16px;
+    margin-bottom: 6px;
+    color: var(--logo);
+}
+.logo .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--primary)
+}
