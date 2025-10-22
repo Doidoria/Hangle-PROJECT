@@ -19,6 +19,7 @@ main {
     margin-bottom: 20px;
     justify-content: center;
 }
+.name{color: var(--primary);}
 .input-group {margin-bottom: 20px;}
 .input-group label {
     display: block;

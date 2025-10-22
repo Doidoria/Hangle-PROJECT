@@ -6,24 +6,34 @@
   <link rel="stylesheet" href="./css/common.css">
   <link rel="stylesheet" href="./css/login.css">
 
-  <!-- main JS -->
-  <script src="./js/main.js" defer></script>
+  <!-- theme-dark (default) -->
+  <script>
+    const root = document.documentElement;
+    
+    const applyTheme = (mode) => {
+    const isDark = mode === 'dark';
+    root.classList.toggle('theme-dark', isDark);
+    };
+
+    (function initTheme() {
+        const saved = localStorage.getItem('theme');
+        if (saved) { applyTheme(saved); }
+    })();
+  </script>
 
   <title>hangle · 로그인</title>
 </head>
 <body>
   <div class="layout">
-
-    <!-- ===== Main ===== -->
     <main>
       <div class="login-container">
         <div class="logo" aria-label="로고">
-          <span class="name">Hangle</span>
+          <a href="./main.html"><span class="name">Hangle</span></a>
         </div>
         <form action="/" method="POST" class="login-wrap"> 
             <div class="input-group">
-                <label for="username">아이디 (이메일)</label>
-                <input type="text" id="username" name="username" required>
+                <label for="userid">아이디 (이메일)</label>
+                <input type="text" id="userid" name="userid" required>
             </div>
             <div class="input-group">
                 <label for="password">비밀번호</label>
@@ -43,7 +53,6 @@
         </a>
       </div>
     </main>
-
   </div>
 </body>
 </html>
