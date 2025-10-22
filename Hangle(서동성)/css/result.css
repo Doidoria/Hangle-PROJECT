@@ -60,13 +60,25 @@
 .tab.active{ box-shadow:0 0 0 3px var(--ring) }
 
 /* ===== 본문 그리드 ===== */
-.nb-grid{
-  display:grid; gap:18px;
-  grid-template-columns: minmax(0,1fr) 320px;
+.nb-grid { 
+  display: block; 
 }
+
+.nb-sidecol { 
+  margin-top: 32px; 
+}
+
+/* (이미 적용했을 가능성 있음) 사이드바와 본문 간격 확보 */
+.main {
+  padding-left: 40px;
+  padding-right: 28px;
+  transition: padding 0.2s ease;
+}
+
 @media (max-width: 1060px){
-  .nb-grid{ grid-template-columns: 1fr; }
+  .main { padding-left: 24px; padding-right: 24px; }
 }
+
 
 /* ===== 메인 컬럼: 코드/결과 ===== */
 .code-card, .output-card{
@@ -188,4 +200,144 @@
     padding-left: 24px; /* 화면 좁을 때는 기본 여백만 */
     padding-right: 24px;
   }
+}
+
+/* ===== Kaggle 스타일에 더 가깝게: 폭/여백/타이포 ===== */
+.nb-header,
+.nb-tabs,
+.nb-grid {
+  max-width: 980px;
+  margin: 0 auto;            /* 가운데 정렬 (사이드바와 시각적 간격 ↑) */
+}
+
+/* 제목 타이포 약간 키움 */
+.nb-title h1 { font-size: 28px; }
+
+/* ===== 탭: 밑줄 스타일 ===== */
+.nb-tabs {
+  display: flex;
+  gap: 18px;
+  border-bottom: 1px solid var(--border);
+  margin: 12px auto 18px;
+  padding-bottom: 0;
+}
+.nb-tabs .tab {
+  border: 0;
+  background: transparent;
+  padding: 10px 2px;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.nb-tabs .tab.active {
+  color: var(--text);
+  border-bottom: 2px solid var(--text);
+}
+
+/* ===== 섹션 타이틀 + 구분선(스샷 풍) ===== */
+.section-title{
+  margin: 28px 0 12px;
+  font-size: 18px;           /* 대문자 변환 제거 느낌 */
+  font-weight: 800;
+  color: var(--text);
+}
+.section-title::after{ display:none; } /* 밑줄 제거 — 대신 섹션 상단에 rule 사용 */
+.nb-maincol .section-title:first-of-type { margin-top: 6px; }
+
+/* 섹션 상단 얇은 구분선 */
+.nb-maincol .section-title,
+.nb-sidecol .section-title {
+  position: relative;
+}
+.nb-maincol .section-title::before,
+.nb-sidecol .section-title::before{
+  content:"";
+  position:absolute;
+  left:0; right:0; top:-14px;
+  height:1px;
+  background: var(--border);
+  opacity:.9;
+}
+
+/* ===== 코드/출력 카드는 최대한 미니멀 ===== */
+.code-card, .output-card{
+  border-radius: 10px;
+  box-shadow: none;
+}
+.cell-toolbar{
+  background: transparent;
+}
+
+/* ===== Collaborators: 카드 → 평면 리스트 ===== */
+.collab-list{
+  display:block;
+  margin-top: 8px;
+}
+.collab{
+  display:flex; align-items:center; gap:10px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  padding: 12px 0;
+  box-shadow: none;
+}
+.collab:first-child{ border-top: 0; }
+.avatar.sm{
+  width: 32px; height: 32px; font-size: 13px;
+  border-radius: 50%;
+  background: #E8F5EF;       /* 살짝 연한 배경 */
+}
+.theme-dark .avatar.sm{ background: #0b3b32; }
+
+/* ===== License: 평면 텍스트 ===== */
+.license-box{
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  padding: 14px 0 0;
+  box-shadow: none;
+  color: var(--muted);
+}
+
+/* ===== Continue exploring: 평면 행 리스트 + 오른쪽 화살표 ===== */
+.explore-list{ display:block; }
+.explore-item{
+  display:flex; align-items:center;
+  justify-content: space-between;  /* 텍스트-화살표 양끝 정렬 */
+  gap: 12px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  padding: 14px 2px;
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: none;
+}
+.explore-item:first-child{ border-top: 0; }
+.explore-item:hover{ background: rgba(0,0,0,.02); }
+.theme-dark .explore-item:hover{ background: rgba(255,255,255,.03); }
+
+.explore-item .left{
+  display:flex; align-items:center; gap:10px;
+}
+.explore-item .arrow{
+  opacity:.7;
+  font-weight: 900;
+}
+
+/* 아이콘 캡슐은 살짝만 색감 유지 */
+.ico{ width:28px; height:28px; border-radius: 8px; display:flex; align-items:center; justify-content:center; }
+.ico.yellow{ background:#FFF7E6 }
+.ico.blue{ background:#E6F0FF }
+.ico.paper{ background:#EDEBFF }
+.ico.gray{ background:#F2F3F5 }
+
+/* ===== 여백: 사이드바 답답함 완화 ===== */
+.main { padding-left: 40px; padding-right: 28px; }
+@media (max-width: 1060px){
+  .main { padding-left: 24px; padding-right: 24px; }
 }
