@@ -1,7 +1,7 @@
 main {
     font-family: Arial, sans-serif;
     background-color: var(--bg);
-    width: 1920px;
+    width: 100vw;
     height: 100vh;
     display: flex;
     justify-content: center;
