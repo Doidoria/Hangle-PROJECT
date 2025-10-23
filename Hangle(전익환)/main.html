@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="./css/header.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/media.css">
+
+  <!-- main JS -->
+  <script src="./js/main.js" defer></script>
+
+  <title>hangle · 메인</title>
+</head>
+<body>
+  <div class="layout">
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar" aria-label="왼쪽 내비게이션">
+      <div class="logo" aria-label="로고">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="name">hangle</span>
+      </div>
+
+      <a class="nav-create" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        만들기
+      </a>
+
+      <nav class="nav-group">
+        <a class="nav-item" href="#">
+          <!-- trophy -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 1 0 0-10H7a5 5 0 1 0 0 10V4Z"/></svg>
+          <span>대회</span>
+        </a>
+        <a class="nav-item" href="#">
+          <!-- chat -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+          <span>커뮤니티</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- ===== Topbar ===== -->
+    <header class="topbar" aria-label="상단바">
+      <div class="search" role="search">
+        <span class="icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        </span>
+        <input type="search" placeholder="검색 (데이터셋, 대회, 사용자…)" aria-label="검색" />
+        <span class="kbd">/</span>
+      </div>
+
+      <div class="top-actions">
+        <!-- Dark/Light Toggle -->
+        <button id="themeToggle" class="toggle" aria-label="다크 모드 전환">
+          <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <span id="modeLabel">다크</span>
+        </button>
+
+        <!-- 로그인/프로필 (상태에 따라 토글) -->
+        <button id="loginBtn" class="login-btn" aria-label="로그인" style="display:none">로그인</button>
+        <button id="profileBtn" class="profile-btn" aria-label="프로필로 이동" style="display:none">
+          <div class="avatar">SD</div>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== Main ===== -->
+    <main class="main">
+      <section class="welcome">
+        <div>
+          <h1>어서 오세요, 서동성님!</h1>
+          <p>데이터 시각화 · 커뮤니티 · 대회 정보를 한 곳에서 관리하세요.</p>
+        </div>
+      </section>
+
+      <!-- 요약 지표 -->
+      <section class="stats" aria-label="요약 지표">
+        <div class="tile"><h4>데이터셋</h4><div class="num">0</div><div class="sub">전체 생성</div></div>
+        <div class="tile"><h4>노트북</h4><div class="num">3</div><div class="sub">전체 생성</div></div>
+        <div class="tile"><h4>대회</h4><div class="num">0</div><div class="sub">참가 수</div></div>
+        <div class="tile"><h4>토론</h4><div class="num">0</div><div class="sub">작성 수</div></div>
+        <div class="tile"><h4>강좌</h4><div class="num">0</div><div class="sub">완료 수</div></div>
+        <div class="tile"><h4>연속 접속</h4><div class="num">2</div><div class="sub">일</div></div>
+      </section>
+
+      <!-- 시작 카드 -->
+      <section class="grid" aria-label="추천 섹션">
+        <article class="card">
+          <span class="badge">가이드</span>
+          <h3>대회 참여 방법</h3>
+          <p class="muted">규칙, 평가 지표, 제출 형식을 빠르게 이해해보세요.</p>
+          <a class="link" href="#">자세히 보기</a>
+        </article>
+
+        <article class="card" id="authCard">
+          <h3>로그인 / 회원가입</h3>
+          <div class="field">
+            <label for="email" class="muted">이메일</label>
+            <input id="email" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label for="pw" class="muted">비밀번호</label>
+            <input id="pw" type="password" placeholder="••••••••" />
+          </div>
+          <button class="btn" style="width:100%" onclick="mockLogin()">로그인</button>
+        </article>
+
+        <article class="card">
+          <h3>샘플 차트</h3>
+          <div class="chart" aria-hidden="true"></div>
+          <p class="muted" style="margin-top:8px">차트/카드 대비를 확인하는 더미 요소입니다.</p>
+        </article>
+
+        <!-- 스크롤을 위한 추가 카드들 -->
+        <article class="card">
+          <span class="badge">추천 대회</span>
+          <h3>이미지 분류 챌린지</h3>
+          <p class="muted">CNN · Transfer Learning · 제출 마감 D-12</p>
+          <a class="link" href="#">참가하기</a>
+        </article>
+
+        <article class="card">
+          <span class="badge">인기 데이터셋</span>
+          <h3>서울시 교통량 통계</h3>
+          <p class="muted">월별/노선별 집계 · 시각화 예제 포함</p>
+          <a class="link" href="#">데이터 보기</a>
+        </article>
+
+        <article class="card">
+          <span class="badge">커뮤니티</span>
+          <h3>초보자를 위한 EDA 팁</h3>
+          <p class="muted">결측치 처리, 이상치 탐지, 시각화 모범 예시</p>
+          <a class="link" href="#">토론 참여</a>
+        </article>
+
+        <article class="card">
+          <span class="badge">가이드</span>
+          <h3>대회 제출 체크리스트</h3>
+          <ul class="muted" style="margin:6px 0 0 18px">
+            <li>파일 포맷/컬럼명 확인</li>
+            <li>스코어 산식 일치 여부</li>
+            <li>베이스라인과 비교</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <span class="badge">코스</span>
+          <h3>파이썬으로 시작하는 머신러닝</h3>
+          <p class="muted">기초 문법 → Pandas → 모델링까지</p>
+          <a class="link" href="#">수강하기</a>
+        </article>
+
+        <article class="card">
+          <h3>리더보드 살펴보기</h3>
+          <p class="muted">상위권 노트북의 전처리/모델 설정을 비교해 보세요.</p>
+          <a class="link" href="#">리더보드 이동</a>
+        </article>
+      </section>
+    </main>
+
+    <!-- ===== Footer ===== -->
+    <footer>
+      <div class="footer-wrap">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h4>회사</h4>
+            <a href="#">회사 소개</a>
+            <a href="#">채용</a>
+            <a href="#">보도자료</a>
+          </div>
+          <div class="footer-col">
+            <h4>정책</h4>
+            <a href="#">이용약관</a>
+            <a href="#">개인정보처리방침</a>
+            <a href="#">쿠키 정책</a>
+          </div>
+          <div class="footer-col">
+            <h4>지원</h4>
+            <a href="#">도움말 센터</a>
+            <a href="#">문의하기</a>
+            <a href="#">신고/피드백</a>
+          </div>
+          <div class="footer-col">
+            <h4>리소스</h4>
+            <a href="#">개발자 문서</a>
+            <a href="#">API</a>
+            <a href="#">브랜드 가이드</a>
+          </div>
+        </div>
+        <div class="copyright">
+          © <span id="year"></span> hangle. 모든 권리 보유.
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

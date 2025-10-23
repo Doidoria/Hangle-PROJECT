@@ -1,0 +1,117 @@
+/* ===== 프로필 상단 ===== */
+.profile-header {
+  position: relative;
+  width: 100%;
+  /* background: linear-gradient(90deg, #065f46 0%, #10b981 50%, #34d399 100%); */
+  margin-bottom: 50px;
+  border-bottom: 1px solid #ddd;
+}
+
+.profile-banner {
+  height: 100px;
+  /* background: linear-gradient(90deg, #4fc3f7, #81c784, #fff176); */
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  margin-top: -60px;
+}
+
+.profile-avatar img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  background: #f0f0f0;
+}
+
+.profile-text {
+  flex: 1;
+  margin-left: 1.5rem;
+}
+
+.username {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.user-meta {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.follow-btn, .contact-btn {
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.follow-btn {
+  background: #10B981;
+  color: #fff;
+}
+
+.contact-btn {
+  background: #059669;
+  color: #fff;
+}
+
+/* ===== 프로필 본문 ===== */
+.profile-body {
+  padding: 2rem;
+}
+
+.info-section, .badge-section {
+  margin-bottom: 2rem;
+}
+
+.info-section h3, .badge-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.4rem;
+}
+
+.info-text {
+  color: #555;
+}
+
+.info-sub {
+  color: #777;
+  font-style: italic;
+}
+
+/* ===== 뱃지 섹션 ===== */
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #10B981;
+  border: 1px solid #10B981;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+}
+
+.badge img {
+  width: 36px;
+  height: 36px;
+}
