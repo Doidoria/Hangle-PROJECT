@@ -4,14 +4,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="./css/common.css">
-  <link rel="stylesheet" href="./css/header.css">
-  <link rel="stylesheet" href="./css/footer.css">
-  <link rel="stylesheet" href="./css/result.css">
-
+  <link rel="stylesheet" href="./css/common.css" />
+  <link rel="stylesheet" href="./css/header.css" />
+  <link rel="stylesheet" href="./css/footer.css" />
+  <link rel="stylesheet" href="./css/result.css" />
+  <script src="./js/result.js" defer></script>
   <!-- main JS -->
   <script src="./js/main.js" defer></script>
-
   <title>hangle · Notebook 결과</title>
 </head>
 
@@ -23,14 +22,12 @@
         <span class="dot" aria-hidden="true"></span>
         <span class="name">hangle</span>
       </div>
-
       <a class="nav-create" href="#">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M12 5v14M5 12h14" />
         </svg>
         만들기
       </a>
-
       <nav class="nav-group">
         <a class="nav-item" href="#">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -59,23 +56,21 @@
         <input type="search" placeholder="검색 (데이터셋, 대회, 사용자…)" aria-label="검색" />
         <span class="kbd">/</span>
       </div>
-
       <div class="top-actions">
         <button id="themeToggle" class="toggle" aria-label="다크 모드 전환">
           <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
           <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            style="display:none">
+            style="display: none">
             <circle cx="12" cy="12" r="5" />
             <path
               d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
           </svg>
           <span id="modeLabel">다크</span>
         </button>
-
-        <button id="loginBtn" class="login-btn" aria-label="로그인" style="display:none">로그인</button>
-        <button id="profileBtn" class="profile-btn" aria-label="프로필로 이동" style="display:none">
+        <button id="loginBtn" class="login-btn" aria-label="로그인" style="display: none">로그인</button>
+        <button id="profileBtn" class="profile-btn" aria-label="프로필로 이동" style="display: none">
           <div class="avatar">SD</div>
         </button>
       </div>
@@ -103,169 +98,252 @@
             </svg>
             <span>0</span>
           </button>
-          <button class="btn-solid">
-            Copy & Edit
-          </button>
+          <button class="btn-solid">Copy & Edit</button>
         </div>
       </div>
 
-      <!-- 탭 (모양만, 기본은 Notebook 표시) -->
-      <nav class="nb-tabs" aria-label="노트북 탭">
-        <button class="tab active">Notebook</button>
-        <button class="tab">입력</button>
-        <button class="tab">출력</button>
-        <button class="tab">로그</button>
-        <button class="tab">댓글</button>
+      <!-- 탭 (모양+동작용) -->
+      <nav class="nb-tabs" aria-label="노트북 탭" role="tablist">
+        <button class="tab active" role="tab" aria-selected="true" data-tab="notebook">Notebook</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="input">입력</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="output">출력</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="logs">로그</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="comments">댓글 (0)</button>
       </nav>
 
-           <!-- 본문 1단 레이아웃 -->
+      <!-- 본문 패널 컨테이너 -->
       <div class="nb-grid">
-        <section class="nb-maincol">
-          <!-- 1) 코드가 들어갈 부분 -->
-          <h2 class="section-title">code</h2>
+        <!-- ===================== [PANEL] Notebook ===================== -->
+        <section class="tab-panel" data-panel="notebook">
+          <section class="nb-maincol">
+            <!-- 1) 코드가 들어갈 부분 -->
+            <h2 class="section-title">code</h2>
+            <article class="code-card" aria-label="코드 셀">
+              <div class="cell-toolbar">
+                <span class="cell-label">In [1]:</span>
+                <span class="cell-status">성공</span>
+              </div>
+              <pre class="code-block"><code></code></pre>
+            </article>
 
-          <article class="code-card" aria-label="코드 셀">
-            <div class="cell-toolbar">
-              <span class="cell-label">In [1]:</span>
-              <span class="cell-status">성공</span>
-            </div>
-            <pre class="code-block">
-              <code></code>
-            </pre>
-          </article>
+            <!-- 2) 코드에 대한 결과물 부분 -->
+            <h2 class="section-title">result</h2>
+            <article class="output-card" aria-label="결과 테이블">
+              <div class="output-header">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="16" rx="2" />
+                  <path d="M3 10h18" />
+                </svg>
+                <span class="output-title">(미리보기)</span>
+              </div>
+              <div class="table-wrap" role="region" aria-label="결과 표 스크롤 영역" tabindex="0">
+                <table class="result-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>prompt</th>
+                      <th>result</th>
+                      <th>result_code</th>
+                    </tr>
+                  </thead>
+                  <tbody><!-- 데이터 행 삽입 --></tbody>
+                </table>
+              </div>
+              <div class="output-footer">
+                <span class="muted">저장됨: <b></b></span>
+              </div>
+            </article>
 
-          <!-- 2) 코드에 대한 결과물 부분 -->
-          <h2 class="section-title">result</h2>
-
-          <article class="output-card" aria-label="결과 테이블">
-            <div class="output-header">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="16" rx="2" />
-                <path d="M3 10h18" />
-              </svg>
-              <span class="output-title">attack_dataset.pkl (미리보기)</span>
-            </div>
-            <div class="table-wrap" role="region" aria-label="결과 표 스크롤 영역" tabindex="0">
-              <table class="result-table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>prompt</th>
-                    <th>result</th>
-                    <th>result_code</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- 데이터 행 삽입 위치 -->
-                </tbody>
-              </table>
-            </div>
-            <div class="output-footer">
-              <span class="muted">저장됨: <b></b></span>
-            </div>
-          </article>
-
-          <!-- ▼▼▼ 여기부터: 아래로 내린 사이드 섹션들 ▼▼▼ -->
-          <aside class="nb-sidecol">
-            <!-- 3) Collaborators -->
-            <h2 class="section-title">Collaborators</h2>
-            <div class="collab-list">
-              <div class="collab">
-                <div class="avatar sm">B</div>
-                <div class="collab-info">
-                  <div class="name">서동성</div>
-                  <div class="role muted">소유자 (Owner)</div>
+            <!-- 아래로 내린 정보 섹션들 -->
+            <aside class="nb-sidecol" data-only="notebook">
+              <h2 class="section-title">Collaborators</h2>
+              <div class="collab-list">
+                <div class="collab">
+                  <div class="avatar sm">B</div>
+                  <div class="collab-info">
+                    <div class="name">서동성</div>
+                    <div class="role muted">소유자 (Owner)</div>
+                  </div>
+                </div>
+                <div class="collab">
+                  <div class="avatar sm">T</div>
+                  <div class="collab-info">
+                    <div class="name">장지원</div>
+                    <div class="role muted">편집자 (Editor)</div>
+                  </div>
+                </div>
+                <div class="collab">
+                  <div class="avatar sm">P</div>
+                  <div class="collab-info">
+                    <div class="name">윤태현</div>
+                    <div class="role muted">편집자 (Editor)</div>
+                  </div>
+                </div>
+                <div class="collab">
+                  <div class="avatar sm">C</div>
+                  <div class="collab-info">
+                    <div class="name">최승호</div>
+                    <div class="role muted">편집자 (Editor)</div>
+                  </div>
                 </div>
               </div>
-              <div class="collab">
-                <div class="avatar sm">T</div>
-                <div class="collab-info">
-                  <div class="name">장지원</div>
-                  <div class="role muted">편집자 (Editor)</div>
-                </div>
+              <h2 class="section-title">License</h2>
+              <div class="license-box">
+                이 Notebook은 <a class="link" href="#">Apache 2.0</a> 오픈소스 라이선스로 배포되었습니다.
               </div>
-              <div class="collab">
-                <div class="avatar sm">P</div>
-                <div class="collab-info">
-                  <div class="name">윤태현</div>
-                  <div class="role muted">편집자 (Editor)</div>
-                </div>
+              <h2 class="section-title">Continue exploring</h2>
+              <div class="explore-list">
+                <a href="#" class="explore-item">
+                  <span class="left">
+                    <span class="ico yellow">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M3 12l18-9-9 18-2-7-7-2z" />
+                      </svg>
+                    </span>
+                    <span class="explore-text">입력 (Input) · 0 파일</span>
+                  </span>
+                  <span class="arrow">→</span>
+                </a>
+                <a href="#" class="explore-item">
+                  <span class="left">
+                    <span class="ico blue">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <rect x="3" y="4" width="18" height="16" rx="2" />
+                        <path d="M7 8h10M7 12h10M7 16h6" />
+                      </svg>
+                    </span>
+                    <span class="explore-text">출력 (Output) · 0 파일</span>
+                  </span>
+                  <span class="arrow">→</span>
+                </a>
+                <a href="#" class="explore-item">
+                  <span class="left">
+                    <span class="ico paper">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M4 4h16v16H4z" />
+                        <path d="M8 4v16" />
+                      </svg>
+                    </span>
+                    <span class="explore-text">로그 (Logs) · 0s · 성공</span>
+                  </span>
+                  <span class="arrow">→</span>
+                </a>
+                <a href="#" class="explore-item">
+                  <span class="left">
+                    <span class="ico gray">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+                      </svg>
+                    </span>
+                    <span class="explore-text">댓글 (Comments) · 0</span>
+                  </span>
+                  <span class="arrow">→</span>
+                </a>
               </div>
-              <div class="collab">
-                <div class="avatar sm">C</div>
-                <div class="collab-info">
-                  <div class="name">최승호</div>
-                  <div class="role muted">편집자 (Editor)</div>
-                </div>
+            </aside>
+          </section>
+        </section>
+
+        <!-- ===================== [PANEL] 입력 ===================== -->
+        <section class="tab-panel" data-panel="input" hidden>
+          <div class="nb-header-spacer"></div>
+          <h2 class="panel-title">입력 데이터</h2>
+          <div class="empty-box" role="status">연결된 데이터 소스가 없습니다.</div>
+        </section>
+
+        <!-- ===================== [PANEL] 출력 ===================== -->
+        <section class="tab-panel" data-panel="output" hidden>
+          <div class="nb-header-spacer"></div>
+          <h2 class="panel-title">출력 데이터</h2>
+          <div class="output-card flat">
+            <div class="outrow">
+              <div class="outname"><strong>file</strong> <span class="muted">(0 kB)</span></div>
+              <button class="btn-ghost sm" aria-label="다운로드">⤓</button>
+            </div>
+            <div class="preview-empty">미리보기를 표시할 수 없습니다 (바이너리 파일).</div>
+            <div class="outrow side">
+              <span class="muted">Output</span>
+              <a href="#" class="link"></a>
+            </div>
+            <div class="cmd-box">
+              <code>I don't know what it is</code>
+              <button class="btn-ghost sm" aria-label="복사">📋</button>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ===================== [PANEL] 로그 ===================== -->
+        <section class="tab-panel" data-panel="logs" hidden>
+          <div class="nb-header-spacer"></div>
+          <h2 class="panel-title">로그</h2>
+          <div class="log-status">
+            <span class="ok">✔</span>
+            <span><b>성공적으로 실행</b> (33.5s)</span>
+            <button class="btn-ghost sm">Download Logs</button>
+          </div>
+          <div class="log-table">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 90px">Time</th>
+                  <th style="width: 60px">#</th>
+                  <th>Log Message</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- 로그 항목 삭제됨 -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ===================== [PANEL] 댓글 ===================== -->
+        <section class="tab-panel" data-panel="comments" hidden>
+          <div class="nb-header-spacer"></div>
+          <h2 class="panel-title">0개의 댓글</h2>
+          <div class="comment-editor">
+            <div class="comment-header">
+              <h2>0 Comments</h2>
+              <div class="comment-sort">
+                <select>
+                  <option>Hotness</option>
+                  <option>Newest</option>
+                  <option>Oldest</option>
+                </select>
+                <button class="btn-follow">Follow Comments</button>
               </div>
             </div>
 
-            <!-- 4) License -->
-            <h2 class="section-title">License</h2>
-            <div class="license-box">
-              이 Notebook은 <a class="link" href="#">Apache 2.0</a> 오픈소스 라이선스로 배포되었습니다.
+            <div class="comment-box">
+              <div class="avatar-wrap">
+                <div class="avatar-lg">SD</div>
+              </div>
+
+              <div class="comment-input-area">
+                <div class="toolbar">
+                  <button>↶</button><button>↷</button><button>🔗</button>
+                  <button><b>B</b></button><button><i>I</i></button>
+                  <button>🔗</button><button>`</button><button>“”</button>
+                  <button>•</button><button>1.</button><button>☑︎</button>
+                  <button>🖼️</button><button>📎</button><button>😊</button><button>?</button>
+                </div>
+                <textarea
+                  placeholder="Comment here. Be patient, be friendly, and focus on ideas. We're all here to learn and improve!"></textarea>
+                <p class="comment-note">This comment will be made public once posted.</p>
+                <div class="editor-actions">
+                  <button class="btn-solid black">Post Comment</button>
+                </div>
+              </div>
             </div>
-
-            <!-- 5) Continue exploring -->
-            <h2 class="section-title">Continue exploring</h2>
-     <div class="explore-list">
-  <a href="#" class="explore-item">
-    <span class="left">
-      <span class="ico yellow">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M3 12l18-9-9 18-2-7-7-2z" />
-        </svg>
-      </span>
-      <span class="explore-text">입력 (Input) · 0 파일</span>
-    </span>
-    <span class="arrow">→</span>
-  </a>
-
-  <a href="#" class="explore-item">
-    <span class="left">
-      <span class="ico blue">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="4" width="18" height="16" rx="2" />
-          <path d="M7 8h10M7 12h10M7 16h6" />
-        </svg>
-      </span>
-      <span class="explore-text">출력 (Output) · 0 파일</span>
-    </span>
-    <span class="arrow">→</span>
-  </a>
-
-  <a href="#" class="explore-item">
-    <span class="left">
-      <span class="ico paper">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 4h16v16H4z" />
-          <path d="M8 4v16" />
-        </svg>
-      </span>
-      <span class="explore-text">로그 (Logs) · 0s · 성공</span>
-    </span>
-    <span class="arrow">→</span>
-  </a>
-
-  <a href="#" class="explore-item">
-    <span class="left">
-      <span class="ico gray">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-        </svg>
-      </span>
-      <span class="explore-text">댓글 (Comments) · 0</span>
-    </span>
-    <span class="arrow">→</span>
-  </a>
-</div>
-
-          </aside>
- 
+          </div>
 
         </section>
       </div>
-
     </main>
 
     <!-- ===== Footer ===== -->
