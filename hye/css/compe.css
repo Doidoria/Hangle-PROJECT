@@ -1,0 +1,340 @@
+        body {
+            height: auto;
+
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24;
+
+            color: var(--text)
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .comp1 {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1350px;
+            width: 100%;
+            height: 255px;
+            margin: 20px 0 0 0;
+        }
+
+        .comp11 {
+            width: 60%;
+            padding-left: 5%;
+            padding-right: 10%;
+            display: flex;
+            flex-direction: column;
+            align-self: start;
+            font-size: 16px;
+
+        }
+
+        .comp1Title {
+            font-size: 36px;
+            padding-bottom: 3%;
+        }
+
+        .comp1Contents {
+            padding-bottom: 3%;
+        }
+
+        .compBtn1 {
+            width: 40%;
+            height: 40px;
+            background-color: var(--text);
+            border-radius: 10px;
+            border-color: var(--bg);
+            color: var(--bg);
+        }
+
+        .comp12 {
+            width: 30%;
+        }
+
+        .comp12 img {
+            width: 70%;
+            height: 70%;
+        }
+
+        /* ============================================================== */
+
+        .kbd2 {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: var(--icon-muted);
+            background: var(--bg);
+            border: 1px solid var(--icon-muted);
+            border-radius: 100px;
+            width: 100px;
+            padding: 2px 6px;
+        }
+        .kbd2-text{
+            font-size: 14px;
+            
+            
+        }
+
+        /* =========================================================== */
+        .comp2 {
+            display: flex;
+            gap: 15px;
+            height: 120px;
+            margin-top: 30px;
+            padding: 0 5%;
+            max-width: 1350px;
+            width: 100%;
+            justify-content: start;
+
+            /* background-color: transparent; */
+
+        }
+
+        .comp2Btn {
+            width: 220px;
+            height: 88px;
+            border: 1px solid var(--text);
+            border-radius: 10px;
+            background-color: transparent;
+            display: flex;
+            justify-content: space-around;
+
+            padding: 12px 10px 12px 16px;
+        }
+
+        .comp2BtnC {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            gap: 10px;
+            color: var(--text)
+        }
+
+        .comp2BtnTitle {
+            font-size: 16px;
+        }
+
+
+
+        /* ============================================================ */
+
+        .comp3 {
+            padding: 0 5%;
+            width: 100%;
+            max-width: 1350px;
+        }
+
+
+
+        .comp31 {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .comp31Content>.material-symbols-outlined {
+            position: relative;
+            bottom: -5px;
+        }
+
+        .comp31Tilte {
+            font-size: 20px;
+        }
+
+        .comp31Btn {
+            border: none;
+            background-color: var(--primary);
+            border-radius: 100px;
+            width: 92px;
+            height: 36px;
+            color: var(--bg)
+        }
+
+        /* ============================================ */
+
+
+
+        .comp4Card {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            height: auto;
+            gap: 15px;
+            max-width: 1500px;
+            margin: 30px 0;
+        }
+
+        .comp4Card2 {
+            width: 277px;
+            height: 320px;
+            border: 1px solid var(--muted);
+            border-radius: 20px;
+            background-color: transparent;
+            flex-shrink: 1;
+            min-width: 250px;
+            max-width: 300px;
+            overflow: hidden;
+        }
+
+        .comp4Card2 a {
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .comp4-card-img {
+            padding-top: 0;
+            overflow: hidden;
+        }
+
+        .comp4-card-img img {
+            width: 100%;
+            height: 108px;
+            object-fit: cover;
+            background-color: var(--bg);
+
+
+        }
+
+        .comp4-card-text {
+            padding: 16px;
+            height: 160px;
+        }
+
+        .comp4-card-text1 {
+            align-items: flex-start;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .comp4-card-Title {
+            font-size: 24px;
+        }
+
+        .comp4-card-text2 {
+            height: auto;
+            text-align: start;
+        }
+
+        .comp4-card-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 16px;
+            border-top: 1px solid;
+            align-items: center;
+        }
+
+        .comp3-grid-footer1 {
+            font-size: 16px;
+        }
+
+
+        /* ============================================================== */
+
+        .comp4 {
+            width: 100%;
+            max-width: 1350px;
+            padding-top: 30px;
+            padding: 0 5%;
+        }
+
+        .comp44 {
+            width: 100%;
+            border-top: 1px solid var(--muted);
+            padding: 20px 0;
+        }
+
+
+        .comp41 {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .comp4Btn {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* ============================================= */
+        .comp5 {
+            width: 100%;
+            height: auto;
+            margin-top: 3%;
+            padding-right: 5%;
+            ;
+        }
+
+        .comp5-list {
+            width: 100%;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            height: 100px;
+        }
+
+        .comp5-content {
+            display: flex;
+            gap: 30px
+        }
+
+        .comp5-img img {
+            width: 64px;
+            height: 64px;
+            border-radius: 10px;
+        }
+
+        .comp5-text {
+            width: 380px;
+            height: 64px;
+        }
+
+        .comp5-text p {
+            margin: 0;
+        }
+
+
+        .comp6 {
+            width: 100%;
+            max-width: 1350px;
+            padding-top: 30px;
+            padding: 0 5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .comp6 div {
+            border-top: 1px solid var(--muted);
+            width: 100%;
+        }
+
+        h2 {
+            width: 100%;
+            padding-top: 50px;
+            font-size: 2rem;
+            font-weight: 900;
+            display: flex;
+            justify-content: center;
+        }
+
+        .comp61 {
+            font-weight: 500;
+            font-size: 24px;
+            width: 300px;
+            height: 50px;
+            background-color: var(--primary);
+            color: var(--bg);
+            border-radius: 10px;
+            border: none;
+        }
