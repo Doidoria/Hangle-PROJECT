@@ -1,0 +1,22 @@
+  
+  @media (max-width:1100px) {
+    .modal-panel{
+        right: 0px;
+    }
+  }
+  
+  @media (max-width:1000px) {
+    .comp11{
+        width: 100%;
+    }
+    .comp12{
+        width: 0;
+    } 
+    .comp12 img {
+          display: none;
+
+      }    
+
+  }
+
+  

@@ -13,17 +13,29 @@
             color: var(--text)
         }
 
-        .main {
+        .competitionsmain {
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
+            flex-shrink: 1;
+            width: 100%;
         }
+        
+        /* .compMain{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 1;
+            width: 100%;
+
+        } */
 
         .comp1 {
             display: flex;
             justify-content: space-between;
             max-width: 1350px;
-            width: 100%;
+            min-width: 550px;
             height: 255px;
             margin: 20px 0 0 0;
         }
@@ -66,8 +78,9 @@
             height: 70%;
         }
 
-        /* ============================================================== */
 
+
+        /* ============================================================== */
         .kbd2 {
             position: absolute;
             right: 12px;
@@ -76,54 +89,66 @@
             font-size: 12px;
             color: var(--icon-muted);
             background: var(--bg);
-            border: 1px solid var(--icon-muted);
+            border: none;
             border-radius: 100px;
             width: 100px;
             padding: 2px 6px;
         }
-        .kbd2-text{
-            font-size: 14px;
-            
-            
+
+        .kbd2 {
+            font-size: 16px;
         }
+
+
+
 
         /* =========================================================== */
         .comp2 {
             display: flex;
             gap: 15px;
             height: 120px;
-            margin-top: 30px;
+            margin: 30px 0;
             padding: 0 5%;
             max-width: 1350px;
             width: 100%;
             justify-content: start;
+            
+            /* 임시 */
+            flex-wrap: wrap;
+            height: auto;
+            
 
-            /* background-color: transparent; */
 
         }
 
         .comp2Btn {
             width: 220px;
             height: 88px;
-            border: 1px solid var(--text);
+            border: 1px solid var(--border);
             border-radius: 10px;
             background-color: transparent;
             display: flex;
-            justify-content: space-around;
+            gap: 10px;
 
             padding: 12px 10px 12px 16px;
         }
 
         .comp2BtnC {
+            color: var(--text);
+            height: 61px;
             display: flex;
             flex-direction: column;
-            align-items: start;
-            gap: 10px;
-            color: var(--text)
+            align-items:start;
+            gap:5px;
         }
 
         .comp2BtnTitle {
             font-size: 16px;
+            text-align: left;
+        }
+
+        .comp2BtnContent {
+           text-align: left;
         }
 
 
@@ -141,6 +166,7 @@
         .comp31 {
             display: flex;
             justify-content: space-between;
+            width: 100%;
         }
 
         .comp31Content>.material-symbols-outlined {
@@ -161,6 +187,12 @@
             color: var(--bg)
         }
 
+        .comp32text {
+            width: 100%;
+        }
+
+
+
         /* ============================================ */
 
 
@@ -171,18 +203,16 @@
             width: 100%;
             height: auto;
             gap: 15px;
-            max-width: 1500px;
             margin: 30px 0;
         }
 
         .comp4Card2 {
-            width: 277px;
             height: 320px;
-            border: 1px solid var(--muted);
+            border: 1px solid var(--border);
             border-radius: 20px;
             background-color: transparent;
             flex-shrink: 1;
-            min-width: 250px;
+            min-width: 200px;
             max-width: 300px;
             overflow: hidden;
         }
@@ -294,7 +324,8 @@
         }
 
         .comp5-text {
-            width: 380px;
+            max-width: 380px;
+            min-width: 200px;
             height: 64px;
         }
 
@@ -306,8 +337,7 @@
         .comp6 {
             width: 100%;
             max-width: 1350px;
-            padding-top: 30px;
-            padding: 0 5%;
+            padding: 50px 5%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -321,7 +351,6 @@
 
         h2 {
             width: 100%;
-            padding-top: 50px;
             font-size: 2rem;
             font-weight: 900;
             display: flex;
@@ -336,5 +365,116 @@
             background-color: var(--primary);
             color: var(--bg);
             border-radius: 10px;
+            border: none;
+        }
+
+
+
+
+
+
+
+
+
+        /* 1. 모달 패널 기본 스타일: 화면 전체를 덮고 숨기기 */
+        .modal-panel {
+            display: none;
+            position: absolute;
+            top: 0px;
+            right: -60px;
+            /*  */
+        }
+
+        /* 2. 모달이 열렸을 때 보이도록 설정 */
+        .modal-panel.is-open {
+            display: flex;
+            /* JavaScript가 이 클래스를 추가/제거 */
+        }
+
+        /* 모달 내용 컨테이너 스타일 */
+        .modal-content {
+            overflow-y: auto;
+            padding: 20px;
+            min-width: 300px;
+            max-width: 400px;
+            max-height: 636px;
+            background: var(--surface);
+            border-radius: 10px;
+            border: 1px solid var(--muted);
+            opacity: 1;
+        }
+
+        /* 필터 항목 섹션 */
+        .filter-section h3 {
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: ver(--muted);
+            font-weight: 600;
+        }
+
+        .modal-content h3 {
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: ver(--muted);
+            font-weight: 600;
+        }
+        .filter-section{
+            margin : 10px 0 ;
+        }
+
+        .comp-line{
+            margin-top: 25px;
+            width: 100%;
+            border: 0.5px solid var(--border);
+            height: 0px;
+        }
+
+        /* 태그 버튼 스타일 */
+        .tag-button {
+            padding: 6px 12px;
+            margin: 4px;
+            border: 1px solid var(--border);
+            background-color: var(--surface);
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        /* 선택된 상태 스타일 (선택 시 JS로 클래스 토글) */
+        .tag-button.selected {
+            background-color: var(--primary);
+            color: var(--surface);
+            border-color: var(--primary);
+        }
+
+        /* 하단 액션 버튼 영역 */
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            /* 오른쪽 정렬 */
+            gap: 10px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .clear-button {
+            background: none;
+            border: none;
+            color: #888;
+        }
+
+        .done-button {
+            background-color: #333;
+            /* Dark color for Done button */
+            color: white;
             border: none;
         }

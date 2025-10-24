@@ -10,8 +10,10 @@
   <link rel="stylesheet" href="../Hangle(샘플)/css/main.css">
   <link rel="stylesheet" href="../Hangle(샘플)/css/media.css">
 
-  <!-- competitopns css -->
-  <link rel="stylesheet" href="./css/compe.css">
+  <!-- competitopns css Js-->
+  <link rel="stylesheet" href="./css/comp.css">
+  <link rel="stylesheet" href="./css/compmedia.css">
+  <script src="./js/comp.js" defer></script>
 
 
   <!-- main JS -->
@@ -101,41 +103,113 @@
 
 
     <!-- ===== Main ===== -->
-    <main class="main">
+    <main class="competitionsmain">
+
+      <!-- <div class="compMain"> -->
+
+        <section class="comp1">
+          <div class="comp11">
+            <div class="comp1Title">Competition</div>
+            <label class="comp1Contents">Grow your data science skills by competing in our exciting
+              competitions. Find help in the documentation or learn about Community Competitions.</label>
+            <button class="compBtn1">Host a Competition</button>
+          </div>
+          <div class="comp12">
+            <img src="./comp1img.svg" alt="대회사진1" />
+          </div>
+        </section>
 
 
-      <section class="comp1">
-        <div class="comp11">
-          <div class="comp1Title">Competition</div>
-          <label class="comp1Contents">Grow your data science skills by competing in our exciting
-            competitions. Find help in the documentation or learn about Community Competitions.</label>
-          <button class="compBtn1">Host a Competition</button>
-        </div>
-        <div class="comp12">
-          <img src="./comp1img.svg" alt="대회사진1" />
-        </div>
-      </section>
+        <section class="comp3 compS">
 
+          <div class="search" role="search">
 
-      <section class="comp3 compS"> 
-
-        <div class="search" role="search">
-          <span class="icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="7" />
-              <path d="M21 21l-4.3-4.3" />
-            </svg>
-          </span>
-          <input type="search" placeholder="검색 (데이터셋, 대회, 사용자…)" aria-label="검색" />
-          <button class="kbd2">
-            <span class="material-symbols-outlined">
-              filter_list
+            <span class="icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.3-4.3" />
+              </svg>
             </span>
-            <span class="kbd2-text">Filters</span>
-          </button>
-        </div>
+            <input type="search" placeholder="검색 (데이터셋, 대회, 사용자…)" aria-label="검색" />
+            <button id="filter-open-btn" class="kbd2"><!--  -->
+              <span class="material-symbols-outlined">
+                filter_list
+              </span>
+              <span class="kbd2-text">Filters</span>
+            </button>
 
-      </section>
+
+            <div id="filter-modal" class="modal-panel"> <!--  -->
+              <div class="modal-content">
+
+                <h3>TAGS</h3>
+
+                <div class="search" role="search">
+                  <span class="icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="7" />
+                      <path d="M21 21l-4.3-4.3" />
+                    </svg>
+                  </span>
+                  <input type="search" placeholder="태그 찾기" aria-label="검색" />
+                </div>
+
+                <div class="comp-line"></div>
+
+
+                <div class="filter-section">
+                  <h3>STATUS</h3>
+                  <div class="filter-tags">
+                    <button class="tag-button">Active</button> <!--  -->
+                    <button class="tag-button">Entered</button>
+                    <button class="tag-button">Completed</button>
+                    <button class="tag-button">Spotlight</button>
+                  </div>
+                </div>
+
+                <div class="filter-section">
+                  <h3>PRIZES AND AWARDS</h3>
+                  <div class="filter-tags">
+                    <button class="tag-button">Monetary</button>
+                    <button class="tag-button">Research</button>
+                    <button class="tag-button">Getting Started</button>
+                    <button class="tag-button">PlayGround</button>
+                    <button class="tag-button">Comminity</button>
+                    <button class="tag-button">Simulatioins</button>
+                    <button class="tag-button">Hackathons</button>
+                  </div>
+                </div>
+
+                <div class="filter-section">
+                  <h3>PARTICIPATION</h3>
+                  <div class="filter-tags">
+                    <button class="tag-button">Open to Everyone</button>
+                    <button class="tag-button">Invitation Only</button>
+                  </div>
+                </div>
+
+                <div class="filter-section">
+                  <h3>For HOSTS</h3>
+                  <div class="filter-tags">
+                    <button class="tag-button">Your Competitions</button>
+                    <button class="tag-button">Cloneable Competitions</button>
+                  </div>
+                </div>
+
+                <div class="modal-actions">
+                  <button class="action-button clear-button">Clear</button>
+                  <button class="action-button done-button" id="filter-close-btn">Done</button><!--  -->
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+        </section>
+      <!-- </div> -->
+
+
 
       <div class="comp2">
 
@@ -152,33 +226,27 @@
 
         <button class="comp2Btn">
           <span class="comp2BtnC">
-            <span class="comp2BtnTitle">All Competitions</span>
-            <span class="comp2BtnContent">Everything, past & present</span>
+            <span class="comp2BtnTitle">Featured</span>
+            <span class="comp2BtnContent">Priemier challenges with prizes</span>
           </span>
           <span class="material-symbols-outlined">
             list
           </span>
         </button>
 
-        <button class="comp2Btn">
-          <span class="comp2BtnC">
-            <span class="comp2BtnTitle">All Competitions</span>
-            <span class="comp2BtnContent">Everything, past & present</span>
-          </span>
-          <span class="material-symbols-outlined">
-            list
-          </span>
-        </button>
 
         <button class="comp2Btn">
           <span class="comp2BtnC">
-            <span class="comp2BtnTitle">All Competitions</span>
-            <span class="comp2BtnContent">Everything, past & present</span>
+            <span class="comp2BtnTitle">Featured</span>
+            <span class="comp2BtnContent">Priemier challenges with prizes</span>
           </span>
           <span class="material-symbols-outlined">
             list
           </span>
         </button>
+   
+
+
 
 
       </div>
@@ -186,12 +254,11 @@
 
 
 
+      <!-- <div class="compMain"> -->
+
+        <section class="comp3">
 
 
-
-      <section class="comp3">
-
-        <div>
           <div class="comp31">
             <span class="comp31Content">
               <span class="material-symbols-outlined">
@@ -202,391 +269,387 @@
             <button class="comp31Btn">See all</button>
           </div>
           <div class="comp32">
-            <span>Competitions with approachable ML fundamentals.</span>
+            <span class="comp32text">Competitions with approachable ML fundamentals.</span>
           </div>
-        </div>
-
-        <div class="comp4Card">
 
 
-          <div class="comp4Card2">
-            <a href="javascript:void(0)">
-              <div class="comp4-card-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg" alt="자연">
-              </div>
-              <div class="comp4-card-text">
-                <div class="comp4-card-text1">
-                  <span class="comp4-card-Title">대회제목</span>
-                  <span class="material-symbols-outlined">
-                    more_vert
-                  </span>
+          <div class="comp4Card">
+
+
+            <div class="comp4Card2">
+              <a href="javascript:void(0)">
+                <div class="comp4-card-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg"
+                    alt="자연">
                 </div>
-                <div class="comp4-card-text2"> 내용 설명</div>
+                <div class="comp4-card-text">
+                  <div class="comp4-card-text1">
+                    <span class="comp4-card-Title">대회제목</span>
+                    <span class="material-symbols-outlined">
+                      more_vert
+                    </span>
+                  </div>
+                  <div class="comp4-card-text2"> 내용 설명</div>
+                </div>
+              </a>
+              <div class="comp4-card-footer">
+                <span class="comp4-card-footer1">Knowledge</span>
+                <span class="comp4-card-footer2"> Ongoing</span>
               </div>
-            </a>
-            <div class="comp4-card-footer">
-              <span class="comp4-card-footer1">Knowledge</span>
-              <span claFs="comp4-card-footer2"> Ongoing</span>
+            </div>
+
+            <div class="comp4Card2">
+              <a href="javascript:void(0)">
+                <div class="comp4-card-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg"
+                    alt="자연">
+                </div>
+                <div class="comp4-card-text">
+                  <div class="comp4-card-text1">
+                    <span class="comp4-card-Title">대회제목</span>
+                    <span class="material-symbols-outlined">
+                      more_vert
+                    </span>
+                  </div>
+                  <div class="comp4-card-text2"> 내용 설명</div>
+                </div>
+              </a>
+              <div class="comp4-card-footer">
+                <span class="comp4-card-footer1">Knowledge</span>
+                <span class="comp4-card-footer2"> Ongoing</span>
+              </div>
+            </div>
+
+            <div class="comp4Card2">
+              <a href="javascript:void(0)">
+                <div class="comp4-card-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg"
+                    alt="자연">
+                </div>
+                <div class="comp4-card-text">
+                  <div class="comp4-card-text1">
+                    <span class="comp4-card-Title">대회제목</span>
+                    <span class="material-symbols-outlined">
+                      more_vert
+                    </span>
+                  </div>
+                  <div class="comp4-card-text2"> 내용 설명</div>
+                </div>
+              </a>
+              <div class="comp4-card-footer">
+                <span class="comp4-card-footer1">Knowledge</span>
+                <span class="comp4-card-footer2"> Ongoing</span>
+              </div>
+            </div>
+
+            <div class="comp4Card2">
+              <a href="javascript:void(0)">
+                <div class="comp4-card-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg"
+                    alt="자연">
+                </div>
+                <div class="comp4-card-text">
+                  <div class="comp4-card-text1">
+                    <span class="comp4-card-Title">대회제목</span>
+                    <span class="material-symbols-outlined">
+                      more_vert
+                    </span>
+                  </div>
+                  <div class="comp4-card-text2"> 내용 설명</div>
+                </div>
+              </a>
+              <div class="comp4-card-footer">
+                <span class="comp4-card-footer1">Knowledge</span>
+                <span class="comp4-card-footer2"> Ongoing</span>
+              </div>
+            </div>
+
+
+          </div>
+
+        </section>
+
+        <section class="comp4">
+          <div class="comp44">
+            <div class="comp31">
+              <span class="comp31Content">
+                <span class="material-symbols-outlined">
+                  group
+                </span>
+                <span class="comp31Tilte">Community Spotlight</span>
+              </span>
+              <button class="comp31Btn">See all</button>
+            </div>
+            <div class="comp32">
+              <span>Selected research and community competitions to explore.</span>
             </div>
           </div>
 
-          <div class="comp4Card2">
-            <a href="javascript:void(0)">
-              <div class="comp4-card-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg" alt="자연">
-              </div>
-              <div class="comp4-card-text">
-                <div class="comp4-card-text1">
-                  <span class="comp4-card-Title">대회제목</span>
-                  <span class="material-symbols-outlined">
-                    more_vert
-                  </span>
+
+          <div class="comp4Card">
+
+            <div class="comp4Card2">
+
+              <a href="javascript:void(0)">
+                <div class="comp4-card-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg"
+                    alt="자연">
                 </div>
-                <div class="comp4-card-text2"> 내용 설명</div>
+                <div class="comp4-card-text">
+                  <div class="comp4-card-text1">
+                    <span class="comp4-card-Title">대회제목</span>
+                    <span class="material-symbols-outlined">
+                      more_vert
+                    </span>
+                  </div>
+                  <div class="comp4-card-text2"> 내용 설명</div>
+                </div>
+              </a>
+
+              <div class="comp4-card-footer">
+                <span class="comp4-card-footer1">Knowledge</span>
+                <span class="comp4-card-footer2"> Ongoing</span>
               </div>
-            </a>
-            <div class="comp4-card-footer">
-              <span class="comp4-card-footer1">Knowledge</span>
-              <span claFs="comp4-card-footer2"> Ongoing</span>
             </div>
           </div>
 
-          <div class="comp4Card2">
-            <a href="javascript:void(0)">
-              <div class="comp4-card-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg" alt="자연">
-              </div>
-              <div class="comp4-card-text">
-                <div class="comp4-card-text1">
-                  <span class="comp4-card-Title">대회제목</span>
-                  <span class="material-symbols-outlined">
-                    more_vert
-                  </span>
-                </div>
-                <div class="comp4-card-text2"> 내용 설명</div>
-              </div>
-            </a>
-            <div class="comp4-card-footer">
-              <span class="comp4-card-footer1">Knowledge</span>
-              <span claFs="comp4-card-footer2"> Ongoing</span>
+        </section>
+
+        <section class="comp4">
+
+          <div class="comp44">
+            <div class="comp31">
+              <span class="comp31Content">
+                <span class="material-symbols-outlined">
+                  history_toggle_off
+                </span>
+                <span class="comp31Tilte">Recently Ended</span>
+              </span>
+              <button class="comp31Btn">See all</button>
             </div>
           </div>
 
-          <div class="comp4Card2">
-            <a href="javascript:void(0)">
-              <div class="comp4-card-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg" alt="자연">
-              </div>
-              <div class="comp4-card-text">
-                <div class="comp4-card-text1">
-                  <span class="comp4-card-Title">대회제목</span>
-                  <span class="material-symbols-outlined">
-                    more_vert
-                  </span>
-                </div>
-                <div class="comp4-card-text2"> 내용 설명</div>
-              </div>
-            </a>
-            <div class="comp4-card-footer">
-              <span class="comp4-card-footer1">Knowledge</span>
-              <span claFs="comp4-card-footer2"> Ongoing</span>
-            </div>
-          </div>
-
-
-        </div>
-
-      </section>
-
-      <section class="comp4">
-        <div class="comp44">
-          <div class="comp31">
-            <span class="comp31Content">
+          <div class="comp5">
+            <div class="comp5-list">
+              <span class="comp5-content">
+                <span class="comp5-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_1D1F74038418C373953B863C1704BF85.jpg"
+                    alt="하늘" />
+                </span>
+                <span class="comp5-text">
+                  <p>ContentTitle</p>
+                  <p>day</p>
+                  <p>money team</p>
+                </span>
+              </span>
               <span class="material-symbols-outlined">
-                group
+                more_horiz
               </span>
-              <span class="comp31Tilte">Community Spotlight</span>
-            </span>
-            <button class="comp31Btn">See all</button>
-          </div>
-          <div class="comp32">
-            <span>Selected research and community competitions to explore.</span>
-          </div>
-        </div>
-
-
-        <div class="comp4Card">
-
-          <div class="comp4Card2">
-
-            <a href="javascript:void(0)">
-              <div class="comp4-card-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg" alt="자연">
-              </div>
-              <div class="comp4-card-text">
-                <div class="comp4-card-text1">
-                  <span class="comp4-card-Title">대회제목</span>
-                  <span class="material-symbols-outlined">
-                    more_vert
-                  </span>
-                </div>
-                <div class="comp4-card-text2"> 내용 설명</div>
-              </div>
-            </a>
-
-            <div class="comp4-card-footer">
-              <span class="comp4-card-footer1">Knowledge</span>
-              <span claFs="comp4-card-footer2"> Ongoing</span>
             </div>
-          </div>
-        </div>
-
-      </section>
-
-      <section class="comp4">
-
-        <div class="comp44">
-          <div class="comp31">
-            <span class="comp31Content">
+            <div class="comp5-list">
+              <span class="comp5-content">
+                <span class="comp5-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_1D1F74038418C373953B863C1704BF85.jpg"
+                    alt="하늘" />
+                </span>
+                <span class="comp5-text">
+                  <p>ContentTitle</p>
+                  <p>day</p>
+                  <p>money team</p>
+                </span>
+              </span>
               <span class="material-symbols-outlined">
-                history_toggle_off
+                more_horiz
               </span>
-              <span class="comp31Tilte">Recently Ended</span>
-            </span>
-            <button class="comp31Btn">See all</button>
-          </div>
-        </div>
-
-        <div class="comp5">
-          <div class="comp5-list">
-            <span class="comp5-content">
-              <span class="comp5-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_1D1F74038418C373953B863C1704BF85.jpg"
-                  alt="하늘" />
+            </div>
+            <div class="comp5-list">
+              <span class="comp5-content">
+                <span class="comp5-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_1D1F74038418C373953B863C1704BF85.jpg"
+                    alt="하늘" />
+                </span>
+                <span class="comp5-text">
+                  <p>ContentTitle</p>
+                  <p>day</p>
+                  <p>money team</p>
+                </span>
               </span>
-              <span class="comp5-text">
-                <p>ContentTitle</p>
-                <p>day</p>
-                <p>money team</p>
-              </span>
-            </span>
-            <span class="material-symbols-outlined">
-              more_horiz
-            </span>
-          </div>
-          <div class="comp5-list">
-            <span class="comp5-content">
-              <span class="comp5-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_1D1F74038418C373953B863C1704BF85.jpg"
-                  alt="하늘" />
-              </span>
-              <span class="comp5-text">
-                <p>ContentTitle</p>
-                <p>day</p>
-                <p>money team</p>
-              </span>
-            </span>
-            <span class="material-symbols-outlined">
-              more_horiz
-            </span>
-          </div>
-          <div class="comp5-list">
-            <span class="comp5-content">
-              <span class="comp5-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_1D1F74038418C373953B863C1704BF85.jpg"
-                  alt="하늘" />
-              </span>
-              <span class="comp5-text">
-                <p>ContentTitle</p>
-                <p>day</p>
-                <p>money team</p>
-              </span>
-            </span>
-            <span class="material-symbols-outlined">
-              more_horiz
-            </span>
-          </div>
-          <div class="comp5-list">
-            <span class="comp5-content">
-              <span class="comp5-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_1D1F74038418C373953B863C1704BF85.jpg"
-                  alt="하늘" />
-              </span>
-              <span class="comp5-text">
-                <p>ContentTitle</p>
-                <p>day</p>
-                <p>money team</p>
-              </span>
-            </span>
-            <span class="material-symbols-outlined">
-              more_horiz
-            </span>
-          </div>
-
-          <div class="comp5-list">
-            <span class="comp5-content">
-              <span class="comp5-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_1D1F74038418C373953B863C1704BF85.jpg"
-                  alt="하늘" />
-              </span>
-              <span class="comp5-text">
-                <p>ContentTitle</p>
-                <p>day</p>
-                <p>money team</p>
-              </span>
-            </span>
-            <span class="material-symbols-outlined">
-              more_horiz
-            </span>
-          </div>
-        </div>
-
-
-      </section>
-
-
-
-      <section class="comp4">
-        <div class="comp44">
-          <div class="comp31">
-            <span class="comp31Content">
               <span class="material-symbols-outlined">
-                group
+                more_horiz
               </span>
-              <span class="comp31Tilte">Community Spotlight</span>
-            </span>
-            <button class="comp31Btn">See all</button>
-          </div>
-          <div class="comp32">
-            <span>Selected research and community competitions to explore.</span>
-          </div>
-        </div>
+            </div>
+            <div class="comp5-list">
+              <span class="comp5-content">
+                <span class="comp5-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_1D1F74038418C373953B863C1704BF85.jpg"
+                    alt="하늘" />
+                </span>
+                <span class="comp5-text">
+                  <p>ContentTitle</p>
+                  <p>day</p>
+                  <p>money team</p>
+                </span>
+              </span>
+              <span class="material-symbols-outlined">
+                more_horiz
+              </span>
+            </div>
 
-
-        <div class="comp4Card">
-
-          <div class="comp4Card2">
-
-            <a href="javascript:void(0)">
-              <div class="comp4-card-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg" alt="자연">
-              </div>
-              <div class="comp4-card-text">
-                <div class="comp4-card-text1">
-                  <span class="comp4-card-Title">대회제목</span>
-                  <span class="material-symbols-outlined">
-                    more_vert
-                  </span>
-                </div>
-                <div class="comp4-card-text2"> 내용 설명</div>
-              </div>
-            </a>
-
-            <div class="comp4-card-footer">
-              <span class="comp4-card-footer1">Knowledge</span>
-              <span claFs="comp4-card-footer2"> Ongoing</span>
+            <div class="comp5-list">
+              <span class="comp5-content">
+                <span class="comp5-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_1D1F74038418C373953B863C1704BF85.jpg"
+                    alt="하늘" />
+                </span>
+                <span class="comp5-text">
+                  <p>ContentTitle</p>
+                  <p>day</p>
+                  <p>money team</p>
+                </span>
+              </span>
+              <span class="material-symbols-outlined">
+                more_horiz
+              </span>
             </div>
           </div>
 
-          <div class="comp4Card2">
 
-            <a href="javascript:void(0)">
-              <div class="comp4-card-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg" alt="자연">
-              </div>
-              <div class="comp4-card-text">
-                <div class="comp4-card-text1">
-                  <span class="comp4-card-Title">대회제목</span>
-                  <span class="material-symbols-outlined">
-                    more_vert
-                  </span>
-                </div>
-                <div class="comp4-card-text2"> 내용 설명</div>
-              </div>
-            </a>
+        </section>
 
-            <div class="comp4-card-footer">
-              <span class="comp4-card-footer1">Knowledge</span>
-              <span claFs="comp4-card-footer2"> Ongoing</span>
+
+
+        <section class="comp4">
+          <div class="comp44">
+            <div class="comp31">
+              <span class="comp31Content">
+                <span class="material-symbols-outlined">
+                  group
+                </span>
+                <span class="comp31Tilte">Community Spotlight</span>
+              </span>
+              <button class="comp31Btn">See all</button>
+            </div>
+            <div class="comp32">
+              <span>Selected research and community competitions to explore.</span>
             </div>
           </div>
 
-          <div class="comp4Card2">
 
-            <a href="javascript:void(0)">
-              <div class="comp4-card-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg" alt="자연">
-              </div>
-              <div class="comp4-card-text">
-                <div class="comp4-card-text1">
-                  <span class="comp4-card-Title">대회제목</span>
-                  <span class="material-symbols-outlined">
-                    more_vert
-                  </span>
+          <div class="comp4Card">
+
+            <div class="comp4Card2">
+
+              <a href="javascript:void(0)">
+                <div class="comp4-card-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg"
+                    alt="자연">
                 </div>
-                <div class="comp4-card-text2"> 내용 설명</div>
-              </div>
-            </a>
+                <div class="comp4-card-text">
+                  <div class="comp4-card-text1">
+                    <span class="comp4-card-Title">대회제목</span>
+                    <span class="material-symbols-outlined">
+                      more_vert
+                    </span>
+                  </div>
+                  <div class="comp4-card-text2"> 내용 설명</div>
+                </div>
+              </a>
 
-            <div class="comp4-card-footer">
-              <span class="comp4-card-footer1">Knowledge</span>
-              <span claFs="comp4-card-footer2"> Ongoing</span>
+              <div class="comp4-card-footer">
+                <span class="comp4-card-footer1">Knowledge</span>
+                <span class="comp4-card-footer2"> Ongoing</span>
+              </div>
             </div>
+
+            <div class="comp4Card2">
+
+              <a href="javascript:void(0)">
+                <div class="comp4-card-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg"
+                    alt="자연">
+                </div>
+                <div class="comp4-card-text">
+                  <div class="comp4-card-text1">
+                    <span class="comp4-card-Title">대회제목</span>
+                    <span class="material-symbols-outlined">
+                      more_vert
+                    </span>
+                  </div>
+                  <div class="comp4-card-text2"> 내용 설명</div>
+                </div>
+              </a>
+
+              <div class="comp4-card-footer">
+                <span class="comp4-card-footer1">Knowledge</span>
+                <span class="comp4-card-footer2"> Ongoing</span>
+              </div>
+            </div>
+
+            <div class="comp4Card2">
+
+              <a href="javascript:void(0)">
+                <div class="comp4-card-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg"
+                    alt="자연">
+                </div>
+                <div class="comp4-card-text">
+                  <div class="comp4-card-text1">
+                    <span class="comp4-card-Title">대회제목</span>
+                    <span class="material-symbols-outlined">
+                      more_vert
+                    </span>
+                  </div>
+                  <div class="comp4-card-text2"> 내용 설명</div>
+                </div>
+              </a>
+
+              <div class="comp4-card-footer">
+                <span class="comp4-card-footer1">Knowledge</span>
+                <span class="comp4-card-footer2"> Ongoing</span>
+              </div>
+            </div>
+
+            <div class="comp4Card2">
+
+              <a href="javascript:void(0)">
+                <div class="comp4-card-img">
+                  <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg"
+                    alt="자연">
+                </div>
+                <div class="comp4-card-text">
+                  <div class="comp4-card-text1">
+                    <span class="comp4-card-Title">대회제목</span>
+                    <span class="material-symbols-outlined">
+                      more_vert
+                    </span>
+                  </div>
+                  <div class="comp4-card-text2"> 내용 설명</div>
+                </div>
+              </a>
+
+              <div class="comp4-card-footer">
+                <span class="comp4-card-footer1">Knowledge</span>
+                <span class="comp4-card-footer2"> Ongoing</span>
+              </div>
+            </div>
+
           </div>
 
-          <div class="comp4Card2">
+        </section>
 
-            <a href="javascript:void(0)">
-              <div class="comp4-card-img">
-                <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_2F583E5543F7E19139C6FCFFBF9607A6.jpg" alt="자연">
-              </div>
-              <div class="comp4-card-text">
-                <div class="comp4-card-text1">
-                  <span class="comp4-card-Title">대회제목</span>
-                  <span class="material-symbols-outlined">
-                    more_vert
-                  </span>
-                </div>
-                <div class="comp4-card-text2"> 내용 설명</div>
-              </div>
-            </a>
 
-            <div class="comp4-card-footer">
-              <span class="comp4-card-footer1">Knowledge</span>
-              <span claFs="comp4-card-footer2"> Ongoing</span>
-            </div>
+        <section class="comp6">
+
+          <div>
+            <h2>찾고싶은 것을 찾지 못하셨나요?</h2>
           </div>
 
-        </div>
 
-      </section>
-
-
-      <section class="comp6">
-
-        <div>
-          <h2>찾고있는 것을 찾지 못하셨나요?</h2>
-        </div>
+          <button class="comp61">모든 대회가기</button>
 
 
-        <button class="comp61">모든 대회가기</button>
-
-
-      </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        </section>
+      <!-- </div> -->
 
 
     </main>
