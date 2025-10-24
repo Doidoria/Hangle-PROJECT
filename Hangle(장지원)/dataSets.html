@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="./css/header.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <link rel="stylesheet" href="./css/dataSets.css">
+
+  <!-- main JS -->
+  <script src="./js/main.js" defer></script>
+  <script src="./js/datasets.js" defer></script>
+
+  <title>hangle · 메인</title>
+</head>
+
+<body>
+  <div class="layout">
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar" aria-label="왼쪽 내비게이션">
+      <div class="logo" aria-label="로고">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="name">hangle</span>
+      </div>
+
+      <a class="nav-create" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        만들기
+      </a>
+
+      <nav class="nav-group">
+        <a class="nav-item" href="#">
+          <!-- trophy -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 1 0 0-10H7a5 5 0 1 0 0 10V4Z" />
+          </svg>
+          <span>대회</span>
+        </a>
+        <a class="nav-item" href="#">
+          <!-- chat -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+          </svg>
+          <span>커뮤니티</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- ===== Topbar ===== -->
+    <header class="topbar" aria-label="상단바">
+      <div class="search" role="search">
+        <span class="icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M21 21l-4.3-4.3" />
+          </svg>
+        </span>
+        <input type="search" placeholder="검색 (데이터셋, 대회, 사용자…)" aria-label="검색" />
+        <span class="kbd">/</span>
+      </div>
+
+      <div class="top-actions">
+        <!-- Dark/Light Toggle -->
+        <button id="themeToggle" class="toggle" aria-label="다크 모드 전환">
+          <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="display:none">
+            <circle cx="12" cy="12" r="5" />
+            <path
+              d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+          <span id="modeLabel">다크</span>
+        </button>
+
+        <!-- 로그인/프로필 (상태에 따라 토글) -->
+        <button id="loginBtn" class="login-btn" aria-label="로그인" style="display:none">로그인</button>
+        <button id="profileBtn" class="profile-btn" aria-label="프로필로 이동" style="display:none">
+          <div class="avatar">SD</div>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== Main ===== -->
+    <main class="main">
+      <section class="dataset-detail">
+        <header class="dataset-header">
+          <div class="dataset-info">
+            <div class="dataset-top">
+              <div class="dataset-author">
+                <a href="javascript:void(0)" class="author-link">
+                  <img src="profile.jpg" alt="프로필" class="author-image">
+                </a>
+                <a href="javascript:void(0)" class="author-link author-name">작성자 닉네임</a>
+                <span class="divider">|</span>
+                <span class="author-date">작성일자</span>
+              </div>
+
+
+              <div class="dataset-actions">
+                <button id="likeBtn" class="btn-outline">👍 <span id="likeCount">0</span></button>
+                <button class="btn-outline">코드 복사</button>
+                <button class="btn-outline">다운로드</button>
+                <button class="more-btn" id="menuToggle">☰</button>
+
+                <!-- ▼ 드롭다운 메뉴 -->
+                <div class="dropdown-menu" id="dropdownMenu">
+                  <button>즐겨찾기</button>
+                  <button>공유</button>
+                  <button>신고</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 제목 / 설명 -->
+            <h1 class="dataset-title">데이터셋 제목</h1>
+            <p class="dataset-description">데이터셋 설명</p>
+          </div>
+
+          <!-- 오른쪽 이미지 -->
+          <div class="dataset-summary">
+            <div class="summary-image">데이터셋 설명 이미지칸</div>
+          </div>
+        </header>
+
+
+
+
+        <!-- ===== 탭 버튼 ===== -->
+        <div class="dataset-tabs">
+          <button class="tab active" data-tab="tab1">탭 1</button>
+          <button class="tab" data-tab="tab2">탭 2</button>
+          <button class="tab" data-tab="tab3">탭 3</button>
+          <button class="tab" data-tab="tab4">탭 4</button>
+        </div>
+
+        <!-- ===== 탭 콘텐츠 ===== -->
+
+        <!-- 탭 1 -->
+        <div class="tab-content active" id="tab1">
+          <div class="dataset-content">
+            <div class="main-content">
+              <h2>내용 제목</h2>
+              <p>시각화 그래픽, 이미지 등이 들어갈 공간입니다.</p>
+            </div>
+            <aside class="side-info">
+              <div class="tags">#태그 #데이터</div>
+              <div class="views">조회수: 123</div>
+              <div class="etc">기타 정보</div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- 탭 2 -->
+        <div class="tab-content" id="tab2">
+          <div class="dataset-content">
+            <div class="main-content">
+              <h2>탭 2 제목</h2>
+              <p>이곳은 탭 2의 내용이 표시됩니다.</p>
+            </div>
+            <aside class="side-info">
+              <div class="tags">#탭2 #예시</div>
+              <div class="views">조회수: 456</div>
+              <div class="etc">기타 정보</div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- 탭 3 -->
+        <div class="tab-content" id="tab3">
+          <div class="dataset-content">
+            <div class="main-content">
+              <h2>탭 3 제목</h2>
+              <p>이곳은 탭 3의 내용이 표시됩니다.</p>
+            </div>
+            <aside class="side-info">
+              <div class="tags">#탭3</div>
+              <div class="views">조회수: 789</div>
+              <div class="etc">기타 정보</div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- 탭 4 -->
+        <div class="tab-content" id="tab4">
+          <div class="dataset-content">
+            <div class="main-content">
+              <h2>탭 4 제목</h2>
+              <p>이곳은 탭 4의 내용이 표시됩니다.</p>
+            </div>
+            <aside class="side-info">
+              <div class="tags">#탭4</div>
+              <div class="views">조회수: 1011</div>
+              <div class="etc">기타 정보</div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ===== Footer ===== -->
+
+  </div>
+</body>
+
+</html>
