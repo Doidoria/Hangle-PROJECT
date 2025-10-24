@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/footer.css">
+    <link rel="stylesheet" href="./css/dataSets원본.css">
+    
+    <script src="./js/main.js" defer></script>
+    <title>hangle · 데이터셋</title>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar" aria-label="왼쪽 내비게이션">
+            <div class="logo">
+                <span class="dot"></span>
+                <span class="name">hangle</span>
+            </div>
+            <a class="nav-create" href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                만들기
+            </a>
+            <nav class="nav-group">
+                <a class="nav-item" href="#">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 1 0 0-10H7a5 5 0 1 0 0 10V4Z"/></svg>
+                    <span>대회</span>
+                </a>
+                <a class="nav-item" href="#">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+                    <span>커뮤니티</span>
+                </a>
+            </nav>
+        </aside>
+        <!-- 상단 바-->
+        <header class="topbar" aria-label="상단바">
+            <div class="search" role="search">
+                <span class="icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                </span>
+                <input type="search" placeholder="검색 (데이터셋, 대회, 사용자…)" aria-label="검색" />
+                <span class="kbd">/</span>
+            </div>
+
+            <div class="top-actions">
+                <button id="themeToggle" class="toggle" aria-label="다크 모드 전환">다크모드</button>
+                <button id="loginBtn" class="login-btn" aria-label="로그인" >로그인</button>
+                <button id="profileBtn" class="profile-btn" aria-label="프로필로 이동" >
+                    <div class="avatar">계정</div>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            
+            <div class="datasets-header">
+                <div class="header-content-left">
+                    <div class="header-text">
+                        <h1>데이터셋</h1>
+                        <p>퀄리티 높은 데이터를 탐색, 분석, 공유해 보세요. 데이터 유형, 생성, 협업에 대해 <a href="#">더 알아보기</a>.</p>
+                    </div>
+                    <button class="new-dataset-btn">
+                        <span>➕</span>
+                        새 데이터셋
+                    </button>
+                </div>    
+
+                <div class="header-illustration"></div>
+
+            </div>
+
+            <div class="search-filter-bar">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="search" placeholder="데이터셋 검색">
+                </div>
+                <button class="filter-btn">
+                    <span>🎛️</span>
+                    필터
+                </button>
+            </div>
+
+            <nav class="tags-nav">
+                <ul>
+                    <li><a href="#" class="active">모든 데이터셋</a></li>
+                    <li><a href="#">컴퓨터 공학</a></li>
+                    <li><a href="#">교육</a></li>
+                    <li><a href="#">분류</a></li>
+                    <li><a href="#">컴퓨터 비전</a></li>
+                    <li><a href="#">자연어 처리 (NLP)</a></li>
+                    <li><a href="#">데이터 시각화</a></li>
+                    <li><a href="#">사전 학습 모델</a></li>
+                </ul>
+            </nav>
+
+            <div class="section-header">
+                <div class="section-header-text">
+                    <h2>⭐ 추천 데이터셋</h2>
+                    <p>hangle 팀이 선별한 추천 데이터셋을 탐색해 보세요</p>
+                </div>
+                <a href="#" class="see-all-link">전체 보기</a>
+            </div>
+
+            <div class="dataset-grid">
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/지진.jpg" alt="지진-쓰나미 이미지"></div> 
+                    <div class="card-content">
+                        <h3>글로벌 지진-쓰나미 위험 평가 데이터셋</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>10.0</strong> • 10 kB • 9,504 다운로드</p>
+                        <p class="meta">파일 1개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>144</span></div>
+                        <div class="comments">💬 <span>202</span></div>
+                        <div class="authors-icons"><a href="#">프로필사진</a></div>
+                    </div>
+                </div>
+                
+                <div class="dataset-card">
+                   <div class="card-image"><img src="./image/병상.jpg" alt="병상 이미지"></div>
+                   <div class="card-content">
+                       <h3>병원 병상 관리</h3>
+                       <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                       <p class="meta">사용성 <strong>10.0</strong> • 48 kB • 8,098 다운로드</p>
+                       <p class="meta">파일 4개 (CSV)</p>
+                   </div>
+                   <div class="card-footer">
+                       <div class="votes">🔼 <span>202</span></div>
+                       <div class="comments">💬 <span>104</span></div>
+                       <div class="authors-icons">
+                           <div class="author-icon" style="background-color: #3498db;"></div>
+                           <div class="author-icon" style="background-color: #9b59b6;"></div>
+                       </div>
+                   </div>
+                </div>
+
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/중국.jpg" alt="천안문 이미지"></div>
+                    <div class="card-content">
+                        <h3>중국의 언어 다양성 활용</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>10.0</strong> • 348 kB • 657 다운로드</p>
+                        <p class="meta">파일 1개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>82</span></div>
+                        <div class="comments">💬 <span>43</span></div>
+                        <div class="authors-icons"><div class="author-icon" style="background-color: #f1c40f;"></div></div>
+                    </div>
+                </div>
+
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/라이프스타일.jpg" alt="라이프스타일 이미지"></div>
+                    <div class="card-content">
+                        <h3>라이프 스타일 데이터</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 트렌드 데이터셋 -->
+            <div class="section-header">
+                <div class="section-header-text">
+                    <h2>📈 트렌드 데이터셋</h2>
+                </div>
+                <a href="#" class="see-all-link">전체 보기</a>
+            </div>
+
+            <div class="dataset-grid">
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/모바일리뷰.png" alt="모바일리뷰 이미지"></div>
+                    <div class="card-content">
+                        <h3>글로벌 모바일 리뷰 데이터셋</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/심부전증.jpg" alt="심부전 이미지"></div>
+                    <div class="card-content">
+                        <h3>심부전증 데이터셋</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/학생 스트레스.jpg" alt="수트레스 이미지"></div>
+                    <div class="card-content">
+                        <h3>학생 스트레스 요인 분석</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/GDP.jpg" alt="GDP 이미지"></div>
+                    <div class="card-content">
+                        <h3>💰글로벌 GDP 데이터셋</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <!-- 벤치마크 데이터셋 -->
+             <div class="section-header">
+                <div class="section-header-text">
+                    <h2>📊 벤치마크 데이터셋</h2>
+                </div>
+                <a href="#" class="see-all-link">전체 보기</a>
+            </div>
+
+            <div class="dataset-grid">
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/수면.jpg" alt="수면 이미지"></div>
+                    <div class="card-content">
+                        <h3>수면 데이터</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/글로벌.jpg" alt="글로벌 생태 발자국 이미지"></div>
+                    <div class="card-content">
+                        <h3>글로벌 생태 발자국</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/수혈.png" alt="수혈 이미지"></div>
+                    <div class="card-content">
+                        <h3>수혈</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/소득.jpg" alt="성인소득 이미지"></div>
+                    <div class="card-content">
+                        <h3>성인 소득</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <!-- 게임 데이터셋 -->
+            <div class="section-header">
+                <div class="section-header-text">
+                    <h2>🎮 GAME</h2>
+                </div>
+                <a href="#" class="see-all-link">전체 보기</a>
+            </div>
+
+            <div class="dataset-grid">
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/비디오.jpg" alt="비디오게임 이미지"></div>
+                    <div class="card-content">
+                        <h3>Video Games</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/판타지.jpg" alt="판타지게임 이미지"></div>
+                    <div class="card-content">
+                        <h3>Fantasy Games</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/롤.jpg" alt="롤 이미지"></div>
+                    <div class="card-content">
+                        <h3>League of Legend Ranked Games</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/피트니스.jpg" alt="피트니스 이미지"></div>
+                    <div class="card-content">
+                        <h3>Fitness Tracker Dataset</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <!-- Education -->
+             <div class="section-header">
+                <div class="section-header-text">
+                    <h2>🎓교육</h2>
+                </div>
+                <a href="#" class="see-all-link">전체 보기</a>
+            </div>
+
+            <div class="dataset-grid">
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/이공계.jpg" alt="이과학생 이미지"></div>
+                    <div class="card-content">
+                        <h3>이공계 학생 데이터</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/중독.jpg" alt="중독관련 이미지"></div>
+                    <div class="card-content">
+                        <h3>학생 성과에 영향을 미치는 요인</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/약음식.jpg" alt="약과 음식 이미지"></div>
+                    <div class="card-content">
+                        <h3>약물-음식 상호작용 데이터셋</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dataset-card">
+                    <div class="card-image"><img src="./image/대학.jpg" alt="대학교 이미지"></div>
+                    <div class="card-content">
+                        <h3>대학 배치 분석</h3>
+                        <p class="author"><a href="#">닉네임</a> • 업로드날짜</p>
+                        <p class="meta">사용성 <strong>8.2</strong> • 4 MB • 11.3k 다운로드</p>
+                        <p class="meta">파일 2개 (CSV)</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="votes">🔼 <span>247</span></div>
+                        <div class="comments">💬 <span>161</span></div>
+                        <div class="authors-icons">
+                            <div class="author-icon" style="background-color: #2ecc71;"></div>
+                            <div class="author-icon" style="background-color: #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+<!-- ===== Footer ===== -->
+    <footer>
+      <div class="footer-wrap">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h4>회사</h4>
+            <a href="#">회사 소개</a>
+            <a href="#">채용</a>
+            <a href="#">보도자료</a>
+          </div>
+          <div class="footer-col">
+            <h4>정책</h4>
+            <a href="#">이용약관</a>
+            <a href="#">개인정보처리방침</a>
+            <a href="#">쿠키 정책</a>
+          </div>
+          <div class="footer-col">
+            <h4>지원</h4>
+            <a href="#">도움말 센터</a>
+            <a href="#">문의하기</a>
+            <a href="#">신고/피드백</a>
+          </div>
+          <div class="footer-col">
+            <h4>리소스</h4>
+            <a href="#">개발자 문서</a>
+            <a href="#">API</a>
+            <a href="#">브랜드 가이드</a>
+          </div>
+        </div>
+        <div class="copyright">
+          © <span id="year"></span> hangle. 모든 권리 보유.
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
