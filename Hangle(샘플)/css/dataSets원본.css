@@ -1,0 +1,375 @@
+/* --- Main Content 레이아웃 --- */
+.main {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 0;
+  /* 상하 여백, 좌우 여백 0 */
+  box-sizing: border-box;
+}
+
+
+/* --- 1. 페이지 상단 헤더 --- */
+.datasets-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.header-illustration {
+  flex-shrink: 0;
+  width: 700px;
+  height: 200px;
+  background-image: url("../image/데이터.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center right;
+  margin-left: 40px;
+}
+
+.datasets-header h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  /* 색상은 body의 var(--text)를 자동으로 상속받습니다. */
+}
+
+.datasets-header p {
+  font-size: 1rem;
+  color: var(--muted);
+  /* ⭐️ 수정됨 */
+  margin: 0;
+  max-width: 650px;
+}
+
+.datasets-header p a {
+  color: var(--primary);
+  /* ⭐️ 수정됨 */
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.datasets-header p a:hover {
+  text-decoration: underline;
+}
+
+.new-dataset-btn {
+  background-color: var(--primary);
+  /* ⭐️ 수정됨 (주요 버튼 색상) */
+  color: #FFFFFF;
+  /* ⭐️ 수정됨 (버튼 텍스트 흰색) */
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.new-dataset-btn:hover {
+  background-color: var(--primary-hover);
+  /* ⭐️ 수정됨 */
+}
+
+
+/* --- 2. 검색 및 필터 바 --- */
+.search-filter-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.search-container {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  /* ⭐️ 수정됨 */
+  border-radius: 4px;
+  background-color: var(--surface);
+  /* ⭐️ 수정됨 */
+  padding-left: 12px;
+}
+
+.search-container:focus-within {
+  border-color: var(--primary);
+  /* ⭐️ 수정됨 */
+  box-shadow: 0 0 0 3px var(--ring);
+  /* ⭐️ 수정됨 (common.css의 포커스 스타일) */
+}
+
+.search-container .search-icon {
+  color: var(--icon-muted);
+  /* ⭐️ 수정됨 */
+  font-size: 1.25rem;
+  margin-right: 8px;
+}
+
+.search-container input {
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 12px 8px;
+  font-size: 1rem;
+  background: transparent;
+  /* ⭐️ 추가 (부모의 배경색을 따름) */
+  color: var(--text);
+  /* ⭐️ 추가 (테마에 맞는 텍스트 색상) */
+}
+
+/* ⭐️ common.css의 폰트를 따르므로 font-family 제거 */
+
+
+.filter-btn {
+  background-color: var(--surface);
+  /* ⭐️ 수정됨 */
+  border: 1px solid var(--border);
+  /* ⭐️ 수정됨 */
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  color: var(--text);
+  /* ⭐️ 수정됨 */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.filter-btn:hover {
+  background-color: var(--badge);
+  /* ⭐️ 수정됨 (테마에 맞는 연한 배경) */
+}
+
+
+/* --- 3. 태그 네비게이션 --- */
+.tags-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style-type: none;
+  padding: 0 32px 16px 32px;
+  margin: 0 0 24px 0;
+  border-bottom: 1px solid var(--border);
+  /* ⭐️ 수정됨 */
+}
+
+.tags-nav li a {
+  display: block;
+  text-decoration: none;
+  color: var(--muted);
+  /* ⭐️ 수정됨 */
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.tags-nav li a:hover {
+  background-color: var(--badge);
+  /* ⭐️ 수정됨 */
+  color: var(--primary);
+  /* ⭐️ 수정됨 */
+}
+
+.tags-nav li a.active {
+  background-color: var(--badge);
+  /* ⭐️ 수정됨 */
+  color: var(--primary);
+  /* ⭐️ 수정됨 */
+  font-weight: 700;
+}
+
+
+/* --- 4. Featured Datasets 헤더 --- */
+.section-header {
+  margin-bottom: 16px;
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.section-header-text h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  /* ⭐️ 수정됨 */
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-header-text p {
+  color: var(--muted);
+  /* ⭐️ 수정됨 */
+  font-size: 0.875rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.see-all-link {
+  color: var(--primary);
+  /* ⭐️ 수정됨 */
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  padding-bottom: 4px;
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+.see-all-link:hover {
+  text-decoration: underline;
+}
+
+
+/* --- 5. 데이터셋 카드 그리드 --- */
+.dataset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  /* ⭐️ 100px은 너무 넓어 24px로 조정했습니다. */
+  align-items: stretch;
+  padding-left: 32px;
+  padding-right: 32px;
+  margin-bottom: 32px;
+  /* ⭐️ 섹션 끝에 하단 여백 추가 */
+}
+
+.dataset-card {
+  background-color: var(--surface);
+  /* ⭐️ 수정됨 */
+  border: 1px solid var(--border);
+  /* ⭐️ 수정됨 */
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s;
+  /* ⭐️ transition 속성 단순화 */
+}
+
+.dataset-card:hover {
+  box-shadow: var(--shadow);
+  /* ⭐️ 수정됨 (common.css의 그림자) */
+}
+
+/* 카드 상단 이미지 */
+.card-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--border);
+  /* ⭐️ 수정됨 (플레이스홀더 색상) */
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+/* 카드 본문 (텍스트) */
+.card-content {
+  padding: 16px;
+  flex-grow: 1;
+}
+
+.card-content h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  /* ⭐️ 수정됨 */
+  margin: 0 0 8px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-content .author {
+  font-size: 0.875rem;
+  color: var(--muted);
+  /* ⭐️ 수정됨 */
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-content .author a {
+  color: var(--primary);
+  /* ⭐️ 수정됨 */
+  text-decoration: none;
+}
+
+.card-content .author a:hover {
+  text-decoration: underline;
+}
+
+.card-content .meta {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  /* ⭐️ 수정됨 */
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* 카드 하단 (투표, 댓글) */
+.card-footer {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
+  /* ⭐️ 수정됨 */
+  gap: 16px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  /* ⭐️ 수정됨 */
+}
+
+.card-footer .votes,
+.card-footer .comments {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.authors-icons {
+  margin-left: auto;
+  display: flex;
+}
+
+.author-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--border);
+  /* ⭐️ 수정됨 */
+  border: 2px solid var(--surface);
+  /* ⭐️ 수정됨 (카드 배경색) */
+  margin-left: -8px;
+}
+
+.author-icon:first-child {
+  margin-left: 0;
+}
