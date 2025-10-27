@@ -27,7 +27,6 @@ modal.addEventListener('click', function (event) {
     }
 });
 
-
 // 2. 필터 태그 버튼 선택 로직 (선택 상태 토글)
 tagButtons.forEach(button => {
     button.addEventListener('click', function () {

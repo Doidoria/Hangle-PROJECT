@@ -1,19 +1,23 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-   
-}
+
 
 /* 슬라이더 전체 컨테이너 */
 .menu-slider-container {
     position: relative;
-    max-width: 900px; /* 슬라이더가 표시될 최대 너비 설정 */
-    margin: 20px auto;
+    max-width: 900px; 
+    /* ------------------------------------- */
+    /* ✅ 수정된 부분: 왼쪽 정렬 */
+    width: 100%; /* 부모 너비 전체 사용 */
+    margin: 20px 5% ; /* 상하 20px, 좌우 0 */
+    /* ------------------------------------- */
     border: 1px solid #ddd;
-    background-color: #a0c4f3; /* 이미지의 파란색 배경 유사하게 */
+    background-color: #a0c4f3; 
 }
+
+/* @media (max-width : 1260px) {
+    .menu-slider-container{
+        margin: 5%;
+    }
+} */
 
 /* 실제로 스크롤되는 래퍼 */
 .menu-slider-wrapper {

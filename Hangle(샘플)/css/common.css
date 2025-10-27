@@ -22,6 +22,9 @@ body{margin: 0; background: var(--bg); color: var(--text);
     --icon-muted: #64748B;
     --logo: #0f766e;
     /* 로고색 */
+
+    /* comp */
+    --compshadow :  rgba(0, 0, 0, 0.5);
 }
 
 /* ========= Design Tokens: Dark ========= */
@@ -40,6 +43,9 @@ body{margin: 0; background: var(--bg); color: var(--text);
     --chart-grad: linear-gradient(90deg, #065f46 0%, #10b981 50%, #34d399 100%);
     --icon-muted: #94A3B8;
     --logo: #34D399;
+
+    /* comp */
+    --compshadow :  rgba(255, 255, 255, 0.436);
 }
 
 /* ========= Layout ========= */
