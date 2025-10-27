@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaggle Competitions Menu Slider</title>
+    <style>
+        /* 기본 스타일 초기화 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+   
+}
+
+/* 슬라이더 전체 컨테이너 */
+.menu-slider-container {
+    position: relative;
+    max-width: 900px; /* 슬라이더가 표시될 최대 너비 설정 */
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    background-color: #a0c4f3; /* 이미지의 파란색 배경 유사하게 */
+}
+
+/* 실제로 스크롤되는 래퍼 */
+.menu-slider-wrapper {
+    overflow-x: auto; /* 가로 스크롤 허용 */
+    white-space: nowrap; /* 내부 항목들이 줄바꿈되지 않도록 설정 */
+    -webkit-overflow-scrolling: touch; /* iOS에서 부드러운 스크롤 */
+    scrollbar-width: none; /* Firefox 스크롤바 숨기기 */
+}
+
+/* Chrome, Safari 등에서 스크롤바 숨기기 */
+.menu-slider-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+/* 메뉴 항목 목록 (Flex 컨테이너) */
+.menu-items-list {
+    display: inline-flex; /* 가로로 나열 */
+    height: 120px; /* 전체 메뉴 높이 */
+}
+
+/* 개별 메뉴 항목 (버튼 역할) */
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 15px 25px;
+    text-decoration: none;
+    color: #333;
+    min-width: 200px; /* 각 항목의 최소 너비 설정 (이미지와 유사하게) */
+    border-right: 1px solid rgba(255, 255, 255, 0.3); /* 구분선 */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><path d="M0 0l10 10M10 0L0 10" stroke="%2396b7dd" stroke-width="1.5"/></svg>'); /* 이미지의 사선 패턴 유사하게 */
+    background-repeat: repeat;
+    background-color: transparent; /* 배경색은 컨테이너에서 상속 */
+    flex-shrink: 0; /* 크기가 줄어들지 않도록 */
+}
+
+
+
+
+
+/* 슬라이드 제어 버튼 스타일 */
+.slide-btn {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 40px;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.3s;
+}
+
+#prevBtn {
+    left: 0;
+}
+
+#nextBtn {
+    right: 0;
+}
+
+.slide-btn:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.slide-btn.hidden {
+    display: none; /* 버튼 숨기기 */
+}
+    </style>
+</head>
+<body>
+    <div class="menu-slider-container">
+        <button id="prevBtn" class="slide-btn hidden">ᐸ</button>  <!--  -->
+        
+        <div class="menu-slider-wrapper" id="menuSliderWrapper">  <!--  -->
+            <div class="menu-items-list">
+                <a href="#" class="menu-item">
+                    <div class="icon-text">All Competitions 📋</div>
+                    <div class="sub-text">Everything, past &amp; present</div>
+                </a>
+                <a href="#" class="menu-item featured">
+                    <div class="icon-text">Featured ⭐</div>
+                    <div class="sub-text">Premier challenges with prizes</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="icon-text">Getting Started 📁</div>
+                    <div class="sub-text">Approachable ML fundamentals</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="icon-text">Research 🧪</div>
+                    <div class="sub-text">Scientific and scholarly challenges</div>
+                </a>
+                <a href="#" class="menu-item">
+                    <div class="icon-text">Community 👥</div>
+                    <div class="sub-text">Created by Kagglers</div>
+                </a>
+                <a href="#" class="menu-item extra">
+                    <div class="icon-text">Playground 🤸</div>
+                    <div class="sub-text">Just for fun or learning</div>
+                </a>
+                <a href="#" class="menu-item extra">
+                    <div class="icon-text">Recruit 💼</div>
+                    <div class="sub-text">Data Science jobs</div>
+                </a>
+            </div>
+        </div>
+        
+        <button id="nextBtn" class="slide-btn">ᐳ</button>  <!--  -->
+    </div>
+
+    <script >
+        document.addEventListener('DOMContentLoaded', () => {
+    const sliderWrapper = document.getElementById('menuSliderWrapper');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    // 한 번에 스크롤될 거리 (메뉴 항목 너비 정도)
+    const scrollDistance = 800; 
+
+    // 현재 스크롤 위치에 따라 버튼 가시성을 업데이트하는 함수
+    const updateButtonVisibility = () => {
+        // scrollLeft: 현재 스크롤 위치
+        // scrollWidth: 스크롤 가능한 전체 콘텐츠 너비
+        // clientWidth: 현재 보이는 영역의 너비 (스크롤바 제외)
+        const { scrollLeft, scrollWidth, clientWidth } = sliderWrapper;
+
+
+        //끝에 도달했을때 버튼 제거 및  반대쪽 버튼 생성
+        // 왼쪽 끝에 도달했을 때 (스크롤이 0)
+        if (scrollLeft <= 5) { // 약간의 여유를 줌 (5px)
+            prevBtn.classList.add('hidden');
+        } else {
+            prevBtn.classList.remove('hidden');
+        }
+
+        // 오른쪽 끝에 도달했을 때 (scrollLeft + clientWidth >= scrollWidth)
+        if (scrollLeft + clientWidth >= scrollWidth - 5) { // 약간의 여유를 줌 (5px)
+            nextBtn.classList.add('hidden');
+        } else {
+            nextBtn.classList.remove('hidden');
+        }
+    };
+
+    // '이전' 버튼 클릭 핸들러
+    prevBtn.addEventListener('click', () => {
+        sliderWrapper.scrollBy({
+            left: -scrollDistance, // 왼쪽으로 스크롤
+            behavior: 'smooth'      // 부드러운 애니메이션
+        });
+    });
+
+    // '다음' 버튼 클릭 핸들러
+    nextBtn.addEventListener('click', () => {
+        sliderWrapper.scrollBy({
+            left: scrollDistance, // 오른쪽으로 스크롤
+            behavior: 'smooth'     // 부드러운 애니메이션
+        });
+    });
+    
+    // 스크롤 이벤트 발생 시 버튼 가시성 업데이트
+    sliderWrapper.addEventListener('scroll', updateButtonVisibility);
+
+    // 페이지 로드 시 초기 버튼 가시성 설정
+    // 모든 이미지와 콘텐츠가 로드된 후 정확한 scrollWidth를 위해 약간의 지연을 줄 수 있음
+    setTimeout(updateButtonVisibility, 100); 
+});
+    </script>
+</body>
+</html>
