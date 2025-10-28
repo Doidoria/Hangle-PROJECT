@@ -1,46 +1,44 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="./css/common.css">
-  <link rel="stylesheet" href="./css/header.css">
-  <link rel="stylesheet" href="./css/footer.css">
-  <link rel="stylesheet" href="./css/competiton.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/footer.css">
+    <link rel="stylesheet" href="./css/myProfile.css">
+    <title>hangle · 메인</title>
 
-  <!-- main JS -->
-  <script src="./js/main.js" defer></script>
+    <!-- main JS -->
+    <script src="./js/main.js" defer></script>
 
-  <title>hangle · 메인</title>
+    <title>hangle · 메인</title>
 </head>
 <body>
   <div class="layout">
-    <!-- ===== Sidebar ===== -->
     <aside class="sidebar" aria-label="왼쪽 내비게이션">
-      <div class="logo" aria-label="로고">
+      <a class="logo" aria-label="hangle 로고 및 홈으로 이동" href="main.html">
         <span class="dot" aria-hidden="true"></span>
-        <span class="name">hangle</span>
-      </div>
-
-      <a class="nav-create" href="#">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-        만들기
+        <span class="name">Hangle</span>
       </a>
-
+      <a class="nav-create active" href="/">
+        <img src="./image/+.png" alt="만들기" style="width: 14px;">Notebook
+      </a>
       <nav class="nav-group">
         <a class="nav-item" href="#">
-          <!-- trophy -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 1 0 0-10H7a5 5 0 1 0 0 10V4Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 1 0 0-10H7a5 5 0 1 0 0 10V4Z" />
+          </svg>
           <span>대회</span>
         </a>
         <a class="nav-item" href="#">
-          <!-- chat -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+          </svg>
           <span>커뮤니티</span>
         </a>
       </nav>
     </aside>
-
     <!-- ===== Topbar ===== -->
     <header class="topbar" aria-label="상단바">
       <div class="search" role="search">
@@ -67,11 +65,63 @@
       </div>
     </header>
 
-    <!-- ===== Main ===== -->
+    <!-- ===== 프로필 상단 ===== -->
     <main class="main">
-      <section>
-        
+    <section>
+
+      <!-- ===== 프로필 상단 버튼 바 ===== -->
+      <div class="profile-topbar">
+        <button class="edit-profile-btn">
+          ✏️ 내 프로필 편집하기
+        </button>
+        <div class="profile-menu">
+          <a href="#" class="menu-item">
+            ⚙️ <span>Settings</span>
+          </a>
+          <a href="#" class="menu-item">
+            💼 <span>Your Work</span>
+          </a>
+          <a href="#" class="menu-item">
+            📈 <span>Progression</span>
+          </a>
+        </div>
+      </div>
+
+        <div class="profile-header">
+            <div class="profile-banner"></div>
+            <div class="profile-info">
+            <div class="profile-avatar">
+                <img src="https://cdn-icons-png.flaticon.com/512/5997/5997002.png" alt="user avatar" />
+            </div>
+            <div class="profile-text">
+                <h2 class="username">전익환</h2>
+                <p class="user-meta">2일 전에 가입함 · 최근 접속 1일 전</p>
+            </div>
+            <div class="profile-actions">
+                <button class="follow-btn">팔로우</button>
+                <button class="contact-btn">메시지</button>
+            </div>
+            </div>
+      </div>
+
+      <!-- ===== 정보 영역 ===== -->
+      <div class="profile-body">
+        <section class="info-section">
+          <h3>정보</h3>
+          <p class="info-text">아직 자기소개가 없습니다...</p>
+          <p class="info-sub">작업 중 💻</p>
+        </section>
+
+        <!-- ===== 뱃지 영역 ===== -->
+        <section class="badge-section">
+          <h3>뱃지</h3>
+          <div class="badges">
+            <div class="badge">
+              <img src="https://cdn-icons-png.flaticon.com/512/3702/3702744.png" alt="Badge" />
+            </div>
+          </div>
       </section>
+    </section>
     </main>
 
     <!-- ===== Footer ===== -->

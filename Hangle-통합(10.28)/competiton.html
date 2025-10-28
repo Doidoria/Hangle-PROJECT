@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="./css/common.css">
   <link rel="stylesheet" href="./css/header.css">
   <link rel="stylesheet" href="./css/footer.css">
-  <link rel="stylesheet" href="./css/dataSets.css">
+  <link rel="stylesheet" href="./css/competiton.css">
 
   <!-- main JS -->
   <script src="./js/main.js" defer></script>
@@ -17,25 +17,24 @@
   <div class="layout">
     <!-- ===== Sidebar ===== -->
     <aside class="sidebar" aria-label="왼쪽 내비게이션">
-      <div class="logo" aria-label="로고">
+      <a class="logo" aria-label="hangle 로고 및 홈으로 이동" href="main.html">
         <span class="dot" aria-hidden="true"></span>
-        <span class="name">hangle</span>
-      </div>
-
-      <a class="nav-create" href="#">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-        만들기
+        <span class="name">Hangle</span>
       </a>
-
+      <a class="nav-create active" href="/">
+        <img src="./image/+.png" alt="만들기" style="width: 14px;">Notebook
+      </a>
       <nav class="nav-group">
         <a class="nav-item" href="#">
-          <!-- trophy -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 1 0 0-10H7a5 5 0 1 0 0 10V4Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 1 0 0-10H7a5 5 0 1 0 0 10V4Z" />
+          </svg>
           <span>대회</span>
         </a>
         <a class="nav-item" href="#">
-          <!-- chat -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+          </svg>
           <span>커뮤니티</span>
         </a>
       </nav>
