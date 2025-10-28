@@ -1,0 +1,30 @@
+/* main 반응형 */
+@media (max-width:1024px) {
+    .stats {grid-template-columns: repeat(3, 1fr)}
+}
+
+@media (max-width:720px) {
+    .layout {
+        grid-template-columns: 64px 1fr
+    }
+
+    .sidebar {
+        padding: 10px 8px
+    }
+
+    .logo span.name {
+        display: none
+    }
+
+    .nav-item span {
+        display: none
+    }
+
+    .nav-item {
+        justify-content: center
+    }
+
+    .search .kbd {
+        display: none
+    }
+}
