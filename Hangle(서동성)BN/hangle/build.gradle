@@ -1,0 +1,97 @@
+plugins {
+    // ✅ Java 프로젝트 지정
+    id 'java'
+
+    // ✅ Spring Boot 플러그인 (빌드, 실행, 패키징)
+    id 'org.springframework.boot' version '3.5.7'
+
+    // ✅ 의존성 버전 자동 관리 (Spring Boot BOM)
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+description = 'Demo project for Spring Boot'
+
+java {
+    toolchain {
+        // ✅ 프로젝트의 자바 버전 명시 (21)
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        // annotationProcessor가 컴파일 시점에만 확장되도록 설정
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    // 중앙 저장소에서 라이브러리 다운로드
+    mavenCentral()
+}
+
+dependencies {
+    // =========================
+    // 주요 애플리케이션 의존성
+    // =========================
+
+    // 캐시 기능 (메인 트렌딩, 자동완성 등)
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+    // JPA (Entity 매핑, ORM, DB 연동)
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Redis (캐시/세션 저장소)
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // OAuth2 로그인 (Google, GitHub 등 외부 로그인)
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // 보안 / 인증 / 인가 (Spring Security)
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // Thymeleaf 템플릿 엔진 (HTML 렌더링)
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // 입력값 검증 (@Valid 등)
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Spring MVC 웹 기능 (REST API, Controller)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Thymeleaf에서 Security 통합 기능 지원 (ex. sec:authorize)
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+
+    // =========================
+    // 개발 편의 & 유틸
+    // =========================
+
+    // Lombok (Getter/Setter/Builder 자동 생성)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // MySQL 드라이버 (DB 연결)
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+
+    // =========================
+    // 테스트 관련 의존성
+    // =========================
+
+    // 기본 테스트 도구 (JUnit, MockMvc 등)
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Security 테스트 도구 (로그인/인가 테스트용)
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // JUnit 플랫폼 런처 (테스트 실행용)
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    // JUnit5 플랫폼을 테스트 실행 엔진으로 지정
+    useJUnitPlatform()
+}
