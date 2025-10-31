@@ -43,6 +43,7 @@ dependencies {
     // JPA (Entity 매핑, ORM, DB 연동)
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+
     // Redis (캐시/세션 저장소)
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
