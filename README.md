@@ -17,7 +17,7 @@
 
 | 담당자 | 대표 클래스(예시) | DB(예시) | 결과 |
 |--------|------------------|-----------|--------|
-| 윤태현 | UserController, CreateController, NoticeBoardController | user, Create_tbl, DataBoard_tbl | 로그인, 회원가입(인증)처리, notebook 생성 & 저장, 데이터 보드 기록 & 저장 |
+| 윤태현　 | UserController, CreateController, NoticeBoardController | user, Create_tbl, DataBoard_tbl | 로그인, 회원가입(인증)처리, notebook 생성 & 저장, 데이터 보드 기록 & 저장 |
 | 서동성 | MainController, DataVisualizationController | DV_tbl | 데이터 시각화 처리 |
 | 전의환 | ProfileController | Profile_tbl | 사용자별 프로필 작성 |
 | 최승호 | DataSetController | DataSet_tbl | 데이터셋(내용) 기록 & 저장 |
