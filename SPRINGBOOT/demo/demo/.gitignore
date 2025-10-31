@@ -1,0 +1,28 @@
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Secrets & Keys ###
+# 환경 변수나 개인 키 파일 무시
+application-secret.yml
+application-secrets.yml
+*.env
+*.key
+*.pem
+*.p12
+*.cer

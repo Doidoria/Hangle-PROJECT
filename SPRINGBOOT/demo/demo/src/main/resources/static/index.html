@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>데이터셋 목록</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<h1>공공데이터 목록</h1>
+
+<button id="loadBtn">데이터 불러오기</button>
+<h2>데이터 정렬</h2>
+<button id="sortBtn">📅 등록일순</button>
+<hr />
+<div id="datasetContainer"></div>
+<hr />
+<!--<button class="like-btn" data-id="1">👍 좋아요 <span>0</span></button>-->
+<!--<hr />-->
+<h2>새 데이터셋 추가</h2>
+<form id="datasetForm">
+    <input type="text" id="title" placeholder="제목" required />
+    <input type="text" id="description" placeholder="설명" required />
+    <input type="text" id="author" placeholder="작성자" required />
+    <button type="button" id="submitDataset">등록</button>
+</form>
+<hr />
+
+
+
+
+<script src="js/dataset.js"></script>
+</body>
+</html>
