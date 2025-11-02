@@ -24,20 +24,8 @@ main{max-width: 1920px;}
     --chart-grad: linear-gradient(90deg, #d1fae5 0%, #a7f3d0 50%, #6ee7b7 100%);
     --icon-muted: #64748B;
     --logo: #0f766e;
-    --text-color: #1c1c1c;
-    --text-secondary: #363636;
-    --text-secondary-lighter: #444444;
-    --border-color:#7e7e7e;
-    --border-color-light: #dfdfdf;
-    --border-color-dark:#555;
-    --main-color:#10B981;
-    --main-color-hover:#34D399;
-    --delete-color:#9e2d2e;
-    --delete-color-hover:#58090c;
-    --bg-primary:#ffffff;
-    --bg-hover-light:#ebebeb;
-    
 }
+
 /* ========= Design Tokens: Dark ========= */
 .theme-dark {
     --bg: #1E293B;
@@ -58,14 +46,10 @@ main{max-width: 1920px;}
     --text-secondary: #aaa;
     --text-secondary-lighter: #888;
     --border-color:#333;
-    --border-color-light: #616161;
+    --border-color-light: #444;
     --border-color-dark:#555;
     --main-color:#10B981;
     --main-color-hover:#34D399;
-    --delete-color:#ff4d4f;
-    --delete-color-hover:#7c2829;
-    --bg-primary:#1c1c1c;
-    --bg-hover-light:#333;
 }
 
 /* ========= Layout ========= */
