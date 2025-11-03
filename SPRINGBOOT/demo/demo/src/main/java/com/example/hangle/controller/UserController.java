@@ -9,10 +9,10 @@ public class UserController {
 
     // ✅ 현재 로그인한 사용자명 반환
     @GetMapping("/whoami")
-    public String whoAmI(Authentication authentication) {
+    public Object whoAmI(Authentication authentication) {
         if (authentication == null) {
             return "anonymous";
         }
-        return authentication.getName(); // 로그인한 username (admin, user 등)
+        return authentication.getPrincipal();
     }
 }

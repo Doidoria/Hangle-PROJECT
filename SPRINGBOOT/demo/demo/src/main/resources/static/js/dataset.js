@@ -193,4 +193,18 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(err => console.error("삭제 실패:", err));
     }
   });
+
+    // 내 정보 보기 버튼
+  const whoBtn = document.getElementById("whoamiBtn");
+  if (whoBtn) {
+    whoBtn.addEventListener("click", () => {
+      fetch("http://localhost:8088/whoami")
+        .then(res => res.text())
+        .then(data => alert("로그인 사용자 = " + data))
+        .catch(err => console.error(err));
+    });
+  }
 });
+
+
+

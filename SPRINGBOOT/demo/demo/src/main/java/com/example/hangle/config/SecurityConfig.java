@@ -57,6 +57,9 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login.html")
                         .invalidateHttpSession(true)
+                )
+                .oauth2Login(oauth -> oauth
+                        .defaultSuccessUrl("/index.html", true)
                 );
 
         return http.build();
