@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="01ba6481-3027-4ec2-865c-67f82d2893a4" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/01/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/public/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/public/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/public/logo192.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/public/logo512.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/public/manifest.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/public/robots.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/App.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/App.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/App.test.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/Component/FN/MainPage.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/Component/FN/Result.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/Component/FN/css/common.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/Component/FN/css/footer.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/Component/FN/css/header.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/Component/FN/css/main.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/Component/FN/css/result.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/index.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/logo.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/reportWebVitals.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01/src/setupTests.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/src/main/java/com/example/demo/DemoApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/src/main/java/com/example/demo/controller/HomeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/src/main/java/com/example/demo/domain/entity/Entity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/src/main/java/com/example/demo/domain/repository/Repository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/src/main/java/com/example/demo/domain/service/Service.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/src/main/resources/templates/main.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hangle(서동성)BN/hangle/src/test/java/com/example/demo/DemoApplicationTests.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="34wyzK2rfqCZXKMF920cna8Rsm9" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "서동성",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="01ba6481-3027-4ec2-865c-67f82d2893a4" name="변경" comment="" />
+      <created>1762139190467</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1762139190467</updated>
+    </task>
+    <servers />
+  </component>
+</project>

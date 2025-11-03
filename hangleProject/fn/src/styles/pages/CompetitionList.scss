@@ -1,0 +1,50 @@
+@use '../base/tokens' as *;
+@use '../components/button.scss';
+
+.comp-list {
+  .header {
+    display: flex; align-items: center; gap: $space-2; margin-bottom: $space-3;
+    h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: .2px; }
+    .spacer { margin-left: auto; }
+  }
+
+  .filters {
+    display: flex; gap: 8px; margin: $space-3 0;
+    .btn { @extend .btn; }
+    .btn-accent { @extend .btn-accent; }
+  }
+
+  .search {
+    display: flex; gap: 8px; margin-bottom: $space-3;
+    input { @extend .input; }
+    button { @extend .btn; }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: $space-3;
+  }
+
+  .card {
+    @include card;
+    padding: $space-3; position: relative;
+    .title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .summary { color: $muted; min-height: 40px; line-height: 1.4; }
+    .meta { margin-top: 10px; font-size: 12px; color: $muted; }
+    .badge {
+      position: absolute; top: 12px; right: 12px;
+      padding: 4px 8px; border-radius: 999px; font-size: 11px; border: 1px solid $border;
+      &.OPEN   { background: rgba(16,185,129,.15); color: $accent; }
+      &.CLOSED { background: rgba(239,68,68,.15); color: $error; }
+      &.DRAFT  { background: rgba(245,158,11,.15); color: $warning; }
+    }
+    &:hover { transform: translateY(-2px); transition: .15s; box-shadow: $shadow-lg; }
+  }
+
+  .pagination {
+    display: flex; gap: 8px; align-items: center; margin-top: $space-3;
+    button { @extend .btn; }
+    .page-info { color: $muted; font-size: 13px; }
+  }
+}

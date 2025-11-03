@@ -1,0 +1,30 @@
+@use '../base/tokens' as *;
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 10px 14px;
+  border-radius: $radius; border: 1px solid $border;
+  background: linear-gradient(180deg, rgba(36,48,68,.6), rgba(11,18,32,.9));
+  color: $text; cursor: pointer; transition: .15s ease-in-out;
+  @include focus-ring;
+
+  &:hover { transform: translateY(-1px); box-shadow: $shadow-sm; }
+  &:active { transform: translateY(0); }
+  &:disabled { opacity: .6; cursor: not-allowed; }
+}
+
+.btn-accent {
+  background: linear-gradient(180deg, $accent, $accent-700);
+  border-color: transparent; color: #0b1220; font-weight: 700;
+}
+
+.input, .select, .textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: $radius;
+  border: 1px solid $border;
+  background: rgba(11,16,32,.8);
+  color: $text;
+  @include focus-ring;
+}
+.textarea { min-height: 140px; resize: vertical; }
