@@ -785,3 +785,158 @@
 2025-11-03T12:46:46.365+09:00  INFO 21156 --- [hangle-app] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-11-03T12:46:46.365+09:00  INFO 21156 --- [hangle-app] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-11-03T12:46:46.369+09:00  INFO 21156 --- [hangle-app] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-11-03T12:46:48.507+09:00  INFO 27516 --- [hangle-app] [main] com.example.hangle.HangleApplication     : Starting HangleApplication using Java 21.0.2 with PID 27516 (C:\Users\Jay\Downloads\팀플\HANGLE_WEB\Hangle-PROJECT\SPRINGBOOT\demo\demo\out\production\classes started by Jay in C:\Users\Jay\Downloads\팀플\HANGLE_WEB\Hangle-PROJECT\SPRINGBOOT\demo\demo)
+2025-11-03T12:46:48.509+09:00  INFO 27516 --- [hangle-app] [main] com.example.hangle.HangleApplication     : The following 1 profile is active: "dev"
+2025-11-03T12:46:49.422+09:00  INFO 27516 --- [hangle-app] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-03T12:46:49.511+09:00  INFO 27516 --- [hangle-app] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 68 ms. Found 1 JPA repository interface.
+2025-11-03T12:46:50.234+09:00  INFO 27516 --- [hangle-app] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8088 (http)
+2025-11-03T12:46:50.252+09:00  INFO 27516 --- [hangle-app] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-03T12:46:50.252+09:00  INFO 27516 --- [hangle-app] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-03T12:46:50.323+09:00  INFO 27516 --- [hangle-app] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-03T12:46:50.323+09:00  INFO 27516 --- [hangle-app] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1756 ms
+2025-11-03T12:46:50.715+09:00  INFO 27516 --- [hangle-app] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-03T12:46:50.809+09:00  INFO 27516 --- [hangle-app] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.33.Final
+2025-11-03T12:46:50.903+09:00  INFO 27516 --- [hangle-app] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-11-03T12:46:51.204+09:00  INFO 27516 --- [hangle-app] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-03T12:46:51.231+09:00  INFO 27516 --- [hangle-app] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-11-03T12:46:51.518+09:00  INFO 27516 --- [hangle-app] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@495da9a7
+2025-11-03T12:46:51.519+09:00  INFO 27516 --- [hangle-app] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-11-03T12:46:51.566+09:00  WARN 27516 --- [hangle-app] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-03T12:46:51.580+09:00  INFO 27516 --- [hangle-app] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.43
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-03T12:46:52.198+09:00  INFO 27516 --- [hangle-app] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-03T12:46:52.201+09:00  INFO 27516 --- [hangle-app] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-03T12:46:52.618+09:00  WARN 27516 --- [hangle-app] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-03T12:46:52.655+09:00  INFO 27516 --- [hangle-app] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userDetailsService
+2025-11-03T12:46:52.774+09:00  INFO 27516 --- [hangle-app] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-11-03T12:46:52.843+09:00 DEBUG 27516 --- [hangle-app] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 13 mappings in 'requestMappingHandlerMapping'
+2025-11-03T12:46:52.855+09:00 DEBUG 27516 --- [hangle-app] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/] in 'viewControllerHandlerMapping'
+2025-11-03T12:46:52.943+09:00 DEBUG 27516 --- [hangle-app] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-11-03T12:46:53.099+09:00 DEBUG 27516 --- [hangle-app] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-11-03T12:46:53.185+09:00 DEBUG 27516 --- [hangle-app] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-11-03T12:46:53.386+09:00  INFO 27516 --- [hangle-app] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8088 (http) with context path '/'
+2025-11-03T12:46:53.395+09:00  INFO 27516 --- [hangle-app] [main] com.example.hangle.HangleApplication     : Started HangleApplication in 5.432 seconds (process running for 5.733)
+2025-11-03T12:47:00.211+09:00  INFO 27516 --- [hangle-app] [http-nio-8088-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-03T12:47:00.211+09:00  INFO 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-11-03T12:47:00.211+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2025-11-03T12:47:00.211+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2025-11-03T12:47:00.211+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2025-11-03T12:47:00.212+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@58922a00
+2025-11-03T12:47:00.212+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@52518ee1
+2025-11-03T12:47:00.212+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-11-03T12:47:00.212+09:00  INFO 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-11-03T12:47:00.235+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : GET "/login", parameters={}
+2025-11-03T12:47:00.236+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.hangle.controller.ViewController#loginPage()
+2025-11-03T12:47:00.249+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.w.s.v.ContentNegotiatingViewResolver : Selected 'text/html' given [text/html, application/xhtml+xml, image/avif, image/webp, image/apng, application/xml;q=0.9, */*;q=0.8, application/signed-exchange;v=b3;q=0.7]
+2025-11-03T12:47:00.249+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.w.servlet.view.InternalResourceView  : View name [forward:], model {}
+2025-11-03T12:47:00.252+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.w.servlet.view.InternalResourceView  : Forwarding to [/login.html]
+2025-11-03T12:47:00.257+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : "FORWARD" dispatch for GET "/login.html", parameters={}
+2025-11-03T12:47:00.258+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:00.266+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : Exiting from "FORWARD" dispatch, status 200
+2025-11-03T12:47:00.268+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:47:00.283+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.web.servlet.DispatcherServlet        : GET "/.well-known/appspecific/com.chrome.devtools.json", parameters={}
+2025-11-03T12:47:00.285+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:00.286+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.w.s.r.ResourceHttpRequestHandler     : Resource not found
+2025-11-03T12:47:00.288+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource .well-known/appspecific/com.chrome.devtools.json.]
+2025-11-03T12:47:00.289+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 404 NOT_FOUND
+2025-11-03T12:47:00.290+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.web.servlet.DispatcherServlet        : "ERROR" dispatch for GET "/error", parameters={}
+2025-11-03T12:47:00.290+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#error(HttpServletRequest)
+2025-11-03T12:47:00.316+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-11-03T12:47:00.319+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{timestamp=Mon Nov 03 12:47:00 GMT+09:00 2025, status=404, error=Not Found, path=/.well-known/appspe (truncated)...]
+2025-11-03T12:47:00.361+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.web.servlet.DispatcherServlet        : Exiting from "ERROR" dispatch, status 404
+2025-11-03T12:47:05.186+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-3] o.s.web.servlet.DispatcherServlet        : GET "/index.html", parameters={}
+2025-11-03T12:47:05.188+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-3] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:05.224+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:47:05.246+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.web.servlet.DispatcherServlet        : GET "/.well-known/appspecific/com.chrome.devtools.json", parameters={}
+2025-11-03T12:47:05.247+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:05.247+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.w.s.r.ResourceHttpRequestHandler     : Resource not found
+2025-11-03T12:47:05.248+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource .well-known/appspecific/com.chrome.devtools.json.]
+2025-11-03T12:47:05.248+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.web.servlet.DispatcherServlet        : Completed 404 NOT_FOUND
+2025-11-03T12:47:05.249+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.web.servlet.DispatcherServlet        : "ERROR" dispatch for GET "/error", parameters={}
+2025-11-03T12:47:05.249+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#error(HttpServletRequest)
+2025-11-03T12:47:05.251+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-11-03T12:47:05.251+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{timestamp=Mon Nov 03 12:47:05 GMT+09:00 2025, status=404, error=Not Found, path=/.well-known/appspe (truncated)...]
+2025-11-03T12:47:05.252+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.web.servlet.DispatcherServlet        : Exiting from "ERROR" dispatch, status 404
+2025-11-03T12:47:05.256+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-4] o.s.web.servlet.DispatcherServlet        : GET "/css/style.css", parameters={}
+2025-11-03T12:47:05.257+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-4] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:05.258+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-6] o.s.web.servlet.DispatcherServlet        : GET "/js/dataset.js", parameters={}
+2025-11-03T12:47:05.259+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-6] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:05.260+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:47:05.261+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:47:07.869+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-8] o.s.web.servlet.DispatcherServlet        : GET "/whoami", parameters={}
+2025-11-03T12:47:07.869+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-8] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.hangle.controller.UserController#whoAmI(Authentication)
+2025-11-03T12:47:07.881+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-8] m.m.a.RequestResponseBodyMethodProcessor : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-11-03T12:47:07.881+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-8] m.m.a.RequestResponseBodyMethodProcessor : Writing [org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=tr (truncated)...]
+2025-11-03T12:47:07.888+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-8] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:47:10.853+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-7] o.s.web.servlet.DispatcherServlet        : GET "/index.html", parameters={}
+2025-11-03T12:47:10.853+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-7] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:10.856+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:47:10.866+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] o.s.web.servlet.DispatcherServlet        : GET "/.well-known/appspecific/com.chrome.devtools.json", parameters={}
+2025-11-03T12:47:10.872+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:10.872+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] o.s.w.s.r.ResourceHttpRequestHandler     : Resource not found
+2025-11-03T12:47:10.872+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource .well-known/appspecific/com.chrome.devtools.json.]
+2025-11-03T12:47:10.872+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] o.s.web.servlet.DispatcherServlet        : Completed 404 NOT_FOUND
+2025-11-03T12:47:10.874+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] o.s.web.servlet.DispatcherServlet        : "ERROR" dispatch for GET "/error", parameters={}
+2025-11-03T12:47:10.874+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#error(HttpServletRequest)
+2025-11-03T12:47:10.875+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-11-03T12:47:10.875+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{timestamp=Mon Nov 03 12:47:10 GMT+09:00 2025, status=404, error=Not Found, path=/.well-known/appspe (truncated)...]
+2025-11-03T12:47:10.877+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] o.s.web.servlet.DispatcherServlet        : Exiting from "ERROR" dispatch, status 404
+2025-11-03T12:47:10.879+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : GET "/css/style.css", parameters={}
+2025-11-03T12:47:10.880+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:10.880+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.web.servlet.DispatcherServlet        : GET "/js/dataset.js", parameters={}
+2025-11-03T12:47:10.880+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:10.883+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:47:10.883+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:47:11.031+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-5] o.s.web.servlet.DispatcherServlet        : GET "/favicon.ico", parameters={}
+2025-11-03T12:47:11.032+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-5] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:11.033+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-5] o.s.w.s.r.ResourceHttpRequestHandler     : Resource not found
+2025-11-03T12:47:11.033+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-5] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource favicon.ico.]
+2025-11-03T12:47:11.033+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-5] o.s.web.servlet.DispatcherServlet        : Completed 404 NOT_FOUND
+2025-11-03T12:47:11.034+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-5] o.s.web.servlet.DispatcherServlet        : "ERROR" dispatch for GET "/error", parameters={}
+2025-11-03T12:47:11.034+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-5] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#error(HttpServletRequest)
+2025-11-03T12:47:11.035+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json;q=0.8', given [image/avif, image/webp, image/apng, image/svg+xml, image/*, */*;q=0.8] and supported [application/json, application/*+json]
+2025-11-03T12:47:11.036+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{timestamp=Mon Nov 03 12:47:11 GMT+09:00 2025, status=404, error=Not Found, path=/favicon.ico}]
+2025-11-03T12:47:11.041+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-5] o.s.web.servlet.DispatcherServlet        : Exiting from "ERROR" dispatch, status 404
+2025-11-03T12:47:20.075+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-3] o.s.web.servlet.DispatcherServlet        : GET "/css/style.css", parameters={}
+2025-11-03T12:47:20.076+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-3] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:20.078+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:47:20.084+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.web.servlet.DispatcherServlet        : GET "/.well-known/appspecific/com.chrome.devtools.json", parameters={}
+2025-11-03T12:47:20.085+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:47:20.085+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.w.s.r.ResourceHttpRequestHandler     : Resource not found
+2025-11-03T12:47:20.086+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource .well-known/appspecific/com.chrome.devtools.json.]
+2025-11-03T12:47:20.086+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.web.servlet.DispatcherServlet        : Completed 404 NOT_FOUND
+2025-11-03T12:47:20.086+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.web.servlet.DispatcherServlet        : "ERROR" dispatch for GET "/error", parameters={}
+2025-11-03T12:47:20.088+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#error(HttpServletRequest)
+2025-11-03T12:47:20.088+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-11-03T12:47:20.088+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{timestamp=Mon Nov 03 12:47:20 GMT+09:00 2025, status=404, error=Not Found, path=/.well-known/appspe (truncated)...]
+2025-11-03T12:47:20.089+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-9] o.s.web.servlet.DispatcherServlet        : Exiting from "ERROR" dispatch, status 404
+2025-11-03T12:47:23.329+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-4] o.s.web.servlet.DispatcherServlet        : GET "/whoami", parameters={}
+2025-11-03T12:47:23.329+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.hangle.controller.UserController#whoAmI(Authentication)
+2025-11-03T12:47:23.329+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-11-03T12:47:23.329+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Writing [org.springframework.security.core.userdetails.User [Username=admin, Password=[PROTECTED], Enabled=tr (truncated)...]
+2025-11-03T12:47:23.329+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:50:27.526+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-8] o.s.web.servlet.DispatcherServlet        : GET "/index.html", parameters={}
+2025-11-03T12:50:27.526+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-8] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:50:27.529+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-8] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:50:27.548+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-7] o.s.web.servlet.DispatcherServlet        : GET "/css/style.css", parameters={}
+2025-11-03T12:50:27.548+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] o.s.web.servlet.DispatcherServlet        : GET "/js/dataset.js", parameters={}
+2025-11-03T12:50:27.549+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-7] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:50:27.549+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:50:27.551+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:50:27.552+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-10] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-11-03T12:50:27.563+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.web.servlet.DispatcherServlet        : GET "/.well-known/appspecific/com.chrome.devtools.json", parameters={}
+2025-11-03T12:50:27.564+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [static/]]
+2025-11-03T12:50:27.565+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.w.s.r.ResourceHttpRequestHandler     : Resource not found
+2025-11-03T12:50:27.566+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource .well-known/appspecific/com.chrome.devtools.json.]
+2025-11-03T12:50:27.566+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 404 NOT_FOUND
+2025-11-03T12:50:27.568+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.web.servlet.DispatcherServlet        : "ERROR" dispatch for GET "/error", parameters={}
+2025-11-03T12:50:27.568+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#error(HttpServletRequest)
+2025-11-03T12:50:27.569+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-11-03T12:50:27.569+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{timestamp=Mon Nov 03 12:50:27 GMT+09:00 2025, status=404, error=Not Found, path=/.well-known/appspe (truncated)...]
+2025-11-03T12:50:27.571+09:00 DEBUG 27516 --- [hangle-app] [http-nio-8088-exec-1] o.s.web.servlet.DispatcherServlet        : Exiting from "ERROR" dispatch, status 404

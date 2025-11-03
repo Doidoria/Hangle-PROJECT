@@ -19,3 +19,8 @@ src/main/resources/credentials/**
 *.p12
 *.keystore
 *.jks
+
+# logs
+logs/
+*.log
+SPRINGBOOT/**/logs/
