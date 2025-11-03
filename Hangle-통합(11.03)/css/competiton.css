@@ -1,0 +1,11 @@
+.competiton-wrap {grid-area: main;padding: 10px 20px 50px;}
+.competiton-title {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.competiton-title h1 {margin: 0;font-size: 30px;letter-spacing: .2px}
+.competiton-title p {margin: 4px 0 0;color: var(--muted)}

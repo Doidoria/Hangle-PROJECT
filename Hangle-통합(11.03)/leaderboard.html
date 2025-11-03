@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="./css/header.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/media.css">
+
+  <script src="./js/main.js" defer></script>
+  
+  <title>Hangle · 리더보드</title>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="logo" href="main.html">
+        <span class="dot"></span><span class="name">Hangle</span>
+      </a>
+      <a class="nav-create active" href="leaderboard.html">
+        <img src="./image/+.png" alt="리더보드" style="width: 14px;"> 리더보드
+      </a>
+    </aside>
+    <header class="topbar">
+      <div class="search"><input type="search" placeholder="참가자 검색" /></div>
+      <div class="top-actions">
+        <button id="themeToggle" class="toggle" aria-label="테마">
+          <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M1 12h2M21 12h2"/>
+          </svg>
+          <span id="modeLabel">다크</span>
+        </button>
+      </div>
+    </header>
+    <main class="main">
+      <section class="welcome">
+        <div>
+          <h1>리더보드 🏆</h1>
+          <p>상위권 참가자의 점수를 확인하세요.</p>
+        </div>
+      </section>
+      <section class="card" style="overflow-x:auto;">
+        <table class="leaderboard" style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th>순위</th>
+              <th>닉네임</th>
+              <th>점수</th>
+              <th>제출 횟수</th>
+              <th>최근 제출일</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardBody"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-wrap">
+        <div class="copyright">© <span id="year"></span> hangle. 모든 권리 보유.</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ===== 더미 데이터 =====
+    const data = [
+      { rank: 1, name: '서동성', score: 0.9843, submissions: 5, date: '2025-10-30' },
+      { rank: 2, name: '김지훈', score: 0.9721, submissions: 7, date: '2025-10-29' },
+      { rank: 3, name: '이유정', score: 0.9584, submissions: 3, date: '2025-10-27' },
+    ];
+
+    const tbody = document.getElementById('leaderboardBody');
+    data.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight:bold;">#${row.rank}</td>
+        <td>${row.name}</td>
+        <td>${(row.score * 100).toFixed(2)}%</td>
+        <td>${row.submissions}</td>
+        <td>${row.date}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // ===== 간단한 스타일 =====
+    document.querySelectorAll('th, td').forEach(el => {
+      el.style.borderBottom = '1px solid var(--border)';
+      el.style.padding = '10px';
+      el.style.textAlign = 'center';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="./css/header.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/media.css">
+  <link rel="stylesheet" href="./css/competiton.css">
+
+  <script src="./js/main.js" defer></script>
+
+  <title>Hangle · 대회</title>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="logo" href="main.html">
+        <span class="dot"></span>
+        <span class="name">Hangle</span>
+      </a>
+      <a class="nav-create active" href="competition.html">
+        <img src="./image/+.png" alt="대회" style="width: 14px;"> 대회 확인
+      </a>
+      <nav class="nav-group">
+        <a class="nav-item" href="leaderboard.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3v18h18"/>
+          </svg>
+          <span>LEADERBOARD</span>
+        </a>
+      </nav>
+    </aside>
+    <header class="topbar">
+      <div class="search">
+        <input type="search" placeholder="검색 (대회, 사용자…)" />
+      </div>
+      <div class="top-actions">
+        <button id="themeToggle" class="toggle" aria-label="다크모드 전환">
+          <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M1 12h2M21 12h2"/>
+          </svg>
+          <span id="modeLabel">다크</span>
+        </button>
+        <button id="loginBtn" class="login-btn" style="display:none">로그인</button>
+        <button id="profileBtn" class="profile-btn" style="display:none">
+          <div class="avatar">SD</div>
+        </button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="competiton-wrap">
+        <div class="competiton-title">
+          <div>
+            <h1>이미지 분류 챌린지 🏁</h1>
+            <p>Transfer Learning으로 고양이·강아지를 분류하세요!</p>
+          </div>
+        </div>
+        <div class="grid">
+          <!-- 대회 설명 -->
+          <article class="card">
+            <span class="badge">대회 정보</span>
+            <h3>설명</h3>
+            <p class="muted">
+              주어진 이미지 데이터셋을 사용해 고양이/강아지를 분류하는 모델을 학습하세요.
+              Accuracy 기준으로 평가됩니다.
+            </p>
+            <ul style="margin-left:18px">
+              <li>파일 형식: <code>submission.csv</code></li>
+              <li>평가지표: Accuracy</li>
+              <li>제출 마감: 2025-12-01</li>
+            </ul>
+          </article>
+          <!-- 데이터 다운로드 -->
+          <article class="card">
+            <span class="badge">데이터셋</span>
+            <h3>데이터 다운로드</h3>
+            <p class="muted">Train/Test 파일을 내려받아 학습하세요.</p>
+            <a href="./data/train.csv" class="link">train.csv 다운로드</a><br>
+            <a href="./data/test.csv" class="link">test.csv 다운로드</a>
+          </article>
+          <!-- 제출 -->
+          <article class="card">
+            <span class="badge">제출</span>
+            <h3>결과 제출</h3>
+            <p class="muted">예측 결과 CSV를 업로드하면 점수가 자동 계산됩니다.</p>
+            <input type="file" id="fileInput" accept=".csv" style="margin:10px 0;">
+            <button class="btn" onclick="submitFile()">제출하기</button>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== Footer ===== -->
+    <footer>
+      <div class="footer-wrap">
+        <div class="copyright">© <span id="year"></span> hangle. 모든 권리 보유.</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ===== 파일 제출 (데모) =====
+    function submitFile() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) return alert('CSV 파일을 선택하세요.');
+      alert(`"${file.name}" 제출 완료! 점수 계산 중...`);
+      setTimeout(() => location.href = 'leaderboard.html', 1200);
+    }
+  </script>
+</body>
+</html>
