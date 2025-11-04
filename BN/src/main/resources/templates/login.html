@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>LOGIN</h1>
+	<form action="/login" method="post">
+		<div>
+			<label>USERNAME : </label>
+			<input name="username" />
+		</div>
+		<div>
+			<label>PASSWORD :</label>
+			<input name="password" type="password"/>
+		</div>
+		<button>로그인</button>
+<!--		 <input type="hidden" name="_csrf" value="${_csrf.token}" /> -->
+	</form>
+	<span th:text="${message}"></span>
+	<span th:text="${param.error}"></span>
+	<hr/>
+	<a href="/oauth2/authorization/kakao">카카오 로그인</a><br>
+	<a href="/oauth2/authorization/naver">네이버 로그인</a><br>
+	<a href="/oauth2/authorization/google">구글 로그인</a><br>
+	
+</body>
+</html>
+
+
+
+
+
+
