@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<form action="/join" method="post">
+		<div>
+			<h1>회원가입</h1>
+		</div>
+		<div>
+			<label>username : </label><span style="color:red;font-size:.7rem;" th:text="${username}"></span><br>
+			<input name="username" />
+		</div>
+		<div>
+			<label>password : </label><span style="color:red;font-size:.7rem;" th:text="${password}"></span><br>
+			<input name="password" />
+		</div>
+		<div>
+			<input type="submit" value="회원가입" />
+		</div>
+
+	
+	</form>
+</body>
+</html>
