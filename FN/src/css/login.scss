@@ -1,8 +1,7 @@
 /* ========= Login Page ========= */
-
 .layout-login {
   font-family: Arial, sans-serif;
-  background-color: var(--bg);
+  background-color: #1E293B;
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -66,7 +65,7 @@
 
     .login-divider {
       text-align: center;
-      margin: 20px 0;
+      margin: 15px 0;
       font-size: 14px;
       color: #a0a0a0;
       position: relative;
@@ -130,13 +129,11 @@
         color: #1a1a1a;
         border: 1px solid #dadce0;
       }
-    }
-    .join-divider{
-      text-align: center;
-      margin-top: 25px;
-      font-size: 15px;
-      font-weight: bold;
-      color
+      &.join-btn {
+        background-color: #ccc;
+        color: #fff;
+        border: 1px solid #dadce0;
+      }
     }
   }
 }

@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class Submission {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long competitionId;
     private String userid;         // 제출자(간단히 String로, 실제로는 FK로 User 연결 권장)

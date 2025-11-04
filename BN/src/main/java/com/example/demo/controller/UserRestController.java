@@ -52,12 +52,12 @@ public class UserRestController {
     public ResponseEntity<Map<String, String>> join_post(@RequestBody UserDto userDto){
         log.info("POST /join..."+userDto);
 
-        // 1️⃣ 비밀번호 일치 검사
+        // 비밀번호 일치 검사
         if (!userDto.getPassword().equals(userDto.getRepassword())) {
             return ResponseEntity.badRequest().body(Map.of("error", "패스워드가 일치하지 않습니다."));
         }
 
-        // 2️⃣ 사용자 존재 여부 검사
+        // 사용자 존재 여부 검사
         User existingUser = userRepository.findByUserid(userDto.getUserid());
         if (existingUser != null) {
             return ResponseEntity.badRequest()

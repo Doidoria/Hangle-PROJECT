@@ -2,6 +2,7 @@ package com.example.demo.domain.competition.service.impl;
 
 import com.example.demo.domain.competition.dto.*;
 import com.example.demo.domain.competition.entity.Submission;
+import com.example.demo.domain.competition.repository.CompetitionRepository;
 import com.example.demo.domain.competition.repository.SubmissionRepository;
 import com.example.demo.domain.competition.service.CompetitionService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.List;
 public class CompetitionServiceImpl implements CompetitionService {
 
     private final SubmissionRepository submissionRepository;
-    // private final CompetitionRepository competitionRepository;
+//    private final CompetitionRepository competitionRepository;
     // private final ScoringService scoringService;  // 점수 계산 로직(추후 구현)
     // private final StorageService storageService;  // 파일 저장/다운로드(추후 구현)
 

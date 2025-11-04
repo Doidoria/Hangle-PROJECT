@@ -6,14 +6,15 @@ import com.example.demo.config.auth.Handler.CustomLoginSuccessHandler;
 import com.example.demo.config.auth.Handler.CustomLogoutHandler;
 import com.example.demo.config.auth.Handler.CustomLogoutSuccessHandler;
 import com.example.demo.config.auth.redis.RedisUtil;
-import com.example.demo.domain.user.repository.JwtTokenRepository;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.global.exceptionHandler.CustomAccessDeniedHandler;
 import com.example.demo.global.exceptionHandler.CustomAuthenticationEntryPoint;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,6 +31,7 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
+@Order(2) // Swagger용보다 나중에 적용
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -38,16 +40,30 @@ public class SecurityConfig {
 	private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 	private final UserRepository userRepository;
 	private final JwtTokenProvider jwtTokenProvider;
-	private final JwtTokenRepository jwtTokenRepository;
 	private final RedisUtil redisUtil;
 
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+        return new JwtAuthorizationFilter(userRepository, jwtTokenProvider, redisUtil);
+    }
+
+    @Bean
+    public FilterRegistrationBean<JwtAuthorizationFilter> jwtAuthFilterRegistration(JwtAuthorizationFilter filter) {
+        FilterRegistrationBean<JwtAuthorizationFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
 	@Bean
-	protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+	protected SecurityFilterChain configure(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
 		//CSRF비활성화
 		http.csrf((config)->{config.disable();});
+
 		//CSRF토큰 쿠키형태로 전달
 //		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 		//권한체크
+        http.securityMatcher("/**");
 		http.authorizeHttpRequests((auth)->{
 			auth.requestMatchers("/","/join","/login","/validate").permitAll();
 			auth.requestMatchers("/user").hasRole("USER");
@@ -90,7 +106,8 @@ public class SecurityConfig {
 		});
 
 		//JWT FILTER ADD
-		http.addFilterBefore(new JwtAuthorizationFilter(userRepository,jwtTokenProvider,jwtTokenRepository,redisUtil), LogoutFilter.class);
+//        http.addFilterBefore(new JwtAuthorizationFilter(userRepository, jwtTokenProvider, redisUtil), LogoutFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter, LogoutFilter.class);
 		//-----------------------------------------------
 		//[추가] CORS
 		//-----------------------------------------------

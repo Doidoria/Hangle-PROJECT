@@ -3,10 +3,14 @@ package com.example.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 @Configuration
+@EnableWebSecurity
+@Order(1)  // 먼저 실행되도록 순서 지정
 public class SecurityPermitConfig {
 
     @Bean

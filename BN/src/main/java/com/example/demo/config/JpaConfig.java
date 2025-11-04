@@ -14,10 +14,16 @@ import java.util.Map;
 import java.util.Properties;
 
 @Configuration
-@EntityScan(basePackages = {"com.example.demo.domain.user.entity"})
+@EntityScan(basePackages = {
+        "com.example.demo.domain.user.entity",
+        "com.example.demo.domain.competition.entity"
+})
 @EnableJpaRepositories
 (
-                basePackages ="com.example.demo.domain.user.repository",
+                basePackages = {
+                        "com.example.demo.domain.user.repository",
+                        "com.example.demo.domain.competition.repository",
+                },
                 transactionManagerRef = "jpaTransactionManager"
 )
 public class JpaConfig {
@@ -29,7 +35,11 @@ public class JpaConfig {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        entityManagerFactoryBean.setPackagesToScan("com.example.demo.domain.user.entity");
+        entityManagerFactoryBean.setPackagesToScan("com.example.demo.domain");
+//        entityManagerFactoryBean.setPackagesToScan(
+//                "com.example.demo.domain.user.entity",
+//                "com.example.demo.domain.competition.entity"
+//        );
 
         Properties jpaProperties = new Properties();
 
@@ -38,7 +48,6 @@ public class JpaConfig {
         properties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect"); // 사용 중인 DB에 맞게 변경
         properties.put("hibernate.show_sql", true);
         properties.put("hibernate.format_sql", true);
-
         properties.put("hibernate.hibernate.jdbc.batch_size", 1000);
         properties.put("hibernate.hibernate.order_inserts", true);
         properties.put("hibernate.order_updates", true);

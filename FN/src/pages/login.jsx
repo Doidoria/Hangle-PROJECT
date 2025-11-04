@@ -50,7 +50,7 @@ const Login = () => {
         <div className="logo" aria-label="로고">
           <Link to="/"><span className="name">Hangle</span></Link>
         </div>
-        <form action="/" method="POST" className="login-wrap">
+        <form className="login-wrap">
           <div className="input-group">
             <label htmlFor="userid">아이디 (이메일)</label>
             <input type="text" id="userid" name="userid" onChange={e=>setUserid(e.target.value)}/>
@@ -71,9 +71,9 @@ const Login = () => {
         <Link to="#" className="social-login-button google-login">
           <img src="./image/icon_Google.png" alt="구글" /> 구글 로그인
         </Link>
-        <div>
-          <div className="join-divider"><Link to="/join">회원가입</Link></div>
-        </div>
+        <div className="login-divider">OR</div>
+        <Link to="/join" className="social-login-button join-btn">회원가입</Link>
+
       </div>
       
     </div>

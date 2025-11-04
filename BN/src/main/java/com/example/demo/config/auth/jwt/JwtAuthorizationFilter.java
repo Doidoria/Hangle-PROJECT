@@ -2,11 +2,11 @@ package com.example.demo.config.auth.jwt;
 
 import com.example.demo.config.auth.redis.RedisUtil;
 import com.example.demo.domain.user.entity.User;
-import com.example.demo.domain.user.repository.JwtTokenRepository;
 import com.example.demo.domain.user.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,16 +29,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final JwtTokenRepository jwtTokenRepository;
     private final RedisUtil redisUtil;
+
+    @PostConstruct
+    public void init() {
+        System.out.println("🔥 JwtAuthorizationFilter Bean 등록됨! logger = " + this.logger);
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain chain
-    ) throws IOException, ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException, IOException {
         System.out.println("[JWTAUTHORIZATIONFILTER] doFilterInternal...");
 
         // cookie 에서 JWT token을 가져옵니다.
