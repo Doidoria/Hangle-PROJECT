@@ -1,17 +1,15 @@
 package com.example.demo.config;
 
-
-import com.example.demo.config.auth.exceptionHandler.CustomAccessDeniedHandler;
-import com.example.demo.config.auth.exceptionHandler.CustomAuthenticationEntryPoint;
 import com.example.demo.config.auth.jwt.JwtAuthorizationFilter;
 import com.example.demo.config.auth.jwt.JwtTokenProvider;
-import com.example.demo.config.auth.loginHandler.CustomLoginFailureHandler;
-import com.example.demo.config.auth.loginHandler.CustomLoginSuccessHandler;
-import com.example.demo.config.auth.logoutHandler.CustomLogoutHandler;
-import com.example.demo.config.auth.logoutHandler.CustomLogoutSuccessHandler;
+import com.example.demo.config.auth.Handler.CustomLoginSuccessHandler;
+import com.example.demo.config.auth.Handler.CustomLogoutHandler;
+import com.example.demo.config.auth.Handler.CustomLogoutSuccessHandler;
 import com.example.demo.config.auth.redis.RedisUtil;
-import com.example.demo.domain.repository.JwtTokenRepository;
-import com.example.demo.domain.repository.UserRepository;
+import com.example.demo.domain.user.repository.JwtTokenRepository;
+import com.example.demo.domain.user.repository.UserRepository;
+import com.example.demo.global.exceptionHandler.CustomAccessDeniedHandler;
+import com.example.demo.global.exceptionHandler.CustomAuthenticationEntryPoint;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +23,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -35,7 +32,6 @@ import java.util.Collections;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	@Autowired
 	private CustomLoginSuccessHandler customLoginSuccessHandler;
 	@Autowired
 	private CustomLogoutHandler customLogoutHandler;

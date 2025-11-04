@@ -1,17 +1,10 @@
 package com.example.demo.config;
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.DatabasePopulator;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
@@ -21,10 +14,10 @@ import java.util.Map;
 import java.util.Properties;
 
 @Configuration
-@EntityScan(basePackages = {"com.example.demo.domain.entity"})
+@EntityScan(basePackages = {"com.example.demo.domain.user.entity"})
 @EnableJpaRepositories
 (
-                basePackages ="com.example.demo.domain.repository",
+                basePackages ="com.example.demo.domain.user.repository",
                 transactionManagerRef = "jpaTransactionManager"
 )
 public class JpaConfig {
@@ -36,7 +29,7 @@ public class JpaConfig {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        entityManagerFactoryBean.setPackagesToScan("com.example.demo.domain.entity");
+        entityManagerFactoryBean.setPackagesToScan("com.example.demo.domain.user.entity");
 
         Properties jpaProperties = new Properties();
 

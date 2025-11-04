@@ -1,23 +1,24 @@
 package com.example.demo.config.auth.jwt;
 
 
-import com.example.demo.config.auth.PrincipalDetails;
-import com.example.demo.domain.dto.UserDto;
-import com.example.demo.domain.entity.Signature;
-import com.example.demo.domain.entity.User;
-import com.example.demo.domain.repository.SignatureRepository;
-import com.example.demo.domain.repository.UserRepository;
+import com.example.demo.config.auth.service.PrincipalDetails;
+import com.example.demo.domain.user.dto.UserDto;
+import com.example.demo.domain.user.entity.Signature;
+import com.example.demo.domain.user.entity.User;
+import com.example.demo.domain.user.repository.SignatureRepository;
+import com.example.demo.domain.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.context.event.EventListener;
 
 import java.security.Key;
 import java.time.LocalDate;
@@ -43,7 +44,7 @@ public class JwtTokenProvider {
     }
 
     //SIGNATURE 저장
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void init(){
         List<Signature> list = signatureRepository.findAll(); //1개 값만 저장되어있음
         if(list.isEmpty()){
@@ -78,7 +79,7 @@ public class JwtTokenProvider {
         Date accessTokenExpiresIn = new Date(now + JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME); // 60초후 만료
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("username",authentication.getName()) //정보저장
+                .claim("userid",authentication.getName()) //정보저장
                 .claim("auth", authorities)//정보저장
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -115,20 +116,20 @@ public class JwtTokenProvider {
                         .map(auth -> new SimpleGrantedAuthority(auth))
                         .collect(Collectors.toList());
 
-        String username = claims.getSubject(); //username
+        String userid = claims.getSubject(); //userid
 
         // PrincipalDetails 생성
         PrincipalDetails principalDetails = new PrincipalDetails();
-        Optional<User> userOptional = userRepository.findById(username);
+        Optional<User> userOptional = userRepository.findById(userid);
         UserDto userDto = null;
         if(userOptional.isPresent())
             userDto = UserDto.toDto(userOptional.get());
         principalDetails.setUserDto(userDto);
 
-        System.out.println("JwtTokenProvider.getAuthentication UsernamePasswordAuthenticationToken : " + accessToken);
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+        System.out.println("JwtTokenProvider.getAuthentication UseridPasswordAuthenticationToken : " + accessToken);
+        UsernamePasswordAuthenticationToken useridPasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(principalDetails, "", authorities);
-        return usernamePasswordAuthenticationToken;
+        return useridPasswordAuthenticationToken;
     }
 
     private Claims parseClaims(String accessToken) {

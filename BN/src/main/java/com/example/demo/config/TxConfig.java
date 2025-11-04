@@ -16,14 +16,6 @@ public class TxConfig {
     @Autowired
     private DataSource dataSource;
 
-//    // 기본 TransactionManager
-//    @Bean(name = "dataSourceTransactionManager")
-//    public DataSourceTransactionManager transactionManager2() {
-//        //System.out.println("TX dataSrouce2 : " + dataSource2.toString());
-//        return new DataSourceTransactionManager(dataSource);
-//    }
-
-
     //    JPA TransactionManager Settings
     @Bean(name="jpaTransactionManager")
     public JpaTransactionManager jpaTransactionManager(EntityManagerFactory entityManagerFactory) {
