@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="./css/header.css">
+  <link rel="stylesheet" href="./css/footer.css">
+  <link rel="stylesheet" href="./css/setting.css">
+  <link rel="stylesheet" href="./css/media.css">
+
+  <!-- main JS -->
+  <script src="./js/main.js" defer></script>
+  <script src="./js/setting.js" defer></script>
+
+  <title>hangle · Setting</title>
+</head>
+
+<body>
+  <div class="layout">
+    <aside class="sidebar" aria-label="왼쪽 내비게이션">
+      <a class="logo" aria-label="hangle 로고 및 홈으로 이동" href="main.html">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="name">Hangle</span>
+      </a>
+      <a class="nav-create active" href="/">
+        <img src="./image/+.png" alt="만들기" style="width: 14px;">Notebook
+      </a>
+      <nav class="nav-group">
+        <a class="nav-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 1 0 0-10H7a5 5 0 1 0 0 10V4Z" />
+          </svg>
+          <span>대회</span>
+        </a>
+        <a class="nav-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+          </svg>
+          <span>커뮤니티</span>
+        </a>
+      </nav>
+    </aside>
+    <header class="topbar" aria-label="상단바">
+      <div class="search" role="search">
+        <span class="icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M21 21l-4.3-4.3" />
+          </svg>
+        </span>
+        <input type="search" placeholder="검색 (데이터셋, 대회, 사용자…)" aria-label="검색" />
+        <span class="kbd">/</span>
+      </div>
+      <div class="top-actions">
+        <button id="themeToggle" class="toggle" aria-label="다크 모드 전환">
+          <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="display:none">
+            <circle cx="12" cy="12" r="5" />
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+          <span id="modeLabel">다크</span>
+        </button>
+        <button id="profileBtn" class="profile-btn" aria-label="프로필로 이동">
+          <div class="avatar">T</div>
+        </button>
+      </div>
+    </header>
+    <!-- ===== Main ===== -->
+    <main>
+      <div class="title-wrap">
+        <h1>설정</h1>
+        <p style="font-weight: 600;">Hangle 계정 및 알림 모든 커뮤니케이션에 대한 제어</p>
+      </div>
+      <section class="section-wrap">
+        <div class="tabs">
+          <a href="#" class="tab-item active">계정</a>
+          <a href="#" class="tab-item">알림</a>
+        </div>
+        <div class="setting-wrap">
+          <!-- 계정 -->
+          <div class="settings-content">
+            <div class="info-group-container">
+              <div class="info-group email-group">
+                <h2 class="group-title">귀하의 이메일 주소</h2>
+                <p class="data-text">test@daum.net</p>
+                <button class="action-button">이메일 변경</button>
+              </div>
+            </div>
+            <hr class="divider">
+            <div class="verification-section phone-verification">
+              <h2 class="section-title">전화 확인</h2>
+              <p class="section-description">계정이 인증되지 않았습니다. 전화번호로 계정을 인증하면 Hangle에서 더 많은 활동을 할 수 있고, 스팸 및 기타 악용 사례를
+                방지하는데 도움이 됩니다.</p>
+              <button class="action-button primary-button">전화 확인</button>
+            </div>
+            <hr class="divider">
+            <div class="verification-section identity-verification">
+              <h2 class="section-title">신원 확인</h2>
+              <p class="section-description">신뢰할 수 있는 제3자 서비스인 <strong class="highlight">Persona</strong>를 사용하여 신원 확인을
+                확인하였습니다. 신원 확인을 통해 신원 확인이 필요한 대회에 참가할 수 있습니다. <a href="#" class="more-info-link">자세히 알아보기</a></p>
+              <button class="action-button primary-button">내 계정을 확인하세요</button>
+            </div>
+            <hr class="divider">
+            <div class="theme-section verification-section">
+              <h2 class="section-title">주제</h2>
+              <p class="section-description">아래에서 Hangle UI 테마를 선택하세요.</p>
+              <div class="custom-select-container" data-current-value="dark">
+                <button class="select-display-button" aria-expanded="false" aria-controls="theme-options">
+                  <img src="./image/icon_moon(white).png" alt="다크">
+                  <span class="selected-text">다크 테마</span>
+                  <span class="arrow-icon">▼</span>
+                </button>
+                <ul class="select-options-list" id="theme-options" role="listbox" style="display: none;">
+                  <li data-value="dark" role="option" aria-selected="true" class="select-option active">
+                    <img src="./image/icon_moon(white).png" alt="다크"><span>다크 테마</span>
+                  </li>
+                  <li data-value="light" role="option" aria-selected="false" class="select-option">
+                    <img src="./image/icon_sun(white).png" alt="라이트"><span>라이트 테마</span> 
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <hr class="divider">
+            <div class="delete-account-section verification-section">
+              <h2 class="section-title delete-title">Hangle 계정 삭제</h2>
+              <p class="section-description">Hangle 계정을 영구적으로 삭제하세요</p>
+              <button class="action-button delete-button">계정 삭제</button>
+            </div>
+          </div>
+          <!-- 알림 -->
+          <div class="notification-settings">
+            <div class="verification-section">
+              <h2 class="section-title">알림 설정</h2>
+              <p class="section-description">Hangle에서 수신하고 싶은 알림 종류를 선택하세요.</p>
+              <div class="notification-options">
+                <label class="noti-label">
+                  <input type="checkbox" checked>
+                  대회 업데이트 및 공지사항 이메일 수신
+                </label>
+                <label class="noti-label">
+                  <input type="checkbox">
+                  새로운 커뮤니티 댓글 및 멘션 알림
+                </label>
+                <label class="noti-label">
+                  <input type="checkbox" checked>
+                  주요 플랫폼 변경 사항 알림
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- 사용자 이름 고정 -->
+          <div class="name-group">
+            <h2 class="group-title">사용자 이름</h2>
+            <p class="data-text">홍길동</p>
+            <a href="/" class="name-change">이름 변경</a>
+          </div>
+        </div>
+      </section>
+  </div>
+</body>
+
+</html>
