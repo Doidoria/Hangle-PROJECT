@@ -25,10 +25,8 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
-
 	@Autowired
 	private JwtTokenRepository jwtTokenRepository;
-
 	@Autowired
 	private RedisUtil redisUtil;
 
@@ -66,7 +64,6 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 		//- Client에게 AT 전송
 		//- DB 저장
 		//
-
 
 		//---------------------------------
 		//기존로그인(Client's AT o , DB o)

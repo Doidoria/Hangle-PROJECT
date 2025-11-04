@@ -1,4 +1,3 @@
-// com/example/demo/domain/competition/controller/CompetitionController.java
 package com.example.demo.controller;
 
 import com.example.demo.domain.competition.dto.*;

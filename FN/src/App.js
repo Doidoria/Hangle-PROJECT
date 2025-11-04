@@ -6,6 +6,7 @@ import Main from './pages/main';
 import Login from './pages/login';
 import Join from './pages/join';
 import Competiton from './pages/competiton';
+import Setting from './pages/setting';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/login" element={<Login/>}></Route>
           <Route path="/join" element={<Join/>}></Route>
           <Route path="/competiton" element={<Competiton/>}></Route>
+          <Route path="/setting" element={<Setting/>}></Route>
         </Routes>
       </BR>
     </div>

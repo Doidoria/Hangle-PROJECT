@@ -10,7 +10,7 @@ const Competiton = () => {
     const file = fileInputRef.current?.files[0];
     if (!file) return alert("CSV 파일을 선택하세요.");
     alert(`"${file.name}" 제출 완료! 점수 계산 중...`);
-    setTimeout(() => (location.href = "leaderboard.html"), 1200);
+    // setTimeout(() => (location.href = "/leaderboard"), 1200);
   }
 
   const renderSection = () => (

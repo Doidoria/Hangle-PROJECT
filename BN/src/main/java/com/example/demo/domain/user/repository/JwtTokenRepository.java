@@ -9,8 +9,8 @@ public interface JwtTokenRepository extends JpaRepository<JwtToken,Long> {
     //AccessToken 을 받아 Entity 반환
     JwtToken findByAccessToken(String accessToken);
 
-    //Username 을 받아 Entity 반환
-    JwtToken findByUsername(String userid);
+    //Userid 을 받아 Entity 반환
+    JwtToken findByUserid(String userid);
 
     void deleteByAccessToken(String token);
 }

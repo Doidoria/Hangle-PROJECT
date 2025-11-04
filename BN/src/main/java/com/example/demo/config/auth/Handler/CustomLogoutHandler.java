@@ -1,7 +1,5 @@
 package com.example.demo.config.auth.Handler;
 
-
-
 import com.example.demo.config.auth.service.PrincipalDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

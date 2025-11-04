@@ -72,7 +72,7 @@ function Loginbtn(){
 //프로필 버튼
 function Profilebtn(){
   return(
-    <Link to='/profile' id="profileBtn" className="profile-btn" aria-label="프로필">
+    <Link to='/setting' id="profileBtn" className="profile-btn" aria-label="프로필">
       <div className="avatar">SD</div>
     </Link>
   )

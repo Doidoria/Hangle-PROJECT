@@ -77,7 +77,6 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 			response.sendRedirect("https://kauth.kakao.com/oauth/logout?client_id="+KAKAO_CLIENT_ID+"&logout_redirect_uri="+KAKAO_LOGOUT_REDIRECT_URI);
 			return ;
 		}else if(provider!=null && provider.startsWith("naver")){
-			//https://nid.naver.com/nidlogin.logout?returl=https://www.naver.com/
 			response.sendRedirect("https://nid.naver.com/nidlogin.logout?returl=https://www.naver.com/");
 			return ;
 		}else if(provider!=null && provider.startsWith("google")){

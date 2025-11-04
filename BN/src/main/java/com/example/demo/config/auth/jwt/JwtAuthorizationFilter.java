@@ -1,6 +1,5 @@
 package com.example.demo.config.auth.jwt;
 
-
 import com.example.demo.config.auth.redis.RedisUtil;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.JwtTokenRepository;
@@ -19,17 +18,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
-
-
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
-
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;

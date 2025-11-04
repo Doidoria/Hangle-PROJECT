@@ -10,6 +10,7 @@ import com.example.demo.domain.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.example.demo.domain.user.entity.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -41,30 +44,34 @@ public class UserRestController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private JwtTokenRepository jwtTokenRepository;
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private RedisUtil redisUtil;
 
-
     @PostMapping(value = "/join",produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<String> join_post(@RequestBody UserDto userDto){
+    public ResponseEntity<Map<String, String>> join_post(@RequestBody UserDto userDto){
         log.info("POST /join..."+userDto);
 
-        //dto->entity
-        User user = User.builder()
-                .userid(userDto.getUserid())
-                .password( passwordEncoder.encode(userDto.getPassword()))
-                .role("ROLE_USER")
-                .build();
+        // 1️⃣ 비밀번호 일치 검사
+        if (!userDto.getPassword().equals(userDto.getRepassword())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "패스워드가 일치하지 않습니다."));
+        }
 
+        // 2️⃣ 사용자 존재 여부 검사
+        User existingUser = userRepository.findByUserid(userDto.getUserid());
+        if (existingUser != null) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "이미 존재하는 사용자입니다."));
+        }
+
+        //dto -> entity
+        User user = userDto.toEntity();
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         // save entity to DB
         userRepository.save(user);
 
-        //
-        return new ResponseEntity<String>("success", HttpStatus.OK);
+//        return new ResponseEntity<String>("success", HttpStatus.OK);
+        return ResponseEntity.ok(Map.of("message", "회원가입이 완료되었습니다."));
     }
     //Header 방식 (Authorization: Bearer <token>)
     // - XXS 공격에 매우취약 - LocalStorage / SessionStorage에 저장시 문제 발생
@@ -76,10 +83,9 @@ public class UserRestController {
 
         try{
             //사용자 인증 시도(ID/PW 일치여부 확인)
-            Authentication authentication =
-                    authenticationManager.authenticate(
-                            new UsernamePasswordAuthenticationToken(userDto.getUserid(),userDto.getPassword())
-                    );
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userDto.getUserid(),userDto.getPassword())
+            );
             System.out.println("인증성공 : " + authentication);
 
             //Token 생성
@@ -88,34 +94,24 @@ public class UserRestController {
 
             //REDIS 에 REFRESH 저장
             redisUtil.save("RT:"+authentication.getName() , tokenInfo.getRefreshToken());
-            //
             response.put("state","success");
-            response.put("message","인증성공!");
+            response.put("message","아이디 또는 비밀번호가 올바르지 않습니다.");
 
-            //---------------------------------------------
             Cookie accessCookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken());
             accessCookie.setHttpOnly(true);
             accessCookie.setSecure(false); // Only for HTTPS
             accessCookie.setPath("/"); // Define valid paths
             accessCookie.setMaxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME); // 1 hour expiration
 
-            // Set refresh-token as HTTP-only cookie
-//            Cookie refreshCookie = new Cookie(JwtProperties.REFRESH_TOKEN_COOKIE_NAME, tokenInfo.getRefreshToken());
-//            refreshCookie.setHttpOnly(true);
-//            accessCookie.setSecure(false); // Only for HTTPS
-//            refreshCookie.setPath("/");
-//            refreshCookie.setMaxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME); // 7 days expiration
-
             Cookie userCookie = new Cookie("userid", authentication.getName());
             userCookie.setHttpOnly(true);
-            accessCookie.setSecure(false); // Only for HTTPS
+            userCookie.setSecure(false); // Only for HTTPS
             userCookie.setPath("/");
             userCookie.setMaxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME); // 7 days expiration
 
             resp.addCookie(accessCookie);
-//            resp.addCookie(refreshCookie);
             resp.addCookie(userCookie);
-            //---------------------------------------------
+
         }catch(AuthenticationException e){
             System.out.println("인증실패 : " + e.getMessage());
             response.put("state","fail");
@@ -131,11 +127,13 @@ public class UserRestController {
         log.info("name..." + authentication.getName());
 
         Optional<User> userOptional =  userRepository.findById(authentication.getName());
+        // Access토큰에 정보를 넣어서 authentication으로 바로 꺼내와도 됨.
         Map<String, Object> response = new HashMap<>();
 
         if(userOptional.isPresent()){
             User user = userOptional.get();
             response.put("userid",user.getUserid());
+            response.put("username",user.getUsername());
             response.put("role",user.getRole());
 
             return new ResponseEntity<>(response , HttpStatus.OK);
@@ -150,6 +148,7 @@ public class UserRestController {
         Collection<? extends GrantedAuthority> auth =  authentication.getAuthorities();
         auth.forEach(System.out::println);
         boolean hasRoleAnon = auth.stream()
+                // 기본 롤이 ROLE_ANONYMOUS 상태라서 로그인 상태가 아니라고 판단
                 .anyMatch(authority -> "ROLE_ANONYMOUS".equals(authority.getAuthority()));
 
         if (authentication.isAuthenticated() && !hasRoleAnon) {

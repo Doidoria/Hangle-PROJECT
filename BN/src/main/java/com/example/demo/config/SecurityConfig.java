@@ -11,7 +11,7 @@ import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.global.exceptionHandler.CustomAccessDeniedHandler;
 import com.example.demo.global.exceptionHandler.CustomAuthenticationEntryPoint;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,22 +30,16 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-	private CustomLoginSuccessHandler customLoginSuccessHandler;
-	@Autowired
-	private CustomLogoutHandler customLogoutHandler;
-	@Autowired
-	private CustomLogoutSuccessHandler customLogoutSuccessHandler;
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private JwtTokenProvider jwtTokenProvider;
-	@Autowired
-	private JwtTokenRepository jwtTokenRepository;
-	@Autowired
-	private RedisUtil redisUtil;
-
+	private final CustomLoginSuccessHandler customLoginSuccessHandler;
+	private final CustomLogoutHandler customLogoutHandler;
+	private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
+	private final UserRepository userRepository;
+	private final JwtTokenProvider jwtTokenProvider;
+	private final JwtTokenRepository jwtTokenRepository;
+	private final RedisUtil redisUtil;
 
 	@Bean
 	protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
