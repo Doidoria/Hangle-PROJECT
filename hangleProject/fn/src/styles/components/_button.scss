@@ -1,0 +1,38 @@
+@use '../base/tokens' as *;
+
+%btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: $radius;
+  border: 1px solid $border;
+  background: linear-gradient(180deg, #ffffff, #f3f4f6);
+  color: $text;
+  cursor: pointer;
+  transition: .15s ease-in-out;
+  box-shadow: $shadow-sm;
+}
+%btn-accent {
+  background: linear-gradient(180deg, $accent, $accent-600);
+  border-color: transparent;
+  color: white;
+  font-weight: 700;
+}
+%input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: $radius;
+  border: 1px solid $border;
+  background: #fff;
+  color: $text;
+}
+%textarea { min-height: 140px; resize: vertical; }
+
+/* 실제 클래스도 그대로 유지 가능 */
+.btn { @extend %btn; }
+.btn-accent { @extend %btn-accent; }
+.input { @extend %input; }
+.textarea { @extend %textarea; }
+.select { @extend %input; }

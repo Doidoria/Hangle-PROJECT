@@ -1,8 +1,7 @@
 // src/components/competitions/CompetitionCreate.jsx
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// CompetitionCreate.jsx
 import '../../styles/pages/CompetitionCreate.scss';
 
 function CompetitionCreate() {
@@ -21,15 +20,18 @@ function CompetitionCreate() {
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // ✅ 폼 입력 처리
   const onChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
   };
 
+  // ✅ 폼 제출 처리
   const onSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
+    // === 간단한 유효성 검사 ===
     if (!form.title.trim()) {
       setErrorMsg('제목을 입력해주세요.');
       return;
@@ -41,10 +43,14 @@ function CompetitionCreate() {
 
     try {
       setSaving(true);
-      const res = await axios.post('/api/admin/competitions', form);
+      // ✅ 실제 백엔드 요청 경로 수정 (포트 8095, 경로 /api/competitions)
+      const res = await axios.post('http://localhost:8095/api/competitions', form);
       const created = res.data;
+
+      alert(`✅ 대회가 등록되었습니다!\nID: ${created.id}`);
       navigate(`/competitions/${created.id}`);
     } catch (err) {
+      console.error(err);
       setErrorMsg('저장 중 오류가 발생했습니다.');
     } finally {
       setSaving(false);
@@ -59,17 +65,33 @@ function CompetitionCreate() {
       <form onSubmit={onSubmit}>
         <label>
           제목
-          <input name="title" value={form.title} onChange={onChange} placeholder="대회 제목" />
+          <input
+            name="title"
+            value={form.title}
+            onChange={onChange}
+            placeholder="대회 제목"
+          />
         </label>
 
         <label>
           요약
-          <input name="summary" value={form.summary} onChange={onChange} placeholder="간단 소개" />
+          <input
+            name="summary"
+            value={form.summary}
+            onChange={onChange}
+            placeholder="간단 소개"
+          />
         </label>
 
         <label>
           설명
-          <textarea name="description" value={form.description} onChange={onChange} rows={8} placeholder="상세 설명" />
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={onChange}
+            rows={8}
+            placeholder="상세 설명"
+          />
         </label>
 
         <div className="row">
@@ -85,7 +107,12 @@ function CompetitionCreate() {
 
         <label>
           상금
-          <input name="prize" value={form.prize} onChange={onChange} placeholder="예: 총상금 100만원" />
+          <input
+            name="prize"
+            value={form.prize}
+            onChange={onChange}
+            placeholder="예: 총상금 100만원"
+          />
         </label>
 
         <label>
@@ -99,23 +126,36 @@ function CompetitionCreate() {
 
         <label>
           데이터셋 URL
-          <input name="datasetUrl" value={form.datasetUrl} onChange={onChange} placeholder="https://..." />
+          <input
+            name="datasetUrl"
+            value={form.datasetUrl}
+            onChange={onChange}
+            placeholder="https://..."
+          />
         </label>
 
         <label>
           규칙 URL
-          <input name="rulesUrl" value={form.rulesUrl} onChange={onChange} placeholder="https://..." />
+          <input
+            name="rulesUrl"
+            value={form.rulesUrl}
+            onChange={onChange}
+            placeholder="https://..."
+          />
         </label>
 
         {errorMsg && <div className="error">{errorMsg}</div>}
 
         <div className="actions">
-          <button type="submit" className="primary" disabled={saving}>{saving ? '저장 중' : '저장'}</button>
-          <button type="button" onClick={() => navigate('/competitions')}>취소</button>
+          <button type="submit" className="primary" disabled={saving}>
+            {saving ? '저장 중...' : '저장'}
+          </button>
+          <button type="button" onClick={() => navigate('/competitions')}>
+            취소
+          </button>
         </div>
       </form>
     </div>
-
   );
 }
 
