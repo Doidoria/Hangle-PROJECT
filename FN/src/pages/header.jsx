@@ -1,5 +1,5 @@
 import '../css/header.scss'
-import { SearchBox, ThemeToggle, Loginbtn, Profilebtn } from '../js/header-btn'
+import { SearchBox, ThemeToggle, Loginbtn, Profilebtn } from '../components/header-btn'
 
 
 const Header = () => {

@@ -5,7 +5,7 @@ import axios from 'axios' // npm axios 설치
 import api from '../api/axiosConfig'; // 새로운 api 인스턴스 임포트
 
 const Login = () => {
-    const [username ,setUsername] = useState()
+    const [userid ,setUserid] = useState()
     const [password ,setPassword] = useState()
     const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ const Login = () => {
         try {
             const resp = await api.post(
                 "/login",
-                { username, password },
+                { userid, password },
                 { headers: { "Content-Type": "application/json" } }
             );
             alert("로그인 성공:", resp.data);
@@ -53,15 +53,15 @@ const Login = () => {
         <form action="/" method="POST" className="login-wrap">
           <div className="input-group">
             <label htmlFor="userid">아이디 (이메일)</label>
-            <input type="text" id="userid" name="userid" required />
+            <input type="text" id="userid" name="userid" onChange={e=>setUserid(e.target.value)}/>
           </div>
           <div className="input-group">
             <label htmlFor="password">비밀번호</label>
-            <input type="password" id="password" name="password" required />
+            <input type="password" id="password" name="password" onChange={e=>setPassword(e.target.value)}/>
           </div>
-          <button type="submit">로그인</button>
+          <button onClick={handleLogin}>로그인</button>
         </form>
-        <div className="divider">OR</div>
+        <div className="login-divider">OR</div>
         <Link to="#" className="social-login-button kakao-login">
           <img src="./image/icon_Kakao.png" alt="카카오" /> 카카오 로그인
         </Link>
@@ -71,7 +71,11 @@ const Login = () => {
         <Link to="#" className="social-login-button google-login">
           <img src="./image/icon_Google.png" alt="구글" /> 구글 로그인
         </Link>
+        <div>
+          <div className="join-divider"><Link to="/join">회원가입</Link></div>
+        </div>
       </div>
+      
     </div>
   )
 }
