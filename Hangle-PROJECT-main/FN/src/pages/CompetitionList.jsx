@@ -66,7 +66,7 @@ function CompetitionList() {
         <div className="header">
           <h1>대회 목록</h1>
           <div className="spacer" />
-          <Link to="/CompetitionCreate" className="btn btn-accent">대회 생성</Link>
+          <Link to="/CompetitionCreate" className="create-btn">대회 생성</Link>
         </div>
 
         <div className="filters">

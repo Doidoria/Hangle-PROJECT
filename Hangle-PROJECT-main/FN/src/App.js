@@ -22,9 +22,10 @@ function App() {
           <Route path="/login" element={<Login />}></Route>
           <Route path="/join" element={<Join />}></Route>
           {/* <Route path="/competiton" element={<competiton />}></Route> */}
-          <Route path="/CompetitionList" element={<CompetitionList />}></Route>
-          <Route path="/CompetitionDetail" element={<CompetitionDetail />}></Route>
-          <Route path="/CompetitionCreate" element={<CompetitionCreate />}></Route>
+          {/* 대회 페이지 */}
+          <Route path="/competitions" element={<CompetitionList />} />
+          <Route path="/competitions/new" element={<CompetitionCreate />} />
+          <Route path="/competitions/:id" element={<CompetitionDetail />} />
         </Routes>
       </BR>
     </div>
