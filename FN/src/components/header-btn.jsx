@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from "react";
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
+import { useAuth } from "../api/AuthContext.js";
+import api from '../api/axiosConfig';
 
 function SearchBox() {
   const inputRef = useRef(null);
@@ -63,11 +65,33 @@ function ThemeToggle() {
 }
 
 // 로그인 버튼
-function Loginbtn(){
-  return(
-    <Link to='/login' id="loginBtn" className="login-btn" aria-label="로그인">로그인</Link>
-  )
-}
+function HeaderButtons() {
+  const { isLogin, setIsLogin } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+    const resp = await api.post("/logout", {}, { withCredentials: true });
+    console.log("로그아웃 응답:", resp.data);
+    setIsLogin(false);         // ✅ 즉시 상태 업데이트
+    navigate("/login", { replace: true });  // ✅ 뒤로가기 방지
+  } catch (error) {
+    console.error("로그아웃 실패:", error);
+    setIsLogin(false);         // ✅ 실패해도 강제 로그아웃 UI 반영
+    navigate("/login", { replace: true });
+  }
+  }
+
+  return (
+    <>
+      {isLogin ? (
+        <Link onClick={handleLogout} id="logoutBtn" className="logout-btn">로그아웃</Link>
+      ) : (
+        <Link to='login' id="loginBtn" className="login-btn">로그인</Link>
+      )}
+    </>
+  );
+};
 
 //프로필 버튼
 function Profilebtn(){
@@ -78,4 +102,4 @@ function Profilebtn(){
   )
 }
 
-export {SearchBox, ThemeToggle, Loginbtn, Profilebtn};
+export {SearchBox, ThemeToggle, HeaderButtons, Profilebtn};

@@ -136,4 +136,20 @@
       }
     }
   }
+  .login-message {
+    font-size: 13px;
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+
+    &.error {
+      background-color: #ffeaea;
+      color: #b30000;
+    }
+
+    &.success {
+      background-color: #eaffea;
+      color: #007a00;
+    }
+  }
 }

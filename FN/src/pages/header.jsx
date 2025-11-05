@@ -1,6 +1,5 @@
 import '../css/header.scss'
-import { SearchBox, ThemeToggle, Loginbtn, Profilebtn } from '../components/header-btn'
-
+import { SearchBox, ThemeToggle, HeaderButtons, Profilebtn} from '../components/header-btn'
 
 const Header = () => {
 
@@ -9,7 +8,7 @@ const Header = () => {
       <SearchBox />
       <div className="top-actions">
         <ThemeToggle />
-        <Loginbtn />
+        <HeaderButtons/>
         <Profilebtn/>
       </div>
     </header>

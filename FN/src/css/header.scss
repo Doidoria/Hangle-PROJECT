@@ -97,6 +97,21 @@
         box-shadow: 0 0 0 3px var(--ring);
       }
     }
+    .logout-btn {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--logoutbtn);
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 30px;
+
+      &:hover {
+        box-shadow: 0 0 0 3px var(--logout-ring);
+      }
+    }
 
     .profile-btn {
       width: 34px;

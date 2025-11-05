@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 
-import {BrowserRouter as BR, Routes, Route} from "react-router-dom"
+import { BrowserRouter as BR, Routes, Route } from "react-router-dom"
 import Main from './pages/main';
 import Login from './pages/login';
 import Join from './pages/join';
@@ -13,11 +13,11 @@ function App() {
     <div className="App">
       <BR>
         <Routes>
-          <Route path="/" element={<Main/>}></Route>
-          <Route path="/login" element={<Login/>}></Route>
-          <Route path="/join" element={<Join/>}></Route>
-          <Route path="/competiton" element={<Competiton/>}></Route>
-          <Route path="/setting" element={<Setting/>}></Route>
+          <Route path="/" element={<Main />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/join" element={<Join />}></Route>
+          <Route path="/competiton" element={<Competiton />}></Route>
+          <Route path="/setting" element={<Setting />}></Route>
         </Routes>
       </BR>
     </div>

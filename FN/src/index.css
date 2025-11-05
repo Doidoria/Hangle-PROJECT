@@ -15,11 +15,14 @@ main{max-width: 1920px;}
     --muted: #6B7280;
     --primary: #10B981;
     --primary-hover: #059669;
+    --logoutbtn: #b12d2f;
+    --logoutbtn-hover: #dd4043;
     --surface: #FFFFFF;
     --border: #E6E9E6;
     --badge: #EAF7F1;
     --nav: #FFFFFF;
     --ring: rgba(16, 185, 129, .15);
+    --logout-ring: rgba(185, 16, 16, 0.15);
     --shadow: 0 10px 24px rgba(0, 0, 0, .06);
     --chart-grad: linear-gradient(90deg, #d1fae5 0%, #a7f3d0 50%, #6ee7b7 100%);
     --icon-muted: #64748B;

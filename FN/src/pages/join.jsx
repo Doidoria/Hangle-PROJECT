@@ -1,6 +1,6 @@
 import '../css/login.scss'
 import '../css/join.scss'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {useState,useEffect} from 'react'
 import axios from 'axios'
 
@@ -9,19 +9,38 @@ const Join = () => {
   const [userid, setUserid] = useState()
   const [password, setPassword] = useState()
   const [repassword, setrePassword] = useState()
+  const [message, setMessage] = useState(null)
+  const [isError, setIsError] = useState(false)
+  const navigate = useNavigate();
 
-  const handleJoin = (e) => {
-    axios
-      .post(
+  const handleJoin = async (e) => {
+    e.preventDefault(); // 폼 새로고침 방지
+    setMessage(null)
+
+    try {
+      const resp = await axios.post(
         'http://localhost:8090/join',
-        { "username":userid, "userid": username, "password": password, "repassword": repassword },
+        {
+          username,
+          userid,
+          password,
+          repassword,
+        },
         { headers: { 'Content-Type': 'application/json' } }
-      )
-      .then(resp => {
-        console.log(resp)
-      })
-      .catch(err => { console.log(err) })
-  }
+      );
+
+      setIsError(false);
+      setMessage(resp.data.message || '회원가입이 완료되었습니다.');
+
+      setTimeout(() => navigate('/login'), 1000);
+    } catch (err) {
+      const errMsg =
+        err.response?.data?.error ||
+        '회원가입 중 오류가 발생했습니다.';
+      setIsError(true);
+      setMessage(errMsg);
+    }
+  };
 
   return (
     <div className="layout-login">
@@ -48,6 +67,20 @@ const Join = () => {
           </div>
           <button onClick={handleJoin}>회원가입</button>
         </form>
+        {/* ✅ 메시지 표시 영역 */}
+        {message && (
+          <div
+            className={`join-message ${isError ? 'error' : 'success'}`}
+            style={{
+              color: isError ? '#d9534f' : '#28a745',
+              marginTop: '15px',
+              fontWeight: '600',
+              textAlign: 'center',
+            }}
+          >
+            {message}
+          </div>
+        )}
         <div className="register-links">이미 계정이 있으신가요?{" "}
           <Link to="/login" className="link">로그인</Link>
         </div>

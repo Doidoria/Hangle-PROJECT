@@ -95,7 +95,7 @@ public class UserRestController {
             //REDIS 에 REFRESH 저장
             redisUtil.save("RT:"+authentication.getName() , tokenInfo.getRefreshToken());
             response.put("state","success");
-            response.put("message","아이디 또는 비밀번호가 올바르지 않습니다.");
+            response.put("message","로그인에 성공했습니다.");
 
             Cookie accessCookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken());
             accessCookie.setHttpOnly(true);
@@ -115,7 +115,7 @@ public class UserRestController {
         }catch(AuthenticationException e){
             System.out.println("인증실패 : " + e.getMessage());
             response.put("state","fail");
-            response.put("message",e.getMessage());
+            response.put("message","아이디 또는 비밀번호가 올바르지 않습니다.");
             return new ResponseEntity(response,HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity(response,HttpStatus.OK);

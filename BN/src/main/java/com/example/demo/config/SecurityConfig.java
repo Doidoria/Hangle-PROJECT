@@ -15,6 +15,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,11 +28,11 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
-@Order(2) // Swagger용보다 나중에 적용
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -48,14 +49,29 @@ public class SecurityConfig {
     }
 
     @Bean
-    public FilterRegistrationBean<JwtAuthorizationFilter> jwtAuthFilterRegistration(JwtAuthorizationFilter filter) {
-        FilterRegistrationBean<JwtAuthorizationFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(filter);
-        registration.setEnabled(false);
-        return registration;
+    @Order(1)
+    public SecurityFilterChain openapiPermitAll(HttpSecurity http) throws Exception {
+        http.securityMatcher(
+                "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html"
+                )
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return http.build();
     }
 
+//    @Bean
+//    public FilterRegistrationBean<JwtAuthorizationFilter> jwtAuthFilterRegistration(JwtAuthorizationFilter filter) {
+//        FilterRegistrationBean<JwtAuthorizationFilter> registration = new FilterRegistrationBean<>();
+//        registration.setFilter(filter);
+//        registration.setEnabled(false);
+//        return registration;
+//    }
+
 	@Bean
+    @Order(2)
 	protected SecurityFilterChain configure(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
 		//CSRF비활성화
 		http.csrf((config)->{config.disable();});
@@ -65,7 +81,10 @@ public class SecurityConfig {
 		//권한체크
         http.securityMatcher("/**");
 		http.authorizeHttpRequests((auth)->{
+            auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
 			auth.requestMatchers("/","/join","/login","/validate").permitAll();
+            auth.requestMatchers(HttpMethod.POST, "/logout").permitAll();
+            auth.requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll();
 			auth.requestMatchers("/user").hasRole("USER");
 			auth.requestMatchers("/manager").hasRole("MANAGER");
 			auth.requestMatchers("/admin").hasRole("ADMIN");
@@ -88,8 +107,8 @@ public class SecurityConfig {
 			logout.addLogoutHandler(customLogoutHandler);
 			logout.logoutSuccessHandler(customLogoutSuccessHandler);
 		});
-		//예외처리
 
+		//예외처리
 		http.exceptionHandling((ex)->{
 			ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
 			ex.accessDeniedHandler(new CustomAccessDeniedHandler());
@@ -104,6 +123,8 @@ public class SecurityConfig {
 		http.sessionManagement((sessionManagerConfigure)->{
 			sessionManagerConfigure.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		});
+
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
 		//JWT FILTER ADD
 //        http.addFilterBefore(new JwtAuthorizationFilter(userRepository, jwtTokenProvider, redisUtil), LogoutFilter.class);
@@ -128,17 +149,26 @@ public class SecurityConfig {
 	//-----------------------------------------------------
 	@Bean
 	CorsConfigurationSource corsConfigurationSource(){
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedHeaders(Collections.singletonList("*")); //허용헤더
-		config.setAllowedMethods(Collections.singletonList("*")); //허용메서드
-		config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000"));  //허용도메인
-		config.setAllowCredentials(true); // COOKIE TOKEN OPTION
-		return new CorsConfigurationSource(){
-			@Override
-			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-				return config;
-			}
-		};
+        CorsConfiguration config = new CorsConfiguration();
+        // React 개발 서버 주소만 허용
+        config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000"));
+
+        // 모든 헤더와 메서드 허용
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // 쿠키 주고받기 허용
+        config.setAllowCredentials(true);
+
+        // 노출할 헤더
+        config.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+
+        // 중요! 실제 경로 매핑을 등록해야 Spring Security가 인식함
+        org.springframework.web.cors.UrlBasedCorsConfigurationSource source =
+                new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
 	}
 	//-----------------------------------------------------
 	//[추가] ATHENTICATION MANAGER 설정 - 로그인 직접처리를 위한 BEAN

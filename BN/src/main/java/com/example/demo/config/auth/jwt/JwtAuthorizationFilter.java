@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -33,13 +32,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @PostConstruct
     public void init() {
-        System.out.println("🔥 JwtAuthorizationFilter Bean 등록됨! logger = " + this.logger);
+        System.out.println("!!! JwtAuthorizationFilter Bean 등록됨! logger = " + this.logger);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws IOException, ServletException, IOException {
+            throws IOException, ServletException {
         System.out.println("[JWTAUTHORIZATIONFILTER] doFilterInternal...");
 
         // cookie 에서 JWT token을 가져옵니다.
@@ -47,15 +45,20 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String userid = null;
 
         try {
-            token = Arrays.stream(request.getCookies())
-                    .filter(cookie -> cookie.getName().equals(JwtProperties.ACCESS_TOKEN_COOKIE_NAME)).findFirst()
-                    .map(cookie -> cookie.getValue())
-                    .orElse(null);
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                token = Arrays.stream(cookies)
+                        .filter(c -> JwtProperties.ACCESS_TOKEN_COOKIE_NAME.equals(c.getName()))
+                        .map(Cookie::getValue)
+                        .findFirst()
+                        .orElse(null);
 
-            userid = Arrays.stream(request.getCookies())
-                    .filter(cookie -> cookie.getName().equals("userid") ).findFirst()
-                    .map(cookie -> cookie.getValue())
-                    .orElse(null);
+                userid = Arrays.stream(cookies)
+                        .filter(c -> "userid".equals(c.getName()))
+                        .map(Cookie::getValue)
+                        .findFirst()
+                        .orElse(null);
+            }
 
         }catch(Exception e){
 
@@ -64,53 +67,59 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         if (token != null && userid!=null) {
             try {
                 //엑세스 토큰의 유효성체크
-                if(jwtTokenProvider.validateToken(token)) {
-                    Authentication authentication = getUseridPasswordAuthenticationToken(token);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    System.out.println("[JWTAUTHORIZATIONFILTER] : " + authentication);
+                if (jwtTokenProvider.validateToken(token)) {
+                    Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                    if (authentication != null) {
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
 
             } catch (ExpiredJwtException e)     //토큰만료시 예외처리(쿠키 제거)
             {
-                String refreshToken =  redisUtil.getRefreshToken("RT:"+userid);
+                String refreshToken = redisUtil.getRefreshToken("RT:" + userid);
+                if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
+                } else {
+                    // RefreshToken도 만료 or 존재 안 함
+                    clearAuthCookies(response);
+                    redisUtil.delete("RT:" + userid);
+                    System.out.println("[JWT] refreshToken 없음 → 로그아웃 처리");
+                }
                 try{
                         if(jwtTokenProvider.validateToken(refreshToken)){
                             //accessToken 만료 o, refreshToken 만료 x -> access-token갱신
                             long now = (new Date()).getTime();
                             User user = userRepository.findByUserid(userid);
-                            // Access Token 생성
-                            Date accessTokenExpiresIn = new Date(now + JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME); // 60초후 만료
+                            Date accessTokenExpiresIn = new Date(now + JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME);
                             String accessToken = Jwts.builder()
                                     .setSubject(userid)
-                                    .claim("userid",userid) //정보저장
-                                    .claim("auth", user.getRole())//정보저장
+                                    .claim("userid", userid)
+                                    .claim("auth", user.getRole())
                                     .setExpiration(accessTokenExpiresIn)
                                     .signWith(jwtTokenProvider.getKey(), SignatureAlgorithm.HS256)
                                     .compact();
                             //클라이언트 전달
-                            Cookie cookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME,accessToken);
-                            cookie.setMaxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME);
+                            Cookie cookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, accessToken);
+                            cookie.setHttpOnly(true);
+                            cookie.setSecure(false);
                             cookie.setPath("/");
+                            cookie.setMaxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME);
                             response.addCookie(cookie);
+
+                            Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                            System.out.println("[JWT] AccessToken refreshed for user: " + userid);
+                            return; // 여기서 끝내야 다음 필터에서 인증 누락 안 됨
                         }
-                    }catch(ExpiredJwtException refreshTokenExpiredException){
-                        //엑세스토큰 만료 o , 리프레시 토큰 만료 o //클라이언트 만료된 AccessToken 삭제
-                        Cookie cookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME,null);
-                        cookie.setMaxAge(0);
-                        cookie.setPath("/");
-                        response.addCookie(cookie);
-                        //USERID쿠키도 삭제
-                        Cookie userCookie = new Cookie("userid",null);
-                        userCookie.setMaxAge(0);
-                        userCookie.setPath("/");
-                        response.addCookie(userCookie);
-                        //REDIS에서 삭제
-                        redisUtil.delete("RT:"+userid);
+                    }catch (ExpiredJwtException ex) {
+                    clearAuthCookies(response);
+                    redisUtil.delete("RT:" + userid);
+                    System.out.println("[JWT] RefreshToken 만료 → 로그아웃 처리");
                 }
                 System.out.println("[JWTAUTHORIZATIONFILTER] : ...ExpiredJwtException ...."+e.getMessage());
 
             }catch(Exception e2){
-                //그외 나머지
+                System.out.println("[JWT] 기타 예외 발생: " + e2.getMessage());
             }
         }
         chain.doFilter(request, response);
@@ -124,6 +133,20 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         if(user.isPresent())
             return authentication;
         return null; // 유저가 없으면 NULL
+    }
+
+    private void clearAuthCookies(HttpServletResponse response) {
+        Cookie access = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, null);
+        access.setPath("/");
+        access.setMaxAge(0);
+        access.setAttribute("SameSite", "None");
+        Cookie user = new Cookie("userid", null);
+        user.setPath("/");
+        user.setMaxAge(0);
+        user.setAttribute("SameSite", "None");
+
+        response.addCookie(access);
+        response.addCookie(user);
     }
 
 }
