@@ -138,12 +138,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private void clearAuthCookies(HttpServletResponse response) {
         Cookie access = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, null);
         access.setPath("/");
+        access.setHttpOnly(true);
+        access.setSecure(false);
         access.setMaxAge(0);
-        access.setAttribute("SameSite", "None");
+//        access.setAttribute("SameSite", "None");
         Cookie user = new Cookie("userid", null);
         user.setPath("/");
+        user.setHttpOnly(true);
+        user.setSecure(false);
         user.setMaxAge(0);
-        user.setAttribute("SameSite", "None");
+//        user.setAttribute("SameSite", "None");
 
         response.addCookie(access);
         response.addCookie(user);

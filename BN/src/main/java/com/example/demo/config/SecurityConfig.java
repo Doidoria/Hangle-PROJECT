@@ -73,23 +73,23 @@ public class SecurityConfig {
 	@Bean
     @Order(2)
 	protected SecurityFilterChain configure(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
-		//CSRF비활성화
+        // CORS 활성화
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+		// CSRF비활성화
 		http.csrf((config)->{config.disable();});
 
-		//CSRF토큰 쿠키형태로 전달
-//		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 		//권한체크
         http.securityMatcher("/**");
-		http.authorizeHttpRequests((auth)->{
+        http.authorizeHttpRequests(auth -> {
             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-			auth.requestMatchers("/","/join","/login","/validate").permitAll();
+            auth.requestMatchers("/", "/join", "/login", "/validate").permitAll();
             auth.requestMatchers(HttpMethod.POST, "/logout").permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll();
-			auth.requestMatchers("/user").hasRole("USER");
-			auth.requestMatchers("/manager").hasRole("MANAGER");
-			auth.requestMatchers("/admin").hasRole("ADMIN");
-			auth.anyRequest().authenticated();
-		});
+            auth.requestMatchers("/user").hasRole("USER");
+            auth.requestMatchers("/manager").hasRole("MANAGER");
+            auth.requestMatchers("/admin").hasRole("ADMIN");
+            auth.anyRequest().authenticated();
+        });
 		//-----------------------------------------------------
 		// [수정] 로그인(직접처리 - UserRestController)
 		//-----------------------------------------------------
@@ -124,7 +124,7 @@ public class SecurityConfig {
 			sessionManagerConfigure.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		});
 
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+
 
 		//JWT FILTER ADD
 //        http.addFilterBefore(new JwtAuthorizationFilter(userRepository, jwtTokenProvider, redisUtil), LogoutFilter.class);
@@ -152,22 +152,20 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         // React 개발 서버 주소만 허용
         config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000"));
-
         // 모든 헤더와 메서드 허용
-        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // 쿠키 주고받기 허용
+        // 쿠키 포함 요청 허용
         config.setAllowCredentials(true);
-
-        // 노출할 헤더
+        // 쿠키 삭제 시 필요한 헤더 노출
         config.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
-
-        // 중요! 실제 경로 매핑을 등록해야 Spring Security가 인식함
+        // SameSite=None 쿠키를 주고받기 위해 반드시 Secure(false)로 일관성 유지
+        // (이건 쿠키 생성/삭제할 때 맞춰줘야 함)
+        // 쿠키 생성 시에도 동일하게 secure=false, SameSite=None으로 만들어야 브라우저 인식됨
+        // URL 매핑
         org.springframework.web.cors.UrlBasedCorsConfigurationSource source =
                 new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-
         return source;
 	}
 	//-----------------------------------------------------

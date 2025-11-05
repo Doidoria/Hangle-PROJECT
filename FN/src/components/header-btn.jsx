@@ -64,7 +64,7 @@ function ThemeToggle() {
   );
 }
 
-// 로그인 버튼
+// 로그인/로그아웃 버튼
 function HeaderButtons() {
   const { isLogin, setIsLogin } = useAuth();
   const navigate = useNavigate();
@@ -73,11 +73,11 @@ function HeaderButtons() {
     try {
     const resp = await api.post("/logout", {}, { withCredentials: true });
     console.log("로그아웃 응답:", resp.data);
-    setIsLogin(false);         // ✅ 즉시 상태 업데이트
-    navigate("/login", { replace: true });  // ✅ 뒤로가기 방지
+    setIsLogin(false);
+    navigate("/login", { replace: true });
   } catch (error) {
     console.error("로그아웃 실패:", error);
-    setIsLogin(false);         // ✅ 실패해도 강제 로그아웃 UI 반영
+    setIsLogin(false);
     navigate("/login", { replace: true });
   }
   }

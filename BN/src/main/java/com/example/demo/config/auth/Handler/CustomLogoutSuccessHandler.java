@@ -42,10 +42,25 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException {
 		log.info("CustomLogoutSuccessHandler onLogoutSuccess invoke.." + authentication);
+
+        //-----------------------------------
+        //REDIS 서버에서 REFRESH 토큰 제거
+        //----------------------------------
+        Cookie useridCookie = new Cookie("userid",null);
+        useridCookie.setMaxAge(0);
+        useridCookie.setPath("/");
+        response.addCookie(useridCookie);
+        redisUtil.delete("RT:"+authentication.getName());
+
+        //-----------------------------------
+        //발급받은 ACCESS-TOKEN 쿠키제거
+        //-----------------------------------
+        clearCookie(response, JwtProperties.ACCESS_TOKEN_COOKIE_NAME);
+        clearCookie(response, "userid");
+
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write("{\"message\":\"Logout success\"}");
-        response.getWriter().flush();
 
 		//-----------------------------------
 		// TOKEN을 DB에서 삭제
@@ -55,22 +70,6 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 						.map(cookie -> cookie.getValue())
 						.orElse(null);
 		jwtTokenRepository.deleteByAccessToken(token);
-		//-----------------------------------
-		//REDIS 서버에서 REFRESH 토큰 제거
-		//----------------------------------
-		Cookie useridCookie = new Cookie("userid",null);
-        useridCookie.setMaxAge(0);
-        useridCookie.setPath("/");
-		response.addCookie(useridCookie);
-		redisUtil.delete("RT:"+authentication.getName());
-		
-		//-----------------------------------
-		//발급받은 ACCESS-TOKEN 쿠키제거
-		//-----------------------------------
-		Cookie cookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME,null);
-		cookie.setMaxAge(0);
-		cookie.setPath("/");
-		response.addCookie(cookie);
 
 		//-----------------------------------
 		//OAUTH2 SERVER 와 연결 끊기
@@ -90,5 +89,15 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 
 		response.sendRedirect(request.getContextPath()+"/");
 	}
+
+    private void clearCookie(HttpServletResponse response, String name) {
+        Cookie cookie = new Cookie(name, null);
+        cookie.setPath("/");          // 생성 시 Path 동일
+        cookie.setHttpOnly(true);     // 생성 시 동일
+        cookie.setSecure(false);      // 로컬환경은 false
+        cookie.setMaxAge(0);          // 즉시 만료
+        // cookie.setAttribute("SameSite", "None"); // 로컬에서는 X
+        response.addCookie(cookie);
+    }
 
 }
