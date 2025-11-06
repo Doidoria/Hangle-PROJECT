@@ -4,8 +4,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 import '../css/competitionStyle/pages/CompetitionCreate.scss';
-
 import Layout from './Layout.jsx';
+
+// CRA(.env) 기반 API 베이스
+const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8090';
 
 function CompetitionCreate() {
   const navigate = useNavigate();
@@ -30,7 +32,7 @@ function CompetitionCreate() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (saving) return; // 중복 제출 방지
+    if (saving) return;
     setErrorMsg('');
 
     if (!form.title.trim()) {
@@ -48,18 +50,32 @@ function CompetitionCreate() {
 
     try {
       setSaving(true);
-      const res = await axios.post('http://localhost:8095/api/competitions', form, {
+
+      // 백엔드(Status: OPEN/CLOSED/UPCOMING, DateTime) 규격에 맞춰 변환
+      const payload = {
+        ...form,
+        status: form.status === 'DRAFT' ? 'UPCOMING' : form.status,
+        startAt: form.startAt ? `${form.startAt}T00:00:00` : null,
+        endAt: form.endAt ? `${form.endAt}T00:00:00` : null,
+      };
+
+      const res = await axios.post(`${API_BASE}/api/competitions`, payload, {
         headers: { 'Content-Type': 'application/json' },
       });
+
       const created = res.data;
-      alert(`대회가 등록되었습니다!\nID: ${created.id}`);
-      navigate(`/competitions/${created.id}`);
+      alert(`대회가 등록되었습니다!\nID: ${created.id ?? ''}`);
+      navigate(`/competitions/${created.id ?? ''}`);
     } catch (err) {
       console.error(err);
+      if (err.code === 'ERR_NETWORK') {
+        setErrorMsg('서버에 연결할 수 없습니다. (네트워크 오류)');
+        return;
+      }
       const msg =
         err.response?.data?.message ||
         err.response?.data?.error ||
-        '저장 중 오류가 발생했습니다.';
+        `저장 중 오류가 발생했습니다. (HTTP ${err.response?.status ?? '???'})`;
       setErrorMsg(msg);
     } finally {
       setSaving(false);
@@ -69,7 +85,7 @@ function CompetitionCreate() {
   return (
     <Layout>
       <div className="container comp-create">
-        <Link className="back" to="/Competitions">← 목록으로</Link>
+        <Link className="back" to="/competitions">← 목록으로</Link>
         <h1>대회 생성</h1>
 
         <form onSubmit={onSubmit}>
