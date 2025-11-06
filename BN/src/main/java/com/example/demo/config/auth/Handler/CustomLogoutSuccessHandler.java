@@ -86,8 +86,6 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 			response.sendRedirect("https://accounts.google.com/Logout");
 			return ;
 		}
-
-		response.sendRedirect(request.getContextPath()+"/");
 	}
 
     private void clearCookie(HttpServletResponse response, String name) {

@@ -5,6 +5,22 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [isLogin, setIsLogin] = useState(false);
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('username');
+      if (storedUsername) {
+        setUsername(storedUsername);
+        setIsLogin(true);
+      }
+    }, []);
+
+  const logout = () => {
+    localStorage.removeItem('username');
+    localStorage.removeItem('userid');
+    setUsername('');
+    setIsLogin(false);
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -19,7 +35,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLogin, setIsLogin }}>
+    <AuthContext.Provider value={{ isLogin, setIsLogin, username, setUsername, logout }}>
       {children}
     </AuthContext.Provider>
   );

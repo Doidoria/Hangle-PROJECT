@@ -60,8 +60,7 @@ public class UserRestController {
         // 사용자 존재 여부 검사
         User existingUser = userRepository.findByUserid(userDto.getUserid());
         if (existingUser != null) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", "이미 존재하는 사용자입니다."));
+            return ResponseEntity.badRequest().body(Map.of("error", "이미 존재하는 사용자입니다."));
         }
 
         //dto -> entity
@@ -70,7 +69,6 @@ public class UserRestController {
         // save entity to DB
         userRepository.save(user);
 
-//        return new ResponseEntity<String>("success", HttpStatus.OK);
         return ResponseEntity.ok(Map.of("message", "회원가입이 완료되었습니다."));
     }
     //Header 방식 (Authorization: Bearer <token>)
@@ -80,6 +78,25 @@ public class UserRestController {
     public ResponseEntity<Map<String,Object>> login(@RequestBody UserDto userDto, HttpServletResponse resp) throws IOException {
         log.info("POST /login..." + userDto);
         Map<String, Object> response = new HashMap<>();
+
+        User user = userRepository.findByUserid(userDto.getUserid());
+        if (userDto.getUserid() == null || userDto.getUserid().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "아이디(이메일)를 입력해주세요."));
+        }
+        if (!userDto.getUserid().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "아이디(이메일) 형식으로 입력해주세요."));
+        }
+        if (userDto.getPassword() == null || userDto.getPassword().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "비밀번호를 입력해주세요."));
+        }
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "존재하지 않는 사용자입니다."));
+        }
+        if (!passwordEncoder.matches(userDto.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "비밀번호가 일치하지 않습니다."));
+        }
 
         try{
             //사용자 인증 시도(ID/PW 일치여부 확인)
@@ -96,6 +113,9 @@ public class UserRestController {
             redisUtil.save("RT:"+authentication.getName() , tokenInfo.getRefreshToken());
             response.put("state","success");
             response.put("message","로그인에 성공했습니다.");
+            response.put("username", user.getUsername());
+            response.put("userid", user.getUserid());
+            response.put("token", tokenInfo.getAccessToken());
 
             Cookie accessCookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken());
             accessCookie.setHttpOnly(true);
