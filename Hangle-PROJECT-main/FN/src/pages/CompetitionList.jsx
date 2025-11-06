@@ -1,11 +1,14 @@
-// src/components/competitions/CompetitionList.jsx
+// pages/CompetitionList.jsx (경로 네 프로젝트에 맞게)
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import '../css/competitionStyle/pages/CompetitionList.scss';
-import Layout from './Layout.jsx';
 
-function CompetitionList() {
+import '../css/competitionStyle/pages/CompetitionList.scss';
+import Layout from './Layout';
+
+const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:8095';
+
+export default function CompetitionList() {
   const [items, setItems] = useState([]);
   const [pageInfo, setPageInfo] = useState({ page: 0, size: 12, total: 0 });
   const [loading, setLoading] = useState(false);
@@ -17,20 +20,20 @@ function CompetitionList() {
   const size = Number(searchParams.get('size') || 12);
 
   useEffect(() => {
-    async function fetchList() {
+    (async () => {
       setLoading(true);
       try {
-        const res = await axios.get('http://localhost:8095/api/competitions', {
-          params: { status, keyword, page, size },
-        });
-        const data = res.data;
-        setItems(data.content || data || []); // 리스트/배열 또는 페이징 객체 대응
+        const res = await axios.get(`${API_BASE}/api/competitions`, { params: { status, keyword, page, size } });
+        const data = res.data ?? [];
+        const list = Array.isArray(data) ? data : (data.content ?? []);
+        setItems(list);
         setPageInfo({
           page: data.page ?? page,
           size: data.size ?? size,
           total: data.totalElements ?? (Array.isArray(data) ? data.length : 0),
         });
-      } catch (e) {
+      } catch {
+        // 개발용 더미
         setItems([
           { id: 1, title: '예시 대회 1', summary: '간단 소개', status: 'OPEN', startAt: '2025-11-01', endAt: '2025-12-01' },
           { id: 2, title: '예시 대회 2', summary: '간단 소개', status: 'OPEN', startAt: '2025-11-10', endAt: '2025-12-15' },
@@ -39,25 +42,17 @@ function CompetitionList() {
       } finally {
         setLoading(false);
       }
-    }
-    fetchList();
+    })();
   }, [status, keyword, page, size]);
 
   const onSearch = (e) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    const nextKeyword = form.get('keyword') || '';
-    setSearchParams({ status, keyword: nextKeyword, page: 0, size });
+    setSearchParams({ status, keyword: form.get('keyword') || '', page: 0, size });
   };
 
-  const changeStatus = (next) => {
-    setSearchParams({ status: next, keyword, page: 0, size });
-  };
-
-  const movePage = (nextPage) => {
-    setSearchParams({ status, keyword, page: nextPage, size });
-  };
-
+  const changeStatus = (next) => setSearchParams({ status: next, keyword, page: 0, size });
+  const movePage = (nextPage) => setSearchParams({ status, keyword, page: nextPage, size });
   const totalPages = Math.max(1, Math.ceil(pageInfo.total / pageInfo.size));
 
   return (
@@ -66,7 +61,7 @@ function CompetitionList() {
         <div className="header">
           <h1>대회 목록</h1>
           <div className="spacer" />
-          <Link to="/CompetitionCreate" className="create-btn">대회 생성</Link>
+          <Link to="/competitions/new" className="create-btn">대회 만들기</Link>
         </div>
 
         <div className="filters">
@@ -81,14 +76,16 @@ function CompetitionList() {
         </form>
 
         <div className="grid">
-          {items.length === 0 ? (
+          {loading ? (
+            <div style={{ color: '#9ca3af' }}>불러오는 중…</div>
+          ) : items.length === 0 ? (
             <div style={{ color: '#9ca3af' }}>표시할 대회가 없습니다.</div>
           ) : (
             items.map((c) => (
               <Link key={c.id} to={`/competitions/${c.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div className="card">
                   <div className="title">
-                    {c.title}
+                    {c.title ?? '제목 없음'}
                     <span className={`badge ${c.status}`}> {c.status}</span>
                   </div>
                   <div className="summary">{c.summary || '설명 없음'}</div>
@@ -101,18 +98,10 @@ function CompetitionList() {
 
         <div className="pagination">
           <button className="btn" onClick={() => movePage(Math.max(0, page - 1))} disabled={page <= 0}>이전</button>
-          <span className="page-info">페이지 {page + 1} / {Math.max(1, Math.ceil(pageInfo.total / pageInfo.size))}</span>
-          <button
-            className="btn"
-            onClick={() => movePage(Math.min(Math.ceil(pageInfo.total / pageInfo.size) - 1, page + 1))}
-            disabled={page + 1 >= Math.max(1, Math.ceil(pageInfo.total / pageInfo.size))}
-          >
-            다음
-          </button>
+          <span className="page-info">페이지 {page + 1} / {totalPages}</span>
+          <button className="btn" onClick={() => movePage(Math.min(totalPages - 1, page + 1))} disabled={page + 1 >= totalPages}>다음</button>
         </div>
       </div>
     </Layout>
   );
 }
-
-export default CompetitionList;

@@ -2,7 +2,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+
 import '../css/competitionStyle/pages/CompetitionCreate.scss';
+
 import Layout from './Layout.jsx';
 
 function CompetitionCreate() {
@@ -67,7 +69,7 @@ function CompetitionCreate() {
   return (
     <Layout>
       <div className="container comp-create">
-        <Link className="back" to="/CompetitionList">← 목록으로</Link>
+        <Link className="back" to="/Competitions">← 목록으로</Link>
         <h1>대회 생성</h1>
 
         <form onSubmit={onSubmit}>

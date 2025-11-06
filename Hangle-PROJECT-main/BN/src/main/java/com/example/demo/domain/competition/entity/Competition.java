@@ -9,7 +9,10 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "competitions")
+@Table(
+        name = "competitions",
+        uniqueConstraints = @UniqueConstraint(columnNames = "title")
+)
 public class Competition {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

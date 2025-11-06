@@ -8,7 +8,7 @@ const Aside = () => {
                 <span className="dot" aria-hidden="true" />
                 <span className="name">Hangle</span>
             </Link>
-            <Link to="/CompetitionList" className="nav-create active">
+            <Link to="/competitions" className="nav-create active">
                 <img src="/image/+.png" alt="만들기" style={{ width: 14 }} />
                 대회 참여
             </Link>

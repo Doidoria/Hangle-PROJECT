@@ -10,7 +10,7 @@ import CompetitionCreate from './pages/CompetitionCreate';
 import Main from './pages/main';
 import Login from './pages/login';
 import Join from './pages/join';
-import Competiton from './pages/competiton';
+// import competition from './pages/competition';
 
 
 function App() {

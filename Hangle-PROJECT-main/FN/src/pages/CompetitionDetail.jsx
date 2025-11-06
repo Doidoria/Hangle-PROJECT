@@ -1,21 +1,25 @@
-// src/components/competitions/CompetitionDetail.jsx
+// pages/CompetitionDetail.jsx
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import '../css/competitionStyle/pages/CompetitionDetail.scss';
-import Layout from './Layout.jsx';
 
-function CompetitionDetail() {
+import '../css/competitionStyle/pages/CompetitionDetail.scss';
+
+
+const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:8095';
+
+export default function CompetitionDetail() {
   const { id } = useParams();
   const [comp, setComp] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [state, setState] = useState({ loading: false, error: null });
 
   useEffect(() => {
-    async function fetchDetail() {
-      setLoading(true);
+    (async () => {
+      setState({ loading: true, error: null });
       try {
-        const res = await axios.get(`http://localhost:8095/api/competitions/${id}`);
+        const res = await axios.get(`${API_BASE}/api/competitions/${id}`);
         setComp(res.data);
+        setState({ loading: false, error: null });
       } catch (e) {
         setComp({
           id,
@@ -28,34 +32,34 @@ function CompetitionDetail() {
           datasetUrl: '#',
           rulesUrl: '#',
         });
-      } finally {
-        setLoading(false);
+        setState({
+          loading: false,
+          error: e.response?.status === 404 ? '존재하지 않는 대회입니다.' : (e.message || '요청 실패'),
+        });
       }
-    }
-    fetchDetail();
+    })();
   }, [id]);
 
-  if (loading) return <div style={{ padding: 24 }}>불러오는 중...</div>;
+  if (state.loading) return <div style={{ padding: 24 }}>불러오는 중...</div>;
   if (!comp) return <div style={{ padding: 24 }}>데이터가 없습니다.</div>;
 
   return (
-    <Layout>
-      <div className="container comp-detail">
-        <Link className="back" to="/competitions">← 목록으로</Link>
+    <div className="container comp-detail">
+      <Link className="back" to="/competitions">← 목록으로</Link>
 
-        <section className="hero">
-          <h1>{comp.title}</h1>
-          <div className="meta">상태: {comp.status} | 기간: {comp.startAt} ~ {comp.endAt}</div>
-          {comp.prize && <div className="prize">상금: {comp.prize}</div>}
-          <div className="links">
-            {comp.datasetUrl && <a href={comp.datasetUrl} target="_blank" rel="noreferrer" className="btn">데이터셋</a>}
-            {comp.rulesUrl && <a href={comp.rulesUrl} target="_blank" rel="noreferrer" className="btn">규칙</a>}
-          </div>
-        </section>
+      {state.error && <div style={{ marginTop: 12, color: '#b91c1c' }}>{state.error}</div>}
 
-        <section className="desc">{comp.description || '설명이 없습니다.'}</section>
-      </div>
-    </Layout>
+      <section className="hero">
+        <h1>{comp.title}</h1>
+        <div className="meta">상태: {comp.status} | 기간: {comp.startAt} ~ {comp.endAt}</div>
+        {comp.prize && <div className="prize">상금: {comp.prize}</div>}
+        <div className="links">
+          {comp.datasetUrl && <a href={comp.datasetUrl} target="_blank" rel="noreferrer" className="btn">데이터셋</a>}
+          {comp.rulesUrl && <a href={comp.rulesUrl} target="_blank" rel="noreferrer" className="btn">규칙</a>}
+        </div>
+      </section>
+
+      <section className="desc">{comp.description || '설명이 없습니다.'}</section>
+    </div>
   );
 }
-export default CompetitionDetail;
