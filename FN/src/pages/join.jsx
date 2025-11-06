@@ -13,30 +13,39 @@ const Join = () => {
   const [isError, setIsError] = useState(false)
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (repassword && password !== repassword) {
+      setIsError(true);
+      setMessage("비밀번호가 일치하지 않습니다.");
+    } else {
+      setIsError(false);
+      setMessage(null);
+    }
+  }, [password, repassword]);
+
   const handleJoin = async (e) => {
-    e.preventDefault(); // 폼 새로고침 방지
-    setMessage(null)
+    e.preventDefault();
+    setMessage(null);
+
+    if (password !== repassword) {
+      setIsError(true);
+      setMessage("비밀번호가 일치하지 않습니다.");
+      return;
+    }
 
     try {
       const resp = await axios.post(
         'http://localhost:8090/join',
-        {
-          username,
-          userid,
-          password,
-          repassword,
-        },
+        { username, userid, password, repassword },
         { headers: { 'Content-Type': 'application/json' } }
       );
 
       setIsError(false);
       setMessage(resp.data.message || '회원가입이 완료되었습니다.');
-
+      
       setTimeout(() => navigate('/login'), 1000);
     } catch (err) {
-      const errMsg =
-        err.response?.data?.error ||
-        '회원가입 중 오류가 발생했습니다.';
+      const errMsg = err.response?.data?.error || '회원가입 중 오류가 발생했습니다.';
       setIsError(true);
       setMessage(errMsg);
     }

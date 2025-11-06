@@ -1,10 +1,12 @@
 package com.example.demo.config;
 
 import com.example.demo.config.auth.jwt.JwtAuthorizationFilter;
+import com.example.demo.config.auth.jwt.JwtProperties;
 import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import com.example.demo.config.auth.Handler.CustomLoginSuccessHandler;
 import com.example.demo.config.auth.Handler.CustomLogoutHandler;
 import com.example.demo.config.auth.Handler.CustomLogoutSuccessHandler;
+import com.example.demo.config.auth.jwt.TokenInfo;
 import com.example.demo.config.auth.redis.RedisUtil;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.global.exceptionHandler.CustomAccessDeniedHandler;
@@ -15,7 +17,9 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,6 +28,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -115,16 +120,17 @@ public class SecurityConfig {
 		});
 
 		//OAUTH2-CLIENT
-		http.oauth2Login((oauth2)->{
-			oauth2.loginPage("/login");
-		});
+		http.oauth2Login(oauth -> oauth
+                .loginPage("/login") // 커스텀 로그인 페이지 유지
+                .defaultSuccessUrl("http://localhost:3000/", true) // 로그인 성공 후 React 메인 페이지로 리다이렉트
+                .successHandler(oAuth2LoginSuccessHandler())
+                .failureUrl("http://localhost:3000/login?error=true") // 실패 시 React 로그인 페이지로
+        );
 
 		//SESSION INVALIDATED
 		http.sessionManagement((sessionManagerConfigure)->{
 			sessionManagerConfigure.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		});
-
-
 
 		//JWT FILTER ADD
 //        http.addFilterBefore(new JwtAuthorizationFilter(userRepository, jwtTokenProvider, redisUtil), LogoutFilter.class);
@@ -176,5 +182,39 @@ public class SecurityConfig {
 			AuthenticationConfiguration authenticationConfiguration) throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
+
+    @Bean
+    public AuthenticationSuccessHandler oAuth2LoginSuccessHandler() {
+        return (request, response, authentication) -> {
+            // ✅ 1. JWT 생성
+            TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+
+            // ✅ 2. Redis에 Refresh 저장
+            redisUtil.save("RT:" + authentication.getName(), tokenInfo.getRefreshToken());
+
+            // ✅ 3. 쿠키 생성 (Access + User)
+            ResponseCookie accessCookie = ResponseCookie.from(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken())
+                    .httpOnly(true)
+                    .secure(true) // HTTPS에서만 사용, SameSite=None 대응
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME)
+                    .build();
+
+            ResponseCookie userCookie = ResponseCookie.from("userid", authentication.getName())
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME)
+                    .build();
+
+            response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, userCookie.toString());
+
+            // ✅ 4. 프론트엔드로 리다이렉트
+            response.sendRedirect("http://localhost:3000/");
+        };
+    }
 
 }

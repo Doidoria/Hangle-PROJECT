@@ -7,6 +7,10 @@ import Login from './pages/login';
 import Join from './pages/join';
 import Competiton from './pages/competiton';
 import Setting from './pages/setting';
+import MyProfile from './pages/myProfile';
+import CompetitionList from './pages/CompetitionList';
+import CompetitionDetail from './pages/CompetitionDetail';
+import CompetitionCreate from './pages/CompetitionCreate';
 
 function App() {
   return (
@@ -17,7 +21,12 @@ function App() {
           <Route path="/login" element={<Login />}></Route>
           <Route path="/join" element={<Join />}></Route>
           <Route path="/competiton" element={<Competiton />}></Route>
+          <Route path="/myprofile" element={<MyProfile />}></Route>
           <Route path="/setting" element={<Setting />}></Route>
+          
+          <Route path="/competitions" element={<CompetitionList />} />
+          <Route path="/competitions/new" element={<CompetitionCreate />} />
+          <Route path="/competitions/:id" element={<CompetitionDetail />} />
         </Routes>
       </BR>
     </div>

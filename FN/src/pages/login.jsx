@@ -10,8 +10,8 @@ const Login = () => {
     const [password ,setPassword] = useState()
     const [message, setMessage] = useState(null)
     const [isError, setIsError] = useState(false)
-    const navigate = useNavigate();
-    const { setIsLogin } = useAuth();
+    const navigate = useNavigate()
+    const { setIsLogin } = useAuth()
 
   // useEffect에서 API 검증 호출 (최초 처음 실행될때 실행 useEffect)
   useEffect(() => {
@@ -19,19 +19,19 @@ const Login = () => {
       try {
         const resp = await axios.get('http://localhost:8090/validate', {
           withCredentials: true,
-        });
-        console.log('토큰 검증 성공:', resp);
-        navigate('/');
+        })
+        console.log('토큰 검증 성공:', resp)
+        navigate('/')
       } catch (error) {
-        console.log('토큰 검증 실패:', error);
+        console.log('토큰 검증 실패:', error)
       }
     };
-    validateToken();
-  }, [navigate]);
+    validateToken()
+  }, [navigate])
 
     const handleLogin = async (e) => {
-    e.preventDefault();
-    setMessage(null); // 이전 메시지 초기화
+    e.preventDefault()
+    setMessage(null) // 이전 메시지 초기화
 
     try {
       const resp = await api.post(
@@ -42,20 +42,25 @@ const Login = () => {
           withCredentials: true,
         }
       );
-
-      console.log('로그인 성공:', resp.data);
-      setIsError(false);
-      setMessage(resp.data.message || '로그인에 성공했습니다.');
-
-      setIsLogin(true);
-      setTimeout(() => navigate('/'), 1000);
+      console.log('로그인 성공:', resp.data)
+      localStorage.setItem('username', resp.data.username)
+      localStorage.setItem('userid', resp.data.userid)
+      setIsError(false)
+      setMessage(resp.data.message || '로그인에 성공했습니다.')
+      setIsLogin(true)
+      setTimeout(() => navigate('/'), 1000)
     } catch (error) {
-      console.error('로그인 실패:', error);
+      console.error('로그인 실패:', error)
       const errMsg =
         error.response?.data?.message || '아이디 또는 비밀번호가 올바르지 않습니다.';
-      setIsError(true);
-      setMessage(errMsg);
+      setIsError(true)
+      setMessage(errMsg)
     }
+
+    // 로그인 API(카카오, 네이버, 구글)
+    const handleSocialLogin = (provider) => {
+      window.location.href = `http://localhost:8090/oauth2/authorization/${provider}`;
+    };
   };
 
   return (
@@ -90,20 +95,18 @@ const Login = () => {
           </div>
         )}
         <div className="login-divider">OR</div>
-        <Link to="#" className="social-login-button kakao-login">
+        <Link onClick={() => handleSocialLogin('kakao')} className="social-login-button kakao-login">
           <img src="./image/icon_Kakao.png" alt="카카오" /> 카카오 로그인
         </Link>
-        <Link to="#" className="social-login-button naver-login">
+        <Link onClick={() => handleSocialLogin('naver')} className="social-login-button naver-login">
           <img src="./image/icon_Naver.png" alt="네이버" /> 네이버 로그인
         </Link>
-        <Link to="#" className="social-login-button google-login">
+        <Link onClick={() => handleSocialLogin('google')} className="social-login-button google-login">
           <img src="./image/icon_Google.png" alt="구글" /> 구글 로그인
         </Link>
         <div className="login-divider">OR</div>
         <Link to="/join" className="social-login-button join-btn">회원가입</Link>
-
       </div>
-      
     </div>
   )
 }

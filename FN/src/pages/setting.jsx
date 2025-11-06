@@ -1,5 +1,6 @@
 import Layout from './Layout.jsx'
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
 import '../css/setting.scss'
 
 const Setting = () => {
@@ -28,7 +29,7 @@ const Setting = () => {
                             <div className="info-group-container">
                                 <div className="info-group email-group">
                                     <h2 className="group-title">귀하의 이메일 주소</h2>
-                                    <p className="data-text">test@daum.net</p>
+                                    <p className="data-text">유저 아이디</p>
                                     <button className="action-button">이메일 변경</button>
                                 </div>
                             </div>

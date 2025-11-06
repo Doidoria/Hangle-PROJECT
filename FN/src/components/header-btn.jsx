@@ -70,14 +70,19 @@ function HeaderButtons() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
+    
     try {
     const resp = await api.post("/logout", {}, { withCredentials: true });
     console.log("로그아웃 응답:", resp.data);
+    localStorage.removeItem('username');
+    localStorage.removeItem('userid');
+    setUsername(''); // username 상태 초기화
     setIsLogin(false);
     navigate("/login", { replace: true });
   } catch (error) {
     console.error("로그아웃 실패:", error);
     setIsLogin(false);
+    setUsername('');
     navigate("/login", { replace: true });
   }
   }
@@ -87,7 +92,7 @@ function HeaderButtons() {
       {isLogin ? (
         <Link onClick={handleLogout} id="logoutBtn" className="logout-btn">로그아웃</Link>
       ) : (
-        <Link to='login' id="loginBtn" className="login-btn">로그인</Link>
+        <Link to='/login' id="loginBtn" className="login-btn">로그인</Link>
       )}
     </>
   );
@@ -96,7 +101,7 @@ function HeaderButtons() {
 //프로필 버튼
 function Profilebtn(){
   return(
-    <Link to='/setting' id="profileBtn" className="profile-btn" aria-label="프로필">
+    <Link to='/myprofile' id="profileBtn" className="profile-btn" aria-label="프로필">
       <div className="avatar">SD</div>
     </Link>
   )

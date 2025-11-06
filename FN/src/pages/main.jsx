@@ -1,17 +1,20 @@
 import '../css/main.scss'
 import '../css/media.scss'
 import Layout from './Layout.jsx'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
+import { useAuth } from "../api/AuthContext.js";
 
 const Main = () => {
+    const { username, isLogin } = useAuth();
 
     return (
         <Layout>
             <section>
                 <div className="welcome">
                     <div>
-                        <h1>어서 오세요, 서동성님!</h1>
-                        <p>데이터 시각화 · 커뮤니티 · 대회 정보를 한 곳에서 관리하세요.</p>
+                        <h1>어서 오세요, {isLogin && username ? `${username}님!` : '먼저 로그인을 해주세요!'}</h1>
+                        <p>다양한 데이터 · 커뮤니티 · 대회에 참여하여 본인의 실력을 확인하세요!</p>
                     </div>
                 </div>
                 <div className="stats" aria-label="요약 지표">
