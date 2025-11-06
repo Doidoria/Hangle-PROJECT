@@ -53,14 +53,15 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/index.html", true)
                         .permitAll()
                 )
+                .oauth2Login(oauth -> oauth
+                        .defaultSuccessUrl("/index.html", true)
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login.html")
                         .invalidateHttpSession(true)
-                )
-                .oauth2Login(oauth -> oauth
-                        .defaultSuccessUrl("/index.html", true)
                 );
+
 
         return http.build();
     }
