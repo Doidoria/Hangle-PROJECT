@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/footer.css">
+    <link rel="stylesheet" href="./css/myProfile.css">
+    <link rel="stylesheet" href="./css/media.css">
+
+    <!-- main JS -->
+    <script src="./js/main.js" defer></script>
+
+    <title>hangle · 메인</title>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" aria-label="왼쪽 내비게이션">
+      <a class="logo" aria-label="hangle 로고 및 홈으로 이동" href="main.html">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="name">Hangle</span>
+      </a>
+      <a class="nav-create active" href="/">
+        <img src="./image/+.png" alt="만들기" style="width: 14px;">Notebook
+      </a>
+      <nav class="nav-group">
+        <a class="nav-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 1 0 0-10H7a5 5 0 1 0 0 10V4Z" />
+          </svg>
+          <span>대회</span>
+        </a>
+        <a class="nav-item" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+          </svg>
+          <span>커뮤니티</span>
+        </a>
+      </nav>
+    </aside>
+    <!-- ===== Topbar ===== -->
+    <header class="topbar" aria-label="상단바">
+      <div class="search" role="search">
+        <span class="icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        </span>
+        <input type="search" placeholder="검색 (데이터셋, 대회, 사용자…)" aria-label="검색" />
+        <span class="kbd">/</span>
+      </div>
+
+      <div class="top-actions">
+        <!-- Dark/Light Toggle -->
+        <button id="themeToggle" class="toggle" aria-label="다크 모드 전환">
+          <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <span id="modeLabel">다크</span>
+        </button>
+
+        <!-- 로그인/프로필 (상태에 따라 토글) -->
+        <button id="loginBtn" class="login-btn" aria-label="로그인" style="display:none">로그인</button>
+        <button id="profileBtn" class="profile-btn" aria-label="프로필로 이동" style="display:none">
+          <div class="avatar">SD</div>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== 프로필 상단 ===== -->
+    <main class="main">
+    <section>
+
+      <!-- ===== 프로필 상단 버튼 바 ===== -->
+      <div class="profile-topbar">
+        <button class="edit-profile-btn">
+          ✏️ 내 프로필 편집하기
+        </button>
+        <div class="profile-menu">
+          <a href="#" class="menu-item">
+            ⚙️ <span>Settings</span>
+          </a>
+          <a href="#" class="menu-item">
+            💼 <span>Your Work</span>
+          </a>
+          <a href="#" class="menu-item">
+            📈 <span>Progression</span>
+          </a>
+        </div>
+      </div>
+
+        <div class="profile-header">
+            <div class="profile-banner"></div>
+            <div class="profile-info">
+            <div class="profile-avatar">
+                <img src="https://cdn-icons-png.flaticon.com/512/5997/5997002.png" alt="user avatar" />
+            </div>
+            <div class="profile-text">
+                <h2 class="username">전익환</h2>
+                <p class="user-meta">2일 전에 가입함 · 최근 접속 1일 전</p>
+            </div>
+            <div class="profile-actions">
+                <button class="follow-btn">팔로우</button>
+                <button class="contact-btn">메시지</button>
+            </div>
+            </div>
+      </div>
+
+      <!-- ===== 정보 영역 ===== -->
+      <div class="profile-body">
+        <section class="info-section">
+          <h3>정보</h3>
+          <p class="info-text">아직 자기소개가 없습니다...</p>
+          <p class="info-sub">작업 중 💻</p>
+        </section>
+
+        <!-- ===== 뱃지 영역 ===== -->
+        <section class="badge-section">
+          <h3>뱃지</h3>
+          <div class="badges">
+            <div class="badge">
+              <img src="https://cdn-icons-png.flaticon.com/512/3702/3702744.png" alt="Badge" />
+            </div>
+          </div>
+      </section>
+    </section>
+    </main>
+
+    <!-- ===== Footer ===== -->
+    <footer>
+      <div class="footer-wrap">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h4>회사</h4>
+            <a href="#">회사 소개</a>
+            <a href="#">채용</a>
+            <a href="#">보도자료</a>
+          </div>
+          <div class="footer-col">
+            <h4>정책</h4>
+            <a href="#">이용약관</a>
+            <a href="#">개인정보처리방침</a>
+            <a href="#">쿠키 정책</a>
+          </div>
+          <div class="footer-col">
+            <h4>지원</h4>
+            <a href="#">도움말 센터</a>
+            <a href="#">문의하기</a>
+            <a href="#">신고/피드백</a>
+          </div>
+          <div class="footer-col">
+            <h4>리소스</h4>
+            <a href="#">개발자 문서</a>
+            <a href="#">API</a>
+            <a href="#">브랜드 가이드</a>
+          </div>
+        </div>
+        <div class="copyright">
+          © <span id="year"></span> hangle. 모든 권리 보유.
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

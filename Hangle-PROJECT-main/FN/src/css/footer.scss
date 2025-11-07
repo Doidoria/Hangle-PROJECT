@@ -1,0 +1,45 @@
+/* ========= Footer ========= */
+footer {
+  grid-area: footer;
+  border-top: 1px solid var(--border);
+  background: var(--nav);
+  padding: 24px 28px;
+  color: var(--muted);
+
+  .footer-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .footer-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      margin-bottom: 12px;
+
+      .footer-col {
+        h4 {
+          margin: 0 0 8px;
+          color: var(--text);
+          font-size: 14px;
+        }
+
+        a {
+          display: block;
+          color: var(--muted);
+          text-decoration: none;
+          padding: 4px 0;
+
+          &:hover {
+            color: var(--text);
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    .copyright {
+      font-size: 12px;
+      color: var(--muted);
+    }
+  }
+}
