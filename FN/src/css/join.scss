@@ -1,0 +1,25 @@
+.input-group {
+    input[type="email"]{
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #dadce0;
+        border-radius: 4px;
+    }
+}
+.register-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #5f6368;
+}
+.register-links {
+    a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: bold;
+    }
+}
+.register-links {
+    a:hover {text-decoration: underline;}
+}
