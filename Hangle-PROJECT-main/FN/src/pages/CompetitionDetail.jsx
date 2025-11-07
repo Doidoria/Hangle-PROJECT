@@ -6,7 +6,7 @@ import axios from 'axios';
 import '../css/competitionStyle/pages/CompetitionDetail.scss';
 
 
-const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:8095';
+const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:8090';
 
 export default function CompetitionDetail() {
   const { id } = useParams();

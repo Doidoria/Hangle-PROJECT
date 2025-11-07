@@ -48,7 +48,7 @@ function CompetitionCreate() {
 
     try {
       setSaving(true);
-      const res = await axios.post('http://localhost:8095/api/competitions', form, {
+      const res = await axios.post('http://localhost:8090/api/competitions', form, {
         headers: { 'Content-Type': 'application/json' },
       });
       const created = res.data;
