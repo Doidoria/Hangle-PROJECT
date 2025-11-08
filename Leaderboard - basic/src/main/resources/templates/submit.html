@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Submit Page</title>
+</head>
+<body>
+<h2>제출 테스트 페이지</h2>
+<form th:action="@{/submit}" method="post">
+    <input type="text" name="best_score" placeholder="점수 입력">
+    <input type="text" name="compId" placeholder="대회 ID 입력">
+    <button type="submit">제출</button>
+</form>
+</body>
+</html>

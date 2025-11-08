@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard</title>
+
+</head>
+
+<body>
+
+<h1> Leaderboard</h1>
+
+<!-- 대회 이름 -->
+<h3 th:text="${compName}">대회명</h3>
+
+<!-- 검색 폼 -->
+<form th:action="@{/leaderboard}" method="get">
+    <!-- 항상 compId 유지 -->
+    <input type="text" name="keyword" placeholder="참가자 검색">
+    <button type="submit">검색</button>
+</form>
+
+<!-- 에러 메시지 -->
+<div th:if="${errorMessage}">
+    <p th:text="${errorMessage}" style="color:red;"></p>
+</div>
+
+<br>
+
+<div th:each="comp  : ${compNameList}">
+
+    <h2 th:text="${comp}"></h2>
+
+    <!-- 리더보드 리스트 -->
+    <ul>
+        <li th:each="lb : ${leaderboard}" th:if="${lb.compName} == ${comp}">
+            <!-- 순위 -->
+            <span th:text="${lb.rank}"></span>위&nbsp;
+
+            <!-- 참가자 -->
+            참가자: <span th:text="${lb.userName}"></span>&nbsp;
+
+            <!-- 점수 -->
+            점수: <span th:text="${lb.best_score}"></span>&nbsp;
+
+            <!-- 제출 -->
+            제출수: <span th:text="${lb.submit_count}"></span>&nbsp;
+
+            <!-- 최근 제출 -->
+            최근 제출:
+            <span th:text="${#temporals.format(lb.last_submit_time, 'yyyy-MM-dd HH:mm')}"></span>
+        </li>
+    </ul>
+
+</div>
+
+
+</body>
+</html>

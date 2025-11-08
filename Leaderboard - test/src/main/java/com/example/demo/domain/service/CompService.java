@@ -1,8 +1,8 @@
 package com.example.demo.domain.service;
 
-import com.example.demo.domain.dto.CompDetailDto;
+
 import com.example.demo.domain.dto.CompDto;
-import com.example.demo.domain.dto.CompDtoSearch;
+
 import com.example.demo.domain.entity.Comp;
 import com.example.demo.domain.repository.CompRepository;
 import org.springframework.beans.factory.annotation.Autowired;

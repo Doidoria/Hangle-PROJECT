@@ -1,0 +1,70 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.7'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+description = 'Demo project for Spring Boot'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+//    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    //JSP EMBED TOMCAT
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:11.0.10'
+
+    //JSP EL PASRSER
+    // https://mvnrepository.com/artifact/jakarta.el/jakarta.el-api
+    implementation 'jakarta.el:jakarta.el-api:6.0.1'
+
+    //JSTL
+    implementation 'jakarta.servlet:jakarta.servlet-api' //스프링부트 3.0 이상
+    implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api' //스프링부트 3.0 이상
+    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl' //스프링부트 3.0 이상
+
+    //VALIDATION
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //DATABASE
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2
+    implementation 'org.apache.commons:commons-dbcp2:2.13.0'
+
+    //JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    //MYBATIS
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.5'
+
+    //thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
