@@ -1,0 +1,9 @@
+@use './tokens' as *;
+
+/* 카드 박스 스타일용 mixin */
+@mixin card {
+  background: $surface;               // 카드 배경색 (tokens에서 정의됨)
+  border: 1px solid $border;          // 테두리
+  border-radius: $radius;             // 모서리 둥글게
+  box-shadow: $shadow-sm;             // 약한 그림자
+}

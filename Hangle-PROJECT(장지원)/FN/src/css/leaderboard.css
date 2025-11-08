@@ -1,0 +1,8 @@
+.section-wrap {grid-area: main;padding: 25px 70px;}
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 35px;
+    box-shadow: var(--shadow);
+}

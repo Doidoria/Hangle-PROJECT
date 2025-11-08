@@ -1,0 +1,64 @@
+/* src/components/competitions/css/competitionStyle/pages/CompetitionCreate.scss */
+.comp-create {
+  .back { display: inline-block; margin-bottom: 10px; color: var(--muted); }
+  h1 { margin: 0 0 16px; }
+
+  form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 24px;
+    display: grid; gap: 16px;
+
+    label {
+      display: grid; gap: 8px; font-size: 13px; color: var(--muted);
+
+      /* 입력 영역: 카드 배경과 대비되도록 var(--bg) 사용 */
+      input, select, textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--bg);     /* 변경: var(--surface) -> var(--bg) */
+        color: var(--text);
+      }
+      textarea { min-height: 140px; resize: vertical; }
+    }
+
+    /* 포커스 시 카드 배경으로 살짝 밝게 */
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      background: var(--surface);  /* 추가 */
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--ring);
+    }
+
+    .row { display: grid; gap: 12px; grid-template-columns: 1fr; }
+    @media (min-width: 640px) { .row { grid-template-columns: 1fr 1fr; } }
+
+    .error {
+      color: var(--error);
+      background: rgba(239,68,68,.12);
+      border: 1px solid rgba(239,68,68,.35);
+      padding: 10px 12px; border-radius: 10px;
+    }
+
+    .actions {
+      display: flex; gap: 8px;
+
+      .primary {
+        background: var(--primary); color: #fff; border: none;
+        border-radius: 10px; padding: 10px 14px; font-weight: 800; cursor: pointer; transition: .15s;
+      }
+      .primary:disabled { opacity: .6; cursor: default; }
+      .primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+      button:not(.primary) {
+        display: inline-flex; align-items: center; justify-content: center;
+        padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
+        background: var(--surface); color: var(--text); cursor: pointer; box-shadow: var(--shadow);
+      }
+    }
+  }
+}
