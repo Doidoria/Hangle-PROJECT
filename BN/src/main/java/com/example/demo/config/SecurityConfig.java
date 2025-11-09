@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -53,40 +53,34 @@ public class SecurityConfig {
         return new JwtAuthorizationFilter(userRepository, jwtTokenProvider, redisUtil);
     }
 
-    @Bean
-    @Order(1)
-    public SecurityFilterChain openapiPermitAll(HttpSecurity http) throws Exception {
-        http.securityMatcher(
-                "/v3/api-docs/**",
-                        "/swagger-ui/**",
-                        "/swagger-ui.html"
-                )
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        return http.build();
-    }
-
 	@Bean
     @Order(2)
 	protected SecurityFilterChain configure(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
+        http.securityMatcher("/api/**"); // 기존 로직 "/**"
         // CORS 활성화
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		// CSRF비활성화
 		http.csrf((config)->{config.disable();});
 
 		//권한체크
-        http.securityMatcher("/**");
         http.authorizeHttpRequests(auth -> {
+            auth.requestMatchers(
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/swagger-resources/**",
+                    "/swagger-resources"
+            ).permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-            auth.requestMatchers("/", "/join", "/login", "/validate").permitAll();
+            auth.requestMatchers("/", "/join", "/login", "/validate", "/oauth2/authorization/**").permitAll();
             auth.requestMatchers(HttpMethod.POST, "/logout").permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll();
-            auth.requestMatchers("/user").hasRole("USER");
-            auth.requestMatchers("/manager").hasRole("MANAGER");
-            auth.requestMatchers("/admin").hasRole("ADMIN");
-            auth.anyRequest().authenticated();
+            auth.requestMatchers("/admin/**").hasRole("ADMIN");
+            auth.requestMatchers("/manager/**").hasAnyRole("MANAGER", "ADMIN");
+//            auth.anyRequest().hasRole("USER"); // USER 이상만 접근 가능
+            auth.anyRequest().permitAll(); // !!임시로 전체 오픈!!
         });
+
 		//-----------------------------------------------------
 		// [수정] 로그인(직접처리 - UserRestController)
 		//-----------------------------------------------------

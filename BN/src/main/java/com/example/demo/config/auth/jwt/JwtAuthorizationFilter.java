@@ -38,7 +38,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        System.out.println("[JWTAUTHORIZATIONFILTER] doFilterInternal...");
+
+        String uri = request.getRequestURI();
+        if (uri.startsWith("/v3/api-docs")
+                || uri.startsWith("/swagger-ui")
+                || uri.startsWith("/swagger-resources")
+                || uri.equals("/swagger-ui.html")
+                || request.getMethod().equalsIgnoreCase("OPTIONS")) {
+            System.out.println("[JWT] Swagger 요청 감지 → 필터 완전 스킵");
+            chain.doFilter(request, response);
+            return;
+        }
 
         // cookie 에서 JWT token을 가져옵니다.
         String token = null;

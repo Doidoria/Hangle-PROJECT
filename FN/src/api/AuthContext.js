@@ -7,36 +7,38 @@ export function AuthProvider({ children }) {
   const [isLogin, setIsLogin] = useState(false);
   const [username, setUsername] = useState('');
   const [userId, setUserId] = useState(null);
+  const [role, setRole] = useState('');
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem('username');
-      if (storedUsername) {
-        setUsername(storedUsername);
-        setIsLogin(true);
-      }
-    }, []);
+    const storedUsername = localStorage.getItem("username");
+    const storedUserId = localStorage.getItem("userid");
+    const storedRole = localStorage.getItem("role");
+
+    if (storedUsername) {
+      setUsername(storedUsername);
+      setUserId(storedUserId);
+      setRole(storedRole);
+      setIsLogin(true);
+    }
+  }, []);
 
   const logout = () => {
-    localStorage.removeItem('username');
-    localStorage.removeItem('userid');
-    setUsername('');
+    localStorage.removeItem("username");
+    localStorage.removeItem("userid");
+    localStorage.removeItem("role");
+    setUsername("");
+    setRole("");
+    setUserId(null);
     setIsLogin(false);
   };
 
   useEffect(() => {
     const checkAuth = async () => {
-      const storedUserId = localStorage.getItem('userid');
       try {
         await api.get("/validate", { withCredentials: true });
         setIsLogin(true);
-        setIsLogin(true);
-        // 2. 검증 성공 시 userId 상태 업데이트 (로컬 저장소 값이 있다면)
-        if (storedUserId) {
-          setUserId(storedUserId);
-        }
       } catch {
         setIsLogin(false);
-        setUserId(null);
       }
     };
     checkAuth();
@@ -44,19 +46,27 @@ export function AuthProvider({ children }) {
 
   //OAuthSuccess 처리
   useEffect(() => {
-    const handleStorageChange = () => {
-      const storedUsername = localStorage.getItem('username');
-      if (storedUsername) {
-        setUsername(storedUsername);
-        setIsLogin(true);
-      } else {
-        setUsername('');
-        setIsLogin(false);
-      }
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+  const handleStorageChange = () => {
+    const storedUsername = localStorage.getItem("username");
+    const storedUserId = localStorage.getItem("userid");
+    const storedRole = localStorage.getItem("role");
+
+    if (storedUsername && storedUserId) {
+      setUsername(storedUsername);
+      setUserId(storedUserId);
+      setRole(storedRole);
+      setIsLogin(true);
+    } else {
+      setUsername("");
+      setUserId(null);
+      setRole("");
+      setIsLogin(false);
+    }
+  };
+
+  window.addEventListener("storage", handleStorageChange);
+  return () => window.removeEventListener("storage", handleStorageChange);
+}, []);
 
   // username이 비어 있을 때 localStorage를 다시 읽어와서 반영
   useEffect(() => {
@@ -70,9 +80,11 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await api.get("/validate", { withCredentials: true });
+        const resp = await api.get("/validate", { withCredentials: true });
+        console.log("토큰 유효함:", resp.status);
         setIsLogin(true);
-      } catch {
+      } catch (err) {
+        console.log("토큰 만료 또는 비인증:", err);
         setIsLogin(false);
       }
     };
@@ -80,7 +92,19 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLogin, setIsLogin, username, setUsername, logout }}>
+    <AuthContext.Provider
+      value={{
+        isLogin,
+        setIsLogin,
+        username,
+        setUsername,
+        role,
+        setRole,
+        userId,
+        setUserId,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

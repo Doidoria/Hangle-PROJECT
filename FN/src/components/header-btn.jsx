@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../api/AuthContext.js";
+import { useTheme } from '../api/ThemeContext';
 import api from '../api/axiosConfig';
 
 function SearchBox() {
@@ -32,34 +33,21 @@ function SearchBox() {
   );
 }
 
-// 다크, 라이트 버튼
+// 다크, 라이트 모드
 function ThemeToggle() {
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("theme") ||
-      (window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light");
-  });
+  const { theme, setTheme } = useTheme();
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("theme-dark", theme === "dark");
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const listener = (e) => {
-      if (!localStorage.getItem("theme")) {
-        setTheme(e.matches ? "dark" : "light");
-      }
-    };
-    mq.addEventListener("change", listener);
-    return () => mq.removeEventListener("change", listener);
-  }, []);
+  const handleToggle = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
   return (
-    <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="toggle">
-      {theme === "dark" ? "🌙 다크" : "☀️ 라이트"}
+    <button onClick={handleToggle} className="toggle" aria-label="테마 전환">
+      {theme === "dark" ? (
+        <img src="./image/icon_moon(white).png" alt="다크 모드" className="theme-icon"/>
+      ) : (
+        <img src="./image/icon_sun(black).png" alt="라이트 모드" className="theme-icon"/>
+      )}
     </button>
   );
 }

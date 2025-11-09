@@ -13,6 +13,7 @@ import MyProfile from './pages/myProfile';
 import CompetitionList from './pages/CompetitionList';
 import CompetitionDetail from './pages/CompetitionDetail';
 import CompetitionCreate from './pages/CompetitionCreate';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -21,17 +22,17 @@ function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Main />} />
-            <Route path="/competiton" element={<Competiton />} />
-            <Route path="/myprofile" element={<MyProfile />} />
+            <Route path="/myprofile" element={<ProtectedRoute><MyProfile/></ProtectedRoute>} />
             <Route path="/setting" element={<Setting />} />
-            <Route path="/competitions" element={<CompetitionList />} />
-            <Route path="/competitions/new" element={<CompetitionCreate />} />
-            <Route path="/competitions/:id" element={<CompetitionDetail />} />
+            <Route path="/competiton" element={<ProtectedRoute><Competiton /></ProtectedRoute>} />
+            <Route path="/competitions" element={<ProtectedRoute><CompetitionList/></ProtectedRoute>} />
+            <Route path="/competitions/new" element={<ProtectedRoute requiredRole="ROLE_MANAGER"><CompetitionCreate/></ProtectedRoute>} />
+            <Route path="/competitions/:id" element={<ProtectedRoute><CompetitionDetail/></ProtectedRoute>} />
           </Route>
 
           <Route path="/login" element={<Login />}></Route>
-          <Route path="/oauth-success" element={<OAuthSuccess />} />
           <Route path="/join" element={<Join />}></Route>
+          <Route path="/oauth-success" element={<OAuthSuccess />} />
         </Routes>
       </BR>
     </div>

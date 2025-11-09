@@ -6,7 +6,7 @@ import axios from 'axios';
 import '../css/competitionStyle/pages/CompetitionList.scss';
 import Layout from './Layout';
 
-const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:8095';
+const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:8090';
 
 export default function CompetitionList() {
   const [items, setItems] = useState([]);
@@ -57,6 +57,11 @@ export default function CompetitionList() {
 
   return (
     <Layout>
+      <select onChange={(e) => setSearchParams({ sort: e.target.value })}>
+        <option value="createdAt,desc">최신순</option>
+        <option value="startAt,asc">시작일 오름차순</option>
+        <option value="endAt,asc">마감일 오름차순</option>
+      </select>
       <div className="container comp-list">
         <div className="header">
           <h1>대회 목록</h1>

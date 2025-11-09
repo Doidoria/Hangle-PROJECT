@@ -1,28 +1,44 @@
 package com.example.demo.domain.competition.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 @Entity
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
-@Builder
+@Table(
+        name = "competitions",
+        uniqueConstraints = @UniqueConstraint(columnNames = "title")
+)
 public class Competition {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;          // 대회명
-    @Column(length = 2000)
-    private String description;    // 설명
-    @Column(length = 1000)
-    private String rules;          // 규칙
-    private String metric;         // 평가 지표(ex. accuracy, rmse, logloss)
+
+    @NotBlank
+    @Column(nullable = false, length = 200)
+    private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Status status; // OPEN, CLOSED, UPCOMING
+
     private LocalDateTime startAt;
     private LocalDateTime endAt;
 
-    // 데이터셋 파일 경로(예: S3 키 또는 로컬 경로)
-    private String trainPath;
-    private String testPath;
-    private String groundTruthPath; // 정답(y_true) CSV 경로
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt;
+
+    @PreUpdate
+    void onUpdate() { this.updatedAt = LocalDateTime.now(); }
+
 }
