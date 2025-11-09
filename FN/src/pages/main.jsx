@@ -7,6 +7,7 @@ import { useAuth } from "../api/AuthContext.js";
 
 const Main = () => {
     const { username, isLogin } = useAuth();
+    console.log("Main 렌더링:", { username, isLogin });
 
     return (
         <section>

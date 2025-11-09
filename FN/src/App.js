@@ -5,6 +5,7 @@ import { BrowserRouter as BR, Routes, Route } from "react-router-dom"
 import Layout from './pages/Layout';
 import Main from './pages/main';
 import Login from './pages/login';
+import OAuthSuccess from './components/OAuthsuccess';
 import Join from './pages/join';
 import Competiton from './pages/competiton';
 import Setting from './pages/setting';
@@ -29,6 +30,7 @@ function App() {
           </Route>
 
           <Route path="/login" element={<Login />}></Route>
+          <Route path="/oauth-success" element={<OAuthSuccess />} />
           <Route path="/join" element={<Join />}></Route>
         </Routes>
       </BR>

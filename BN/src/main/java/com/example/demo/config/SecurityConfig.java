@@ -67,14 +67,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    public FilterRegistrationBean<JwtAuthorizationFilter> jwtAuthFilterRegistration(JwtAuthorizationFilter filter) {
-//        FilterRegistrationBean<JwtAuthorizationFilter> registration = new FilterRegistrationBean<>();
-//        registration.setFilter(filter);
-//        registration.setEnabled(false);
-//        return registration;
-//    }
-
 	@Bean
     @Order(2)
 	protected SecurityFilterChain configure(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
@@ -100,10 +92,6 @@ public class SecurityConfig {
 		//-----------------------------------------------------
 		http.formLogin((login)->{
 			login.disable();
-//            login.permitAll();
-//            login.loginPage("/login");
-//            login.successHandler(customLoginSuccessHandler());
-//            login.failureHandler(new CustomAuthenticationFailureHandler());
 		});
 
 		//로그아웃
@@ -133,8 +121,8 @@ public class SecurityConfig {
 		});
 
 		//JWT FILTER ADD
-//        http.addFilterBefore(new JwtAuthorizationFilter(userRepository, jwtTokenProvider, redisUtil), LogoutFilter.class);
         http.addFilterBefore(jwtAuthorizationFilter, LogoutFilter.class);
+
 		//-----------------------------------------------
 		//[추가] CORS
 		//-----------------------------------------------
@@ -174,6 +162,7 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
 	}
+
 	//-----------------------------------------------------
 	//[추가] ATHENTICATION MANAGER 설정 - 로그인 직접처리를 위한 BEAN
 	//-----------------------------------------------------
@@ -186,6 +175,15 @@ public class SecurityConfig {
     @Bean
     public AuthenticationSuccessHandler oAuth2LoginSuccessHandler() {
         return (request, response, authentication) -> {
+
+            // PrincipalDetails 캐스팅
+            com.example.demo.config.auth.service.PrincipalDetails principalDetails =
+                    (com.example.demo.config.auth.service.PrincipalDetails) authentication.getPrincipal();
+
+            // 사용자 이름 가져오기
+            String username = principalDetails.getUserDto().getUsername();
+            String userid = principalDetails.getUserDto().getUserid();
+
             // 1. JWT 생성
             TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
             // 2. Redis에 Refresh 저장
@@ -207,10 +205,15 @@ public class SecurityConfig {
                     .maxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME)
                     .build();
 
+            // React로 username과 함께 리다이렉트
+            String redirectUrl = "http://localhost:3000/oauth-success?username="
+                    + java.net.URLEncoder.encode(username, java.nio.charset.StandardCharsets.UTF_8)
+                    + "&userid=" + java.net.URLEncoder.encode(userid, java.nio.charset.StandardCharsets.UTF_8);
+
             response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
             response.addHeader(HttpHeaders.SET_COOKIE, userCookie.toString());
 
-            response.sendRedirect("http://localhost:3000/");
+            response.sendRedirect(redirectUrl);
         };
     }
 

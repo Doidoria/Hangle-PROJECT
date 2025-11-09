@@ -48,25 +48,22 @@ public class UserRestController {
     @Autowired
     private RedisUtil redisUtil;
 
-    @PostMapping(value = "/join",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, String>> join_post(@RequestBody UserDto userDto){
-        log.info("POST /join..."+userDto);
+    @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, String>> join_post(@Valid @RequestBody UserDto userDto, BindingResult result) {
+        log.info("POST /join..." + userDto);
 
-        // 비밀번호 일치 검사
-        if (!userDto.getPassword().equals(userDto.getRepassword())) {
-            return ResponseEntity.badRequest().body(Map.of("error", "패스워드가 일치하지 않습니다."));
+        if (result.hasErrors()) {
+            String errorMessage = result.getFieldError().getDefaultMessage();
+            return ResponseEntity.badRequest().body(Map.of("error", errorMessage));
         }
 
-        // 사용자 존재 여부 검사
         User existingUser = userRepository.findByUserid(userDto.getUserid());
         if (existingUser != null) {
             return ResponseEntity.badRequest().body(Map.of("error", "이미 존재하는 사용자입니다."));
         }
 
-        //dto -> entity
         User user = userDto.toEntity();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // save entity to DB
         userRepository.save(user);
 
         return ResponseEntity.ok(Map.of("message", "회원가입이 완료되었습니다."));

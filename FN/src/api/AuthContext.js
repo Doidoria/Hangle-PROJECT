@@ -6,6 +6,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [isLogin, setIsLogin] = useState(false);
   const [username, setUsername] = useState('');
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
@@ -21,6 +22,50 @@ export function AuthProvider({ children }) {
     setUsername('');
     setIsLogin(false);
   };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const storedUserId = localStorage.getItem('userid');
+      try {
+        await api.get("/validate", { withCredentials: true });
+        setIsLogin(true);
+        setIsLogin(true);
+        // 2. 검증 성공 시 userId 상태 업데이트 (로컬 저장소 값이 있다면)
+        if (storedUserId) {
+          setUserId(storedUserId);
+        }
+      } catch {
+        setIsLogin(false);
+        setUserId(null);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  //OAuthSuccess 처리
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedUsername = localStorage.getItem('username');
+      if (storedUsername) {
+        setUsername(storedUsername);
+        setIsLogin(true);
+      } else {
+        setUsername('');
+        setIsLogin(false);
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  // username이 비어 있을 때 localStorage를 다시 읽어와서 반영
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername && username !== storedUsername) {
+      setUsername(storedUsername);
+      setIsLogin(true);
+    }
+  }, [username]);
 
   useEffect(() => {
     const checkAuth = async () => {
