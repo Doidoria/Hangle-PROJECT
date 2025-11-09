@@ -1,14 +1,9 @@
 package com.example.demo.domain.competition.service;
 
-import com.example.demo.domain.competition.dtos.CompetitionCreateRequest;
-import com.example.demo.domain.competition.dtos.CompetitionUpdateRequest;
-import com.example.demo.domain.competition.dtos.CompetitionDto;
-import com.example.demo.domain.competition.dtos.CompetitionMapper;
-import com.example.demo.domain.competition.entity.Competition;
-import com.example.demo.domain.competition.entity.Status;
+import com.example.demo.domain.competition.dtos.*;
+import com.example.demo.domain.competition.entity.*;
 import com.example.demo.domain.competition.repository.CompetitionRepository;
-import com.example.demo.exception.ConflictException;
-import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.*;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,7 +12,6 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.demo.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +19,7 @@ public class CompetitionService {
 
     private final CompetitionRepository repository;
 
+    // ✅ 검색 (상태 + 키워드 + 페이징)
     @Transactional(readOnly = true)
     public Page<CompetitionDto> search(Status status, String keyword, int page, int size, Sort sort) {
         Specification<Competition> spec = (root, q, cb) -> {
@@ -43,6 +38,7 @@ public class CompetitionService {
         return repository.findAll(spec, pageable).map(CompetitionMapper::toDto);
     }
 
+    // ✅ 단일 조회
     @Transactional(readOnly = true)
     public CompetitionDto get(Long id) {
         Competition c = repository.findById(id)
@@ -50,15 +46,20 @@ public class CompetitionService {
         return CompetitionMapper.toDto(c);
     }
 
-    // 생성
+    // ✅ 생성
     @Transactional
     public CompetitionDto create(CompetitionCreateRequest req) {
         Competition c = new Competition();
         c.setTitle(req.title());
+        c.setSummary(req.summary());
         c.setDescription(req.description());
-        c.setStatus(req.status());              // req.status() 타입이 Status
+        c.setPrize(req.prize());
+        c.setDatasetUrl(req.datasetUrl());
+        c.setRuleUrl(req.ruleUrl());
+        c.setStatus(req.status());   // Status Enum 타입 그대로
         c.setStartAt(req.startAt());
         c.setEndAt(req.endAt());
+
         Competition saved = repository.save(c);
         return CompetitionMapper.toDto(saved);
     }
@@ -67,15 +68,18 @@ public class CompetitionService {
     @Transactional
     public CompetitionDto update(Long id, CompetitionUpdateRequest req) {
         Competition c = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Competition not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Competition not found: " + id));
 
         c.setTitle(req.title());
+        c.setSummary(req.summary());
         c.setDescription(req.description());
-        c.setStatus(Status.valueOf(req.status()));  // create, update 둘 다
+        c.setPrize(req.prize());
+        c.setDatasetUrl(req.datasetUrl());
+        c.setRuleUrl(req.ruleUrl());
+        c.setStatus(req.status());     // Enum이면 그대로, String이면 valueOf()로 변경
         c.setStartAt(req.startAt());
         c.setEndAt(req.endAt());
 
-        // JPA 영속 상태라 save 호출 없이도 flush 시점에 반영되지만, 명시적으로 save 해도 OK
         Competition updated = repository.save(c);
         return CompetitionMapper.toDto(updated);
     }

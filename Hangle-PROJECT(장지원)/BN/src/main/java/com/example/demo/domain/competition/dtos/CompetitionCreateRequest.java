@@ -8,7 +8,11 @@ import java.time.LocalDateTime;
 
 public record CompetitionCreateRequest(
         @NotBlank String title,
+        String summary,
         String description,
+        String prize,
+        String datasetUrl,
+        String ruleUrl,
         @NotNull Status status,           // OPEN, CLOSED, UPCOMING
         LocalDateTime startAt,            // ISO-8601: "2025-11-10T09:00:00"
         LocalDateTime endAt               // ISO-8601: "2025-12-10T18:00:00"

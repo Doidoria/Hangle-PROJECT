@@ -1,6 +1,6 @@
 package com.example.demo.domain.competition.dtos;
 
-import com.example.demo.domain.competition.entity.Competition; // ✅ entity 패키지 확인
+import com.example.demo.domain.competition.entity.Competition;
 
 public final class CompetitionMapper {
     private CompetitionMapper() {}
@@ -9,8 +9,12 @@ public final class CompetitionMapper {
         return new CompetitionDto(
                 c.getId(),
                 c.getTitle(),
+                c.getSummary(),
                 c.getDescription(),
+                c.getPrize(),
                 c.getStatus(),
+                c.getDatasetUrl(),
+                c.getRuleUrl(),
                 c.getStartAt(),
                 c.getEndAt()
         );

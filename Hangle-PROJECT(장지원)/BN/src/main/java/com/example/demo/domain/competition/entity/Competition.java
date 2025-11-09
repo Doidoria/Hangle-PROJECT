@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,8 +26,6 @@ public class Competition {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
     private String prize;
 
     @Enumerated(EnumType.STRING)
@@ -37,9 +34,14 @@ public class Competition {
     private String datasetUrl;
     private String ruleUrl;
 
-    @CreationTimestamp
+    // ✅ 대회 시작/종료일
     private LocalDateTime startAt;
+    private LocalDateTime endAt;
+
+    // ✅ 시스템 생성/수정 시간 (대회 일정과 별개)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime endAt;
+    private LocalDateTime updatedAt;
 }

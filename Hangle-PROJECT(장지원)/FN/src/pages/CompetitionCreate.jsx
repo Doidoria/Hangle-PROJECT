@@ -52,7 +52,7 @@ function CompetitionCreate() {
 
       const payload = {
         ...form,
-        status: form.status === 'DRAFT' ? 'UPCOMING' : form.status,
+        status: form.status,
         startAt: form.startAt ? `${form.startAt}T00:00:00` : null,
         endAt: form.endAt ? `${form.endAt}T00:00:00` : null,
       };
