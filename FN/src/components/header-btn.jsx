@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../api/AuthContext.js";
 import api from '../api/axiosConfig';
 
@@ -66,25 +66,34 @@ function ThemeToggle() {
 
 // 로그인/로그아웃 버튼
 function HeaderButtons() {
-  const { isLogin, setIsLogin } = useAuth();
+  const { isLogin, setIsLogin, username, setUsername } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
+
+  // 로그인 / 회원가입 페이지에서는 Header 자체 숨김
+  if (location.pathname === '/login' || location.pathname === '/join') {
+    return null;
+  }
 
   const handleLogout = async () => {
     
     try {
-    const resp = await api.post("/logout", {}, { withCredentials: true });
-    console.log("로그아웃 응답:", resp.data);
-    localStorage.removeItem('username');
-    localStorage.removeItem('userid');
-    setUsername(''); // username 상태 초기화
-    setIsLogin(false);
-    navigate("/login", { replace: true });
-  } catch (error) {
-    console.error("로그아웃 실패:", error);
-    setIsLogin(false);
-    setUsername('');
-    navigate("/login", { replace: true });
-  }
+      const resp = await api.post("/logout", {}, { withCredentials: true });
+      console.log("로그아웃 응답:", resp.data);
+      localStorage.removeItem('username');
+      localStorage.removeItem('userid');
+      setUsername(''); // username 상태 초기화
+      setIsLogin(false);
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
+    } finally { // 항상 로컬 스토리지와 상태 초기화
+      localStorage.removeItem('username');
+      localStorage.removeItem('userid');
+      setUsername('');
+      setIsLogin(false);
+      // navigate("/login", { replace: true });
+    }
   }
 
   return (

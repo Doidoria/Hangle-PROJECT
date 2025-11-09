@@ -1,7 +1,8 @@
 package com.example.demo.domain.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.example.demo.domain.myProfile.entity.Profile;
+import com.example.demo.domain.mySetting.entity.Setting;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,4 +19,12 @@ public class User {
 	private String username;
 	private String password;
 	private String role;
+
+    // Profile과의 1:1 관계 설정 (User가 Profile을 소유함)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Profile profile;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Setting setting;
+
 }

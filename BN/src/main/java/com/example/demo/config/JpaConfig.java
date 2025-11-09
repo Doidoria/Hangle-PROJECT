@@ -23,6 +23,8 @@ import java.util.Properties;
                 basePackages = {
                         "com.example.demo.domain.user.repository",
                         "com.example.demo.domain.competition.repository",
+                        "com.example.demo.domain.myProfile.repository",
+                        "com.example.demo.domain.mySetting.repository",
                 },
                 transactionManagerRef = "jpaTransactionManager"
 )
@@ -36,10 +38,6 @@ public class JpaConfig {
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         entityManagerFactoryBean.setPackagesToScan("com.example.demo.domain");
-//        entityManagerFactoryBean.setPackagesToScan(
-//                "com.example.demo.domain.user.entity",
-//                "com.example.demo.domain.competition.entity"
-//        );
 
         Properties jpaProperties = new Properties();
 

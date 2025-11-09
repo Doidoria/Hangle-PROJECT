@@ -11,7 +11,7 @@ const Login = () => {
     const [message, setMessage] = useState(null)
     const [isError, setIsError] = useState(false)
     const navigate = useNavigate()
-    const { setIsLogin } = useAuth()
+    const { setIsLogin, setUsername } = useAuth()
 
   // useEffect에서 API 검증 호출 (최초 처음 실행될때 실행 useEffect)
   useEffect(() => {
@@ -43,6 +43,9 @@ const Login = () => {
         }
       );
       console.log('로그인 성공:', resp.data)
+
+      setUsername(resp.data.username);
+      setIsLogin(true);
       localStorage.setItem('username', resp.data.username)
       localStorage.setItem('userid', resp.data.userid)
       setIsError(false)
@@ -52,16 +55,20 @@ const Login = () => {
     } catch (error) {
       console.error('로그인 실패:', error)
       const errMsg =
-        error.response?.data?.message || '아이디 또는 비밀번호가 올바르지 않습니다.';
-      setIsError(true)
-      setMessage(errMsg)
+        error.response?.data?.error ||  // 백엔드의 error 필드 먼저 확인
+        error.response?.data?.message || // message 필드 (혹시 다른 구조일 경우)
+        '아이디 또는 비밀번호가 올바르지 않습니다.';
+
+      setIsError(true);
+      setMessage(errMsg);
+      }
     }
 
     // 로그인 API(카카오, 네이버, 구글)
     const handleSocialLogin = (provider) => {
       window.location.href = `http://localhost:8090/oauth2/authorization/${provider}`;
     };
-  };
+  
 
   return (
     <div className="layout-login">
@@ -80,7 +87,7 @@ const Login = () => {
           </div>
           <button onClick={handleLogin}>로그인</button>
         </form>
-        {/* ✅ 메시지 표시 */}
+        {/* 메시지 표시 */}
         {message && (
           <div
             className={`login-message ${isError ? 'error' : 'success'}`}
