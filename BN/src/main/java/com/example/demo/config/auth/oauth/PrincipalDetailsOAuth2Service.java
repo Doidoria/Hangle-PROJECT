@@ -70,35 +70,24 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService {
         String username = oAuth2UserInfo.getName();
         String userid = oAuth2UserInfo.getProvider()+"_"+oAuth2UserInfo.getProviderId();
         String password = passwordEncoder.encode("1234");
-        Optional<User> userOptional =  userRepository.findById(userid);
-        //UserDto 생성 (이유 : PrincipalDetails에 포함)
-        //UserEntity 생성(이유 : 최초 로그인시 DB 저장용도)
-        UserDto userDto =null;
-        if(userOptional.isEmpty()){
+        User user = userRepository.findByUserid(userid);
+        if(user == null){
             //최초 로그인(Dto , Entity)
-            userDto = UserDto.builder()
+            user = User.builder()
                     .userid(userid)
                     .password(password)
                     .role("ROLE_USER")
                     .username(username)
                     .build();
-            User user = userDto.toEntity();
             userRepository.save(user);  //계정 등록
-
+            System.out.println("[OAuth2] 신규 사용자 등록 완료 → " + userid);
         }else{
             //기존 유저 존재(Dto)
-            User user = userOptional.get();
-            userDto = UserDto.toDto(user);
+            user.setProvider(provider);
+            user.setProviderId(oAuth2UserInfo.getProviderId());
+            userRepository.save(user);
+            System.out.println("[OAuth2] 기존 사용자 로그인 → " + userid);
         }
-
-        // PrincipalDetails 전달
-        PrincipalDetails principalDetails = new PrincipalDetails();
-        userDto.setProvider(provider);
-        userDto.setProviderId(oAuth2UserInfo.getProviderId());
-        principalDetails.setUserDto(userDto);
-        principalDetails.setAttributes(oAuth2User.getAttributes());
-        principalDetails.setAccess_token(userRequest.getAccessToken().getTokenValue());
-        return principalDetails;
-
+        return new PrincipalDetails(user, attributes);
     }
 }

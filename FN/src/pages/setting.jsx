@@ -90,15 +90,33 @@ const [currentEmail, setCurrentEmail] = useState(userid || '');
 
     try {
       const resp = await api.put('/api/user/update-info', { userid: newEmail });
-      Swal.fire({
-        icon: 'success',
-        title: '이메일 변경 완료',
-        text: '이메일이 성공적으로 변경되었습니다.',
-        confirmButtonColor: '#10B981',
-      });
-      setCurrentEmail(newEmail);
-      setNewEmail('');
-      setIsEditingEmail(false);
+      if (resp.data.message?.includes('로그아웃')) {
+        Swal.fire({
+          icon: 'success',
+          title: '이메일 변경 완료',
+          text: '이메일이 변경되어 로그아웃되었습니다. 다시 로그인해주세요.',
+          confirmButtonColor: '#10B981',
+        }).then(() => {
+          // 쿠키 삭제 (클라이언트 쪽에서도 확실히 정리)
+          document.cookie = "access-token=; path=/; max-age=0; sameSite=None; secure=false";
+          document.cookie = "userid=; path=/; max-age=0; sameSite=None; secure=false";
+
+          window.location.href = '/login';
+        });
+      } 
+      // 단순 이메일만 수정(로그아웃 아님)
+      else {
+        Swal.fire({
+          icon: 'success',
+          title: '이메일 변경 완료',
+          text: '이메일이 성공적으로 변경되었습니다.',
+          confirmButtonColor: '#10B981',
+        });
+        setCurrentEmail(newEmail);
+        setNewEmail('');
+        setIsEditingEmail(false);
+      }
+
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -225,11 +243,7 @@ const [currentEmail, setCurrentEmail] = useState(userid || '');
                       title: '본인 인증 필요',
                       text: '본인 인증 후 이름 변경이 가능합니다.',
                       confirmButtonColor: '#10B981',
-                    });
-                    return;
-                  } setIsEditingUsername(true);
-                }}>
-                이름 변경
+                    }); return;} setIsEditingUsername(true);}}> 이름 변경
               </Link>
             )}
           </div>
@@ -250,18 +264,14 @@ const [currentEmail, setCurrentEmail] = useState(userid || '');
                   </div>
                 </div>
                 ) : (
-                  <button className="action-button" disabled={!isVerified} onClick={() => {
-                    if (!isVerified) {
+                  <button className="action-button" onClick={() => { if (!isVerified) {
                       Swal.fire({
                         icon: 'warning',
                         title: '본인 인증 필요',
                         text: '본인 인증 후 이메일 변경이 가능합니다.',
                         confirmButtonColor: '#10B981',
-                      });
-                      return;
-                    } setIsEditingEmail(true);
-                  }}>
-                    이메일 변경
+                      }); return;
+                    } setIsEditingEmail(true);}}> 이메일 변경
                   </button>
                 )}
               </div>
@@ -276,6 +286,7 @@ const [currentEmail, setCurrentEmail] = useState(userid || '');
                   onClick={handleVerification} disabled={isVerified}> {isVerified ? '인증 완료' : '본인 인증'}
                 </button>
               </div>
+              <hr className="divider" />
               {/* 테마 선택 */}
               <div className="theme-section verification-section">
                 <h2 className="section-title">테마 변경</h2>

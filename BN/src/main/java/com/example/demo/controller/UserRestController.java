@@ -46,11 +46,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserRestController {
 
-    final private UserRepository userRepository;
-    final private PasswordEncoder passwordEncoder;
-    final private AuthenticationManager authenticationManager;
-    final private JwtTokenProvider jwtTokenProvider;
-    final private RedisUtil redisUtil;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RedisUtil redisUtil;
 
     @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> join_post(@Valid @RequestBody UserDto userDto, BindingResult result) {
@@ -107,6 +107,7 @@ public class UserRestController {
         }
 
         try{
+            System.out.println(">>> login controller in progress: " + user.getUserid());
             //사용자 인증 시도(ID/PW 일치여부 확인)
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDto.getUserid(),userDto.getPassword())
@@ -133,13 +134,13 @@ public class UserRestController {
             accessCookie.setHttpOnly(true);
             accessCookie.setSecure(false); // Only for HTTPS
             accessCookie.setPath("/"); // Define valid paths
-            accessCookie.setMaxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME); // 1 hour expiration
+            accessCookie.setMaxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000); // 1 hour expiration
 
             Cookie userCookie = new Cookie("userid", authentication.getName());
             userCookie.setHttpOnly(true);
             userCookie.setSecure(false); // Only for HTTPS
             userCookie.setPath("/");
-            userCookie.setMaxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME); // 7 days expiration
+            userCookie.setMaxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000); // 7 days expiration
 
             resp.addCookie(accessCookie);
             resp.addCookie(userCookie);
@@ -195,7 +196,9 @@ public class UserRestController {
     }
 
     @PutMapping("/api/user/update-info")
-    public ResponseEntity<?> updateUserInfo(@RequestBody Map<String, String> req, Authentication authentication) {
+    public ResponseEntity<?> updateUserInfo(@RequestBody Map<String, String> req, Authentication authentication, HttpServletResponse resp) {
+        System.out.println("현재 인증된 ID = " + authentication.getName());
+        String currentUserid = authentication.getName();
         String userid = authentication.getName();
         User user = userRepository.findByUserid(userid);
         if (user == null) {
@@ -213,6 +216,35 @@ public class UserRestController {
                 return ResponseEntity.badRequest().body(Map.of("error", "이미 존재하는 아이디입니다."));
             }
             user.setUserid(newUserid);
+            userRepository.save(user);
+            // 로그아웃 처리 (토큰/쿠키/Redis 정리)
+            // Redis Refresh Token 제거
+            redisUtil.delete("RT:" + currentUserid);
+
+            // Access Token 쿠키 제거
+            Cookie accessCookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, null);
+            accessCookie.setPath("/");
+            accessCookie.setMaxAge(0);
+            accessCookie.setHttpOnly(true);
+            accessCookie.setSecure(false);
+            resp.addCookie(accessCookie);
+
+            // UserID 쿠키 제거
+            Cookie userCookie = new Cookie("userid", null);
+            userCookie.setPath("/");
+            userCookie.setMaxAge(0);
+            userCookie.setHttpOnly(true);
+            userCookie.setSecure(false);
+            resp.addCookie(userCookie);
+
+            // SecurityContext 초기화 (현재 로그인 세션 강제 해제)
+            SecurityContextHolder.clearContext();
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "이메일이 변경되어 로그아웃되었습니다. 다시 로그인해주세요.",
+                    "username", user.getUsername(),
+                    "userid", user.getUserid()
+            ));
         }
         userRepository.save(user);
         return ResponseEntity.ok(Map.of(

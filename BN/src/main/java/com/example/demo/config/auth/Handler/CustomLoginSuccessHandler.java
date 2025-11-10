@@ -39,7 +39,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 		//TOKEN 쿠키로 전달
 		TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 		Cookie cookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME,tokenInfo.getAccessToken());
-		cookie.setMaxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME);
+		cookie.setMaxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000);
 		cookie.setPath("/");
 		response.addCookie(cookie);
 
@@ -53,10 +53,12 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		//REDIS 에 REFRESH 저장
 		Cookie useridCookie = new Cookie("userid",authentication.getName());
-        useridCookie.setMaxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME);
+        useridCookie.setMaxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000);
         useridCookie.setPath("/");
 		response.addCookie(useridCookie);
-		redisUtil.setDataExpire("RT:"+authentication.getName(),tokenInfo.getRefreshToken(),JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME);
+        redisUtil.setDataExpire("RT:" + authentication.getName(),
+                tokenInfo.getRefreshToken(),
+                JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000);
 
 		//---------------------------------
 		//최초로그인(Client's AT x , DB x)

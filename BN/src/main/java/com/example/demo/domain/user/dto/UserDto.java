@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class UserDto {
+    private Long id;
     @NotBlank(message = "이름을 입력하세요.")
     private String username;
     @NotBlank(message = "ID(E-mail)를 입력하세요.")

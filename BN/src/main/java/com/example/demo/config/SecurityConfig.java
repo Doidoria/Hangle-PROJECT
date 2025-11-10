@@ -175,20 +175,22 @@ public class SecurityConfig {
                     (com.example.demo.config.auth.service.PrincipalDetails) authentication.getPrincipal();
 
             // 사용자 이름 가져오기
-            String username = principalDetails.getUserDto().getUsername();
-            String userid = principalDetails.getUserDto().getUserid();
+            String username = principalDetails.getUser().getUsername();
+            String userid = principalDetails.getUser().getUserid();
 
             // 1. JWT 생성
             TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
             // 2. Redis에 Refresh 저장
-            redisUtil.save("RT:" + authentication.getName(), tokenInfo.getRefreshToken());
+            redisUtil.setDataExpire("RT:" + authentication.getName(),
+                    tokenInfo.getRefreshToken(),
+                    JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000);
             // 3. 쿠키 생성 (Access + User)
             ResponseCookie accessCookie = ResponseCookie.from(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken())
                     .httpOnly(true)
                     .secure(false) // HTTPS에서만 사용, SameSite=None 대응
                     .sameSite("None")
                     .path("/")
-                    .maxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME)
+                    .maxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000)
                     .build();
 
             ResponseCookie userCookie = ResponseCookie.from("userid", authentication.getName())
@@ -196,7 +198,7 @@ public class SecurityConfig {
                     .secure(false)
                     .sameSite("None")
                     .path("/")
-                    .maxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME)
+                    .maxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000)
                     .build();
 
             // React로 username과 함께 리다이렉트
