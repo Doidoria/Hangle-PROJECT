@@ -10,15 +10,25 @@ const MyProfile = () => {
     const [joinDate, setJoinDate] = useState('');
     const [lastLogin, setLastLogin] = useState('');
     const [loading, setLoading] = useState(true);
+    const [introduction, setIntroduction] = useState('');
+    const [editing, setEditing] = useState(false);
 
-    const formatDate = (dateString) => {
+    const formatDate = (dateString, includeTime = false) => {
         if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+
+        if (!includeTime) {
+            return `${y}.${m}.${d}`;
+        }
+        let hours = date.getHours();
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? '오후' : '오전';
+        hours = hours % 12 || 12; // 0시는 12시로 표시
+
+        return `${y}.${m}.${d} ${ampm} ${hours}:${minutes}`;
     };
 
     useEffect(() => {
@@ -31,7 +41,8 @@ const MyProfile = () => {
 
                 if (res.status === 200 && res.data) {
                     setJoinDate(formatDate(res.data.createdAt) || '가입일 정보 없음');
-                    setLastLogin(formatDate(res.data.lastLoginAt) || '최근 접속 정보 없음');
+                    setLastLogin(formatDate(res.data.lastLoginAt, true) || '최근 접속 정보 없음');
+                    setIntroduction(res.data.introduction || '');
                 }
             } catch (err) {
                 console.error('[MyProfile] 사용자 정보 불러오기 실패:', err);
@@ -50,6 +61,16 @@ const MyProfile = () => {
             </main>
         );
     }
+
+    const handleSaveIntroduction = async () => {
+        try {
+            const resp = await api.put('/api/user/introduction', { introduction });
+            console.log('자기소개 수정 완료:', resp.data);
+            setEditing(false);
+        } catch (err) {
+            console.error('자기소개 수정 실패:', err);
+        }
+    };
 
     return (
         <section className="myprofile-wrap">
@@ -81,12 +102,30 @@ const MyProfile = () => {
             {/* ===== 정보 영역 ===== */}
             <div className="profile-body">
                 <section className="info-section">
-                    <h3>정보</h3>
-                    <p className="info-text">아직 자기소개가 없습니다.</p>
-                    <p className="info-sub">작업 중...</p>
+                    <h3>자기 소개</h3>
+                    <p className="info-text">
+                        {editing ? ( <textarea value={introduction} onChange={(e) => setIntroduction(e.target.value)} 
+                            className="intro-textarea" rows="4"/>
+                        ) : (
+                        <p className="info-text">{introduction || '아직 자기소개가 없습니다.'}</p>)}
+                    </p>
                     <div className="profile-actions">
-                        <button className="follow-btn">변경</button>
-                        <button className="contact-btn">저장</button>
+                        {editing ? (
+                            <>
+                                <button className="contact-btn" onClick={async () => {
+                                    try {
+                                        const resp = await api.put('/api/user/introduction', { introduction });
+                                        console.log('자기소개 수정 완료:', resp.data);
+                                        setEditing(false);
+                                    } catch (err) {
+                                        console.error('자기소개 수정 실패:', err);
+                                    }
+                                }}>저장
+                                </button>
+                                <button className="follow-btn" onClick={() => setEditing(false)}>취소</button>
+                            </>) : (
+                            <button className="follow-btn" onClick={() => setEditing(true)}>변경</button>
+                        )}
                     </div>
                 </section>
                 {/* ===== 뱃지 영역 ===== */}

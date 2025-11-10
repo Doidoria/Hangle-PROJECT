@@ -56,7 +56,6 @@ export default function CompetitionDetail() {
   if (!comp) return <div style={{ padding: 24 }}>데이터가 없습니다.</div>;
 
   return (
-    <Layout>
       <div className="container comp-detail">
         <Link className="back" to="/competitions">
           ← 목록으로
@@ -176,6 +175,5 @@ export default function CompetitionDetail() {
           <p>{comp.description || '설명이 없습니다.'}</p>
         </section>
       </div>
-    </Layout>
   );
 }

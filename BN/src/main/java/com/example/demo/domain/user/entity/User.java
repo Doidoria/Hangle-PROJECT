@@ -33,6 +33,9 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime lastLoginAt;
 
+    @Column(length = 500)
+    private String introduction;  // 자기소개 (null 가능)
+
     @Column(nullable = true)
     private String provider;
     @Column(nullable = true)

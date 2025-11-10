@@ -46,38 +46,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserRestController {
 
-    //    @Autowired
     final private UserRepository userRepository;
-    //    @Autowired
     final private PasswordEncoder passwordEncoder;
-    //    @Autowired
     final private AuthenticationManager authenticationManager;
-    //    @Autowired
     final private JwtTokenProvider jwtTokenProvider;
-    //    @Autowired
     final private RedisUtil redisUtil;
-
-    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.",
-            security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping("/api/user/me")
-    public ResponseEntity<?> getUserInfo(Authentication authentication) {
-        // 사용자 식별 (JWT에서 userid 가져오기)
-        String userid = authentication.getName();
-        User user = userRepository.findByUserid(userid);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
-        }
-        // JSON 응답 데이터 구성
-        Map<String, Object> data = new HashMap<>();
-        data.put("username", user.getUsername());
-        data.put("userid", user.getUserid());
-        data.put("role", user.getRole());
-        data.put("createdAt", user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
-        data.put("lastLoginAt", user.getLastLoginAt() != null ? user.getLastLoginAt().toString() : null);
-
-        return ResponseEntity.ok(data);
-    }
 
     @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> join_post(@Valid @RequestBody UserDto userDto, BindingResult result) {
@@ -178,6 +151,87 @@ public class UserRestController {
             return new ResponseEntity(response,HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity(response,HttpStatus.OK);
+    }
+
+    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping("/api/user/me")
+    public ResponseEntity<?> getUserInfo(Authentication authentication) {
+        // 사용자 식별 (JWT에서 userid 가져오기)
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+        // JSON 응답 데이터 구성
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", user.getUsername());
+        data.put("userid", user.getUserid());
+        data.put("role", user.getRole());
+        data.put("createdAt", user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
+        data.put("lastLoginAt", user.getLastLoginAt() != null ? user.getLastLoginAt().toString() : null);
+        data.put("introduction", user.getIntroduction());
+
+        return ResponseEntity.ok(data);
+    }
+
+    @PutMapping("/api/user/introduction")
+    public ResponseEntity<?> updateIntroduction(@RequestBody Map<String, String> req, Authentication authentication) {
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+        String newIntro = req.get("introduction");
+        user.setIntroduction(newIntro);
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of(
+                "message", "자기소개가 성공적으로 수정되었습니다.",
+                "introduction", newIntro
+        ));
+    }
+
+    @PutMapping("/api/user/update-info")
+    public ResponseEntity<?> updateUserInfo(@RequestBody Map<String, String> req, Authentication authentication) {
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+        String newUsername = req.get("username");
+        String newUserid = req.get("userid");
+        if (newUsername != null && !newUsername.isBlank()) {
+            user.setUsername(newUsername);
+        }
+        if (newUserid != null && !newUserid.isBlank() && !newUserid.equals(userid)) {
+            // 아이디 중복 확인
+            if (userRepository.findByUserid(newUserid) != null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "이미 존재하는 아이디입니다."));
+            }
+            user.setUserid(newUserid);
+        }
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of(
+                "message", "회원 정보가 성공적으로 수정되었습니다.",
+                "username", user.getUsername(),
+                "userid", user.getUserid()
+        ));
+    }
+
+    @DeleteMapping("/api/user/delete")
+    public ResponseEntity<?> deleteUser(Authentication authentication) {
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+        userRepository.delete(user);
+        return ResponseEntity.ok(Map.of("message", "계정이 정상적으로 삭제되었습니다."));
     }
 
     @Operation(summary = "AccessToken 검증", description = "현재 Access Token이 유효한지 확인합니다.",

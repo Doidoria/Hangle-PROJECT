@@ -31,6 +31,7 @@ public class UserDto {
     private String role;
     private LocalDateTime createdAt;
     private LocalDateTime lastLoginAt;
+    private String introduction;
 
 	//OAUTH2 CLIENT INFO
 	private String provider;
@@ -44,6 +45,7 @@ public class UserDto {
                 .userid(this.userid)
                 .password(this.password)
                 .role(this.role != null ? this.role : "ROLE_USER")
+                .introduction(this.introduction)
                 .build();
 	}
 	//ENTITY->DTO
@@ -55,6 +57,7 @@ public class UserDto {
                 .role(user.getRole())
                 .createdAt(user.getCreatedAt())
                 .lastLoginAt(user.getLastLoginAt())
+                .introduction(user.getIntroduction())
                 .build();
 	}
 }

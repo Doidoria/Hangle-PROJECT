@@ -6,17 +6,17 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [isLogin, setIsLogin] = useState(false);
   const [username, setUsername] = useState("");
-  const [userId, setUserId] = useState(null);
+  const [userid, setUserid] = useState(null);
   const [role, setRole] = useState("");
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
-    const storedUserId = localStorage.getItem("userid");
+    const storedUserid = localStorage.getItem("userid");
     const storedRole = localStorage.getItem("role");
 
-    if (storedUsername && storedUserId) {
+    if (storedUsername && storedUserid) {
       setUsername(storedUsername);
-      setUserId(storedUserId);
+      setUserid(storedUserid);
       setRole(storedRole);
       setIsLogin(true);
     }
@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("userid");
     localStorage.removeItem("role");
     setUsername("");
-    setUserId(null);
+    setUserid(null);
     setRole("");
     setIsLogin(false);
   };
@@ -44,7 +44,7 @@ export function AuthProvider({ children }) {
           if (userResp.status === 200) {
             const { username, userid, role } = userResp.data;
             setUsername(username);
-            setUserId(userid);
+            setUserid(userid);
             setRole(role);
 
             localStorage.setItem("username", username);
@@ -64,12 +64,12 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const handleStorageChange = () => {
       const storedUsername = localStorage.getItem("username");
-      const storedUserId = localStorage.getItem("userid");
+      const storedUserid = localStorage.getItem("userid");
       const storedRole = localStorage.getItem("role");
 
-      if (storedUsername && storedUserId) {
+      if (storedUsername && storedUserid) {
         setUsername(storedUsername);
-        setUserId(storedUserId);
+        setUserid(storedUserid);
         setRole(storedRole);
         setIsLogin(true);
       } else {
@@ -90,8 +90,8 @@ export function AuthProvider({ children }) {
         setUsername,
         role,
         setRole,
-        userId,
-        setUserId,
+        userid,
+        setUserid,
         logout,
       }}
     >
