@@ -9,7 +9,6 @@ export function AuthProvider({ children }) {
   const [userId, setUserId] = useState(null);
   const [role, setRole] = useState("");
 
-  // localStorage에 저장된 정보 불러오기
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
     const storedUserId = localStorage.getItem("userid");
@@ -23,7 +22,6 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // 로그아웃
   const logout = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("userid");
@@ -34,7 +32,7 @@ export function AuthProvider({ children }) {
     setIsLogin(false);
   };
 
-  // JWT 토큰 유효성 확인 + DB에서 사용자 정보 가져오기
+  // JWT 토큰 유효성 + 사용자 정보 확인
   useEffect(() => {
     const checkAuthAndFetchUser = async () => {
       try {
@@ -42,7 +40,6 @@ export function AuthProvider({ children }) {
         if (validateResp.status === 200) {
           setIsLogin(true);
 
-          // 토큰이 유효하면 사용자 정보도 불러오기
           const userResp = await api.get("/api/user/me", { withCredentials: true });
           if (userResp.status === 200) {
             const { username, userid, role } = userResp.data;
@@ -50,23 +47,20 @@ export function AuthProvider({ children }) {
             setUserId(userid);
             setRole(role);
 
-            // localStorage 동기화
             localStorage.setItem("username", username);
             localStorage.setItem("userid", userid);
             localStorage.setItem("role", role);
           }
         }
       } catch (err) {
-        console.log("인증 실패 또는 만료:", err);
-        setIsLogin(false);
-        logout();
+        console.warn("JWT 인증 실패 또는 만료:", err?.response?.status);
       }
     };
 
     checkAuthAndFetchUser();
   }, []);
 
-  // 다른 탭(localStorage 변경 시) 자동 반영
+  // 다른 탭 동기화
   useEffect(() => {
     const handleStorageChange = () => {
       const storedUsername = localStorage.getItem("username");
@@ -99,7 +93,8 @@ export function AuthProvider({ children }) {
         userId,
         setUserId,
         logout,
-      }}>
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

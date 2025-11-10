@@ -18,22 +18,31 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 public class User {
-	@Id
+    @Id
+    @Column(length = 100) // ✅ 명시적으로 길이 지정 (PK 안정성)
     private String userid;
-	private String username;
-	private String password;
-	private String role;
-    @Column(updatable = false)
+    @Column(nullable = false, length = 50)
+    private String username;
+    @Column(nullable = false)
+    private String password;
+    @Column(nullable = false, length = 20)
+    private String role;
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime lastLoginAt;
 
+    @Column(nullable = true)
+    private String provider;
+    @Column(nullable = true)
+    private String providerId;
 
-    // Profile과의 1:1 관계 설정 (User가 Profile을 소유함)
+    // Profile (1:1) - 주인 관계는 Profile 쪽에서 user_id로
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Profile profile;
 
+    // Setting (1:1) - 주인 관계는 Setting 쪽에서 user_id로
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Setting setting;
 

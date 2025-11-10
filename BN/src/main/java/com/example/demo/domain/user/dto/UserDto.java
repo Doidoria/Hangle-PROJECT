@@ -29,10 +29,7 @@ public class UserDto {
     @NotBlank(message = "비밀번호를 재입력하세요.")
     private String repassword;
     private String role;
-    @Column(updatable = false)
-    @CreationTimestamp
     private LocalDateTime createdAt;
-    @UpdateTimestamp
     private LocalDateTime lastLoginAt;
 
 	//OAUTH2 CLIENT INFO

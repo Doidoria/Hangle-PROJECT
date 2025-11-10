@@ -76,7 +76,7 @@ const Join = () => {
           </div>
           <button onClick={handleJoin}>회원가입</button>
         </form>
-        {/* ✅ 메시지 표시 영역 */}
+        {/* 메시지 표시 영역 */}
         {message && (
           <div
             className={`join-message ${isError ? 'error' : 'success'}`}

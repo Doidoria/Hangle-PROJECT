@@ -26,7 +26,7 @@ const Setting = () => {
       Swal.fire({
         icon: 'warning',
         title: '본인 인증 필요',
-        text: '본인 인증 후 이메일을 변경할 수 있습니다.',
+        text: '본인 인증 후 회원정보를 변경할 수 있습니다.',
         confirmButtonColor: '#10B981',
       });
       return;
@@ -104,7 +104,7 @@ const Setting = () => {
       title: '정말 계정을 삭제하시겠습니까?',
       text: '삭제 후에는 복구할 수 없습니다.',
       showCancelButton: true,
-      confirmButtonText: '삭제하기',
+      confirmButtonText: '삭제',
       cancelButtonText: '취소',
       confirmButtonColor: '#d33',
     });
@@ -149,7 +149,7 @@ const Setting = () => {
                   Swal.fire({
                     icon: 'warning',
                     title: '본인 인증 필요',
-                    text: '본인 인증 후 이름을 변경할 수 있습니다.',
+                    text: '본인 인증 후 회원정보를 변경할 수 있습니다.',
                     confirmButtonColor: '#10B981',
                     });
                   }

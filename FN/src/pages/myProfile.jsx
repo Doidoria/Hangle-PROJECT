@@ -1,7 +1,7 @@
 import { useAuth } from '../api/AuthContext';
 import { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import api from '../api/axiosConfig'; 
+import api from '../api/axiosConfig';
 import '../css/myProfile.scss'
 
 
@@ -24,17 +24,22 @@ const MyProfile = () => {
     useEffect(() => {
         const fetchProfileData = async () => {
             try {
+                console.log("[MyProfile] 사용자 정보 요청 시작...");
                 const res = await api.get('/api/user/me', { withCredentials: true });
-                if (res.status === 200) {
+
+                console.log("[MyProfile] 응답 수신:", res);
+
+                if (res.status === 200 && res.data) {
                     setJoinDate(formatDate(res.data.createdAt) || '가입일 정보 없음');
                     setLastLogin(formatDate(res.data.lastLoginAt) || '최근 접속 정보 없음');
                 }
             } catch (err) {
-                console.error('프로필 데이터 불러오기 실패:', err);
+                console.error('[MyProfile] 사용자 정보 불러오기 실패:', err);
             } finally {
                 setLoading(false);
             }
         };
+
         fetchProfileData();
     }, []);
 
@@ -47,7 +52,7 @@ const MyProfile = () => {
     }
 
     return (
-        <main className="main">
+        <section className="myprofile-wrap">
             <div className="profile-header">
                 <div className="profile-banner" />
                 <div className="profile-info">
@@ -97,7 +102,7 @@ const MyProfile = () => {
                     </div>
                 </section>
             </div>
-        </main>
+        </section>
     )
 }
 

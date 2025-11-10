@@ -47,15 +47,15 @@ import java.util.Optional;
 public class UserRestController {
 
     //    @Autowired
-    private UserRepository userRepository;
+    final private UserRepository userRepository;
     //    @Autowired
-    private PasswordEncoder passwordEncoder;
+    final private PasswordEncoder passwordEncoder;
     //    @Autowired
-    private AuthenticationManager authenticationManager;
+    final private AuthenticationManager authenticationManager;
     //    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    final private JwtTokenProvider jwtTokenProvider;
     //    @Autowired
-    private RedisUtil redisUtil;
+    final private RedisUtil redisUtil;
 
     @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.",
             security = {@SecurityRequirement(name = "bearerAuth")})
