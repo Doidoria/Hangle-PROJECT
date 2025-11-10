@@ -19,6 +19,8 @@ public class Profile {
     @Column(name = "user_id")
     private String userId;
 
+    private String userinfo;
+
     // 프로필 이미지 URL (S3, CDN 등 외부 스토리지 경로)
     private String profileImageUrl;
 

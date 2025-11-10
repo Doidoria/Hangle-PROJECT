@@ -14,6 +14,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,12 +27,14 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.example.demo.domain.user.entity.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,25 +43,41 @@ import java.util.Optional;
 @Tag(name = "User", description = "사용자 관련 API")
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class UserRestController {
+
+    //    @Autowired
+    private UserRepository userRepository;
+    //    @Autowired
+    private PasswordEncoder passwordEncoder;
+    //    @Autowired
+    private AuthenticationManager authenticationManager;
+    //    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+    //    @Autowired
+    private RedisUtil redisUtil;
 
     @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.",
             security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping("/api/users/me")
-    public String getMyInfo() {
-        return "User info OK";
-    }
+    @GetMapping("/api/user/me")
+    public ResponseEntity<?> getUserInfo(Authentication authentication) {
+        // 사용자 식별 (JWT에서 userid 가져오기)
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+        // JSON 응답 데이터 구성
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", user.getUsername());
+        data.put("userid", user.getUserid());
+        data.put("role", user.getRole());
+        data.put("createdAt", user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
+        data.put("lastLoginAt", user.getLastLoginAt() != null ? user.getLastLoginAt().toString() : null);
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-    @Autowired
-    private RedisUtil redisUtil;
+        return ResponseEntity.ok(data);
+    }
 
     @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> join_post(@Valid @RequestBody UserDto userDto, BindingResult result) {
@@ -121,6 +140,10 @@ public class UserRestController {
             );
             System.out.println("인증성공 : " + authentication);
 
+            // 최근 접속 시간 갱신
+            user.setLastLoginAt(LocalDateTime.now());
+            userRepository.save(user);  // DB에 반영
+
             //Token 생성
             TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
             System.out.println("JWT TOKEN : " + tokenInfo);
@@ -155,28 +178,6 @@ public class UserRestController {
             return new ResponseEntity(response,HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity(response,HttpStatus.OK);
-    }
-
-    @Operation(summary = "유저 정보 조회", description = "인증된 사용자의 정보를 반환합니다.",
-            security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping("/user")
-    public ResponseEntity< Map<String,Object> > user(HttpServletRequest request, Authentication authentication) {
-        log.info("GET /user..." + authentication);
-        log.info("name..." + authentication.getName());
-
-        Optional<User> userOptional =  userRepository.findById(authentication.getName());
-        // Access토큰에 정보를 넣어서 authentication으로 바로 꺼내와도 됨.
-        Map<String, Object> response = new HashMap<>();
-
-        if(userOptional.isPresent()){
-            User user = userOptional.get();
-            response.put("userid",user.getUserid());
-            response.put("username",user.getUsername());
-            response.put("role",user.getRole());
-
-            return new ResponseEntity<>(response , HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null , HttpStatus.UNAUTHORIZED);
     }
 
     @Operation(summary = "AccessToken 검증", description = "현재 Access Token이 유효한지 확인합니다.",

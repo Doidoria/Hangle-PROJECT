@@ -8,11 +8,13 @@ import lombok.Data;
 public class ProfileResponseDto {
     private String userId;
     private String displayName;
+    private String userinfo;
     private String profileImageUrl;
 
     public static ProfileResponseDto fromEntity(Profile profile) {
         return ProfileResponseDto.builder()
                 .userId(profile.getUserId())
+                .userinfo(profile.getUserinfo())
                 .displayName(profile.getDisplayName())
                 .profileImageUrl(profile.getProfileImageUrl())
                 .build();

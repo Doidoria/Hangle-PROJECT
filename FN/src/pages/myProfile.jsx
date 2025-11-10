@@ -1,48 +1,75 @@
-import { Link } from 'react-router-dom';
+import { useAuth } from '../api/AuthContext';
+import { useState, useEffect } from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import api from '../api/axiosConfig'; 
 import '../css/myProfile.scss'
 
 
 const MyProfile = () => {
+    const { username: currentUsername, userId } = useAuth();
+    const [joinDate, setJoinDate] = useState('');
+    const [lastLogin, setLastLogin] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    };
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            try {
+                const res = await api.get('/api/user/me', { withCredentials: true });
+                if (res.status === 200) {
+                    setJoinDate(formatDate(res.data.createdAt) || '가입일 정보 없음');
+                    setLastLogin(formatDate(res.data.lastLoginAt) || '최근 접속 정보 없음');
+                }
+            } catch (err) {
+                console.error('프로필 데이터 불러오기 실패:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProfileData();
+    }, []);
+
+    if (loading) {
+        return (
+            <main className="main">
+                <p style={{ textAlign: 'center', marginTop: '50px' }}>프로필 정보를 불러오는 중...</p>
+            </main>
+        );
+    }
 
     return (
         <main className="main">
-            {/* ===== 프로필 상단 버튼 바 ===== */}
-            <div className="profile-topbar">
-                <div className="profile-menu">
-                    <div className="menu-item-wrap">
-                        <Link to="/setting" className="menu-item">
-                            <span className="material-symbols-outlined gle-icon">
-                                settings
-                            </span>
-                            <span>Settings</span>
-                        </Link>
-                    </div>
-                    <Link to="#" className="menu-item">
-                        <span className="material-symbols-outlined">Work</span>
-                        <span>Your Work</span>
-                    </Link>
-                    <Link to="#" className="menu-item">
-                        <span className="material-symbols-outlined">trending_up</span>
-                        <span>Progression</span>
-                    </Link>
-                </div>
-            </div>
             <div className="profile-header">
                 <div className="profile-banner" />
                 <div className="profile-info">
                     <div className="profile-avatar">
-                        <img
-                            src="https://cdn-icons-png.flaticon.com/512/5997/5997002.png"
-                            alt="user avatar"
-                        />
+                        <img src="https://cdn-icons-png.flaticon.com/512/5997/5997002.png"
+                            alt="user avatar" />
                     </div>
                     <div className="profile-text">
-                        <h2 className="username">전익환</h2>
-                        <p className="user-meta">2일 전에 가입함 · 최근 접속 1일 전</p>
+                        <h2 className="username">{currentUsername || ''}</h2>
+                        <p className="user-meta">
+                            {joinDate ? `${joinDate} 가입` : '가입일 정보 없음'} ·{' '}
+                            {lastLogin ? `최근 접속 ${lastLogin}` : '최근 접속 정보 없음'}
+                        </p>
+                        <p className="user-id">{userId}</p>
                     </div>
-                    <div className="profile-actions">
-                        <button className="follow-btn">팔로우</button>
-                        <button className="contact-btn">메시지</button>
+                    <div className="setting-menu">
+                        <Link to="/setting" className="menu-item">
+                            <span className="material-symbols-outlined gle-icon">
+                                settings
+                            </span>
+                            <span>설정</span>
+                        </Link>
                     </div>
                 </div>
             </div>

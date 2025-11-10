@@ -56,7 +56,7 @@ public class SecurityConfig {
 	@Bean
     @Order(2)
 	protected SecurityFilterChain configure(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
-        http.securityMatcher("/api/**"); // 기존 로직 "/**"
+        http.securityMatcher("/**"); // 기존 로직 "/**"
         // CORS 활성화
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		// CSRF비활성화

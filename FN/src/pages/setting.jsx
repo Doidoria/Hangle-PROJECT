@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import '../css/setting.scss';
 import api from '../api/axiosConfig';
 import { useAuth } from '../api/AuthContext';
@@ -16,7 +17,20 @@ const Setting = () => {
   const { theme, setTheme } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const [isVerified, setIsVerified] = useState(false);
+
+  const handleTabClick = (tab) => setActiveTab(tab);
+
   const handleEmailChange = async () => {
+    if (!isVerified) {
+      Swal.fire({
+        icon: 'warning',
+        title: '본인 인증 필요',
+        text: '본인 인증 후 이메일을 변경할 수 있습니다.',
+        confirmButtonColor: '#10B981',
+      });
+      return;
+    }
     setMessage('');
     setIsError(false);
 
@@ -31,6 +45,13 @@ const Setting = () => {
       setMessage(resp.data || '이메일이 성공적으로 변경되었습니다.');
       setCurrentEmail(newEmail);
       setIsEditingEmail(false);
+
+      Swal.fire({
+        icon: 'success',
+        title: '이메일 변경 완료',
+        text: '이메일이 성공적으로 변경되었습니다.',
+        confirmButtonColor: '#10B981',
+      });
     } catch (error) {
       const errMsg = error.response?.data || '이메일 변경에 실패했습니다.';
       setMessage(errMsg);
@@ -39,12 +60,64 @@ const Setting = () => {
   };
 
   const handleThemeSelect = (value) => {
-    setTheme(value);              // 전역 테마 변경
-    setIsDropdownOpen(false);     // 드롭다운 닫기
+    setTheme(value);
+    setIsDropdownOpen(false);
     console.log(`테마가 ${value}로 변경되었습니다.`);
   };
 
-  const handleTabClick = (tab) => setActiveTab(tab);
+  // 본인 인증 (임시 모의용)
+  const handleVerification = async () => {
+    const result = await Swal.fire({
+      icon: 'question',
+      title: '본인 인증',
+      text: '휴대폰 본인 인증을 진행하시겠습니까?',
+      showCancelButton: true,
+      confirmButtonText: '진행하기',
+      cancelButtonText: '취소',
+      confirmButtonColor: '#10B981',
+    });
+
+    if (result.isConfirmed) {
+      setIsVerified(true);
+      Swal.fire({
+        icon: 'success',
+        title: '인증 완료',
+        text: '본인 인증이 성공적으로 완료되었습니다.',
+        confirmButtonColor: '#10B981',
+      });
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!isVerified) {
+      Swal.fire({
+        icon: 'warning',
+        title: '본인 인증 필요',
+        text: '본인 인증 후 계정을 삭제할 수 있습니다.',
+        confirmButtonColor: '#10B981',
+      });
+      return;
+    }
+
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: '정말 계정을 삭제하시겠습니까?',
+      text: '삭제 후에는 복구할 수 없습니다.',
+      showCancelButton: true,
+      confirmButtonText: '삭제하기',
+      cancelButtonText: '취소',
+      confirmButtonColor: '#d33',
+    });
+
+    if (result.isConfirmed) {
+      Swal.fire({
+        icon: 'success',
+        title: '계정 삭제 완료',
+        text: '계정이 정상적으로 삭제되었습니다.',
+        confirmButtonColor: '#10B981',
+      });
+    }
+  };
 
   return (
     <main className="main">
@@ -68,14 +141,26 @@ const Setting = () => {
           {/* 오른쪽 고정 이름 섹션 */}
           <div className="name-group">
             <h2 className="group-title">사용자 이름</h2>
-            <p className="data-text">{currentUsername || '홍길동'}</p>
-            <Link to="#" className="name-change">
+            <p className="data-text">{currentUsername || ''}</p>
+            <Link to="#" className={`name-change ${!isVerified ? 'disabled' : ''}`}
+              onClick={(e) => {
+                if (!isVerified) {
+                  e.preventDefault();
+                  Swal.fire({
+                    icon: 'warning',
+                    title: '본인 인증 필요',
+                    text: '본인 인증 후 이름을 변경할 수 있습니다.',
+                    confirmButtonColor: '#10B981',
+                    });
+                  }
+                }}>
               이름 변경
             </Link>
           </div>
           {/* 계정 탭 */}
           {activeTab === 'account' && (
             <div className="settings-content">
+              {/* 이메일 변경 */}
               <div className="info-group email-group">
                 <h2 className="group-title">귀하의 이메일 주소</h2>
                 <p className="data-text">{userId || '로그인이 필요합니다.'}</p>
@@ -83,36 +168,42 @@ const Setting = () => {
                   <div style={{ marginTop: '10px' }}>
                     <input type="email" placeholder="새로운 이메일 주소" value={newEmail}
                       onChange={(e) => setNewEmail(e.target.value)} className="input-field"
-                      style={{ marginBottom: '10px', padding: '10px', width: '80%' }} />
+                      style={{ marginBottom: '10px', padding: '10px', width: '80%' }}/>
                     <div style={{ display: 'flex', gap: '10px' }}>
                       <button className="action-button primary-button" onClick={handleEmailChange}>
                         저장
                       </button>
-                      <button className="action-button" onClick={() => {
-                        setIsEditingEmail(false);
-                        setNewEmail(''); setMessage('');
-                      }}>취소
+                      <button className="action-button" onClick={() => { setIsEditingEmail(false);
+                          setNewEmail(''); setMessage('');}}>
+                        취소
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <button className="action-button" onClick={() => setIsEditingEmail(true)}>
+                  <button className="action-button" disabled={!isVerified}
+                    onClick={() => { if (!isVerified) { Swal.fire({
+                          icon: 'warning',
+                          title: '본인 인증 필요',
+                          text: '본인 인증 후 이메일 변경이 가능합니다.',
+                          confirmButtonColor: '#10B981',
+                        });
+                        return;} setIsEditingEmail(true);}}>
                     이메일 변경
                   </button>
-                )} {message && (
-                  <p style={{ color: isError ? 'red' : 'green', marginTop: '10px' }}>{message}</p>)}
+                )}
+                {message && (<p style={{ color: isError ? 'red' : 'green', marginTop: '10px' }}>{message}</p>)}
               </div>
               <hr className="divider" />
-              {/* 전화번호 인증 */}
+              {/* 본인 인증 */}
               <div className="verification-section phone-verification">
                 <h2 className="section-title">본인 확인</h2>
-                <p className="section-description">
-                  계정이 인증되지 않았습니다. 전화번호로 계정을 인증하면
-                  Hangle에서 더 많은 활동을 할 수 있고, 스팸 및 기타 악용 사례를
-                  방지하는데 도움이 됩니다.
+                <p className="section-description"> {isVerified
+                    ? '본인 인증이 완료되었습니다'
+                    : '계정이 인증되지 않았습니다. 전화번호로 인증을 완료해주세요.'}
                 </p>
-                <button className="action-button primary-button">
-                  본인 인증
+                <button className={`action-button primary-button ${isVerified ? 'verified' : ''}`}
+                  onClick={handleVerification} disabled={isVerified}>
+                  {isVerified ? '인증 완료' : '본인 인증'}
                 </button>
               </div>
               <hr className="divider" />
@@ -141,9 +232,9 @@ const Setting = () => {
                       </li>
                       <li className={`select-option ${theme === 'light' ? 'active' : ''}`}
                         onClick={() => handleThemeSelect('light')}>
-                        <img src={ theme === 'light'
-                              ? './image/icon_sun(black).png'
-                              : './image/icon_sun(white).png'} alt="라이트"/>
+                        <img src={theme === 'light'
+                          ? './image/icon_sun(black).png'
+                          : './image/icon_sun(white).png'} alt="라이트" />
                         <span>라이트 테마</span>
                       </li>
                     </ul>
@@ -151,10 +242,14 @@ const Setting = () => {
                 </div>
               </div>
               <hr className="divider" />
+              {/* 계정 삭제 */}
               <div className="delete-account-section verification-section">
                 <h2 className="section-title delete-title">Hangle 계정 삭제</h2>
                 <p className="section-description">Hangle 계정을 영구적으로 삭제하세요.</p>
-                <button className="action-button delete-button">계정 삭제</button>
+                <button className="action-button delete-button" 
+                  disabled={!isVerified} onClick={handleDeleteAccount}>
+                  계정 삭제
+                </button>
               </div>
             </div>
           )}
