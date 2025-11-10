@@ -16,13 +16,15 @@ import java.util.Properties;
 @Configuration
 @EntityScan(basePackages = {
         "com.example.demo.domain.user.entity",
-        "com.example.demo.domain.competition.entity"
+        "com.example.demo.domain.competition.entity",
+        "com.example.demo.domain.leaderboard.entity"
 })
 @EnableJpaRepositories
 (
                 basePackages = {
                         "com.example.demo.domain.user.repository",
                         "com.example.demo.domain.competition.repository",
+                        "com.example.demo.domain.leaderboard.repository"
                 },
                 transactionManagerRef = "jpaTransactionManager"
 )

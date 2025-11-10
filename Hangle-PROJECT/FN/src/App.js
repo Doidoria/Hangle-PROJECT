@@ -17,16 +17,20 @@ function App() {
     <div className="App">
       <BR>
         <Routes>
-          <Route path="/" element={<Main />}></Route>
+          <Route element={<Layout />}> {/* 추가 및 변경 */}
+            <Route path="/" element={<Main />} />
+            <Route path="/competiton" element={<Competiton />} />
+            <Route path="/myprofile" element={<MyProfile />} />
+            <Route path="/setting" element={<Setting />} />
+            <Route path="/competitions" element={<CompetitionList />} />
+            <Route path="/competitions/new" element={<CompetitionCreate />} />
+            <Route path="/competitions/:id" element={<CompetitionDetail />} />
+            
+            <Route path="/leaderboard" element={<Leaderboard/>}></Route>
+          </Route>
+
           <Route path="/login" element={<Login />}></Route>
           <Route path="/join" element={<Join />}></Route>
-          <Route path="/competiton" element={<Competiton />}></Route>
-          <Route path="/myprofile" element={<MyProfile />}></Route>
-          <Route path="/setting" element={<Setting />}></Route>
-          
-          <Route path="/competitions" element={<CompetitionList />} />
-          <Route path="/competitions/new" element={<CompetitionCreate />} />
-          <Route path="/competitions/:id" element={<CompetitionDetail />} />
         </Routes>
       </BR>
     </div>

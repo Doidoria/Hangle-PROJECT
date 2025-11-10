@@ -1,0 +1,7 @@
+<주석처리>
+JwtTokenProvider init() 주석처리
+usercontroller 주석처리
+ 
+<수정된 부분>
+리더보드컨트롤러 
+도메인 - 리더보드 

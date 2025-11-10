@@ -10,6 +10,7 @@ const Layout = ({children}) => {
       <Aside/>
       <Header/>
       <main className='main'>
+         <Outlet/> {/* 추가 */}
         {children}
       </main>
       <Footer/>

@@ -1,5 +1,7 @@
 package com.example.demo.domain.leaderboard.repository;
 
+
+import com.example.demo.domain.leaderboard.dto.LeaderboardEntryDto;
 import com.example.demo.domain.leaderboard.entity.Leaderboard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +16,7 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard,Long> {
     //순위 조회
     @Query("""
             SELECT l FROM Leaderboard l
-            ORDER BY l.compId ASC, l.score DESC
+            ORDER BY l.compid ASC, l.score DESC
     """)
     List<Leaderboard> findAllOrderByCompThenScore();
 
@@ -23,13 +25,17 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard,Long> {
     SELECT l FROM Leaderboard l
     WHERE LOWER(l.username) LIKE LOWER(CONCAT('%', :keyword, '%'))
        OR LOWER(l.compname) LIKE LOWER(CONCAT('%', :keyword, '%'))
-    ORDER BY l.compId ASC, l.score DESC, l.submittedAt ASC
+    ORDER BY l.compid ASC, l.score DESC, l.submittedAt ASC
 """)
     List<Leaderboard> searchAllByKeyword(@Param("keyword") String keyword);
 
-    List<Leaderboard> findByComp_CompId(Long compId);
+    List<Leaderboard> findByCompid(Long compId);
 
-    //FK받은 경우
+
+    // ========================
+    // FK받은 경우
+    // ========================
+
 //    //순위 조회
 //    @Query("""
 //            SELECT l FROM Leaderboard l
