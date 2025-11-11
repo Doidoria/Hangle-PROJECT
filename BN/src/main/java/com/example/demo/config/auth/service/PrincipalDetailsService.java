@@ -1,6 +1,5 @@
 package com.example.demo.config.auth.service;
 
-import com.example.demo.domain.user.dto.UserDto;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -21,17 +20,13 @@ public class PrincipalDetailsService implements UserDetailsService{
 	
 	@Override
 	public UserDetails loadUserByUsername(String userid) throws UsernameNotFoundException {
-		
-		System.out.println("loadUserByUsername .. " + userid);
-		Optional<User> userOption  = userRepository.findById(userid);
-		if(userOption.isEmpty())
-			throw new UsernameNotFoundException(userid + " 존재하지 않는 계정입니다.");
-
-		//entity-> dto
-		UserDto userDto = UserDto.toDto(userOption.get());
-		return new PrincipalDetails(userDto);
-	}
-
+        System.out.println("loadUserByUsername .. " + userid);
+        User user = userRepository.findByUserid(userid);
+        if (user == null) {
+            throw new UsernameNotFoundException(userid + " 존재하지 않는 계정입니다.");
+        }
+        return new PrincipalDetails(user);
+    }
 }
 
 

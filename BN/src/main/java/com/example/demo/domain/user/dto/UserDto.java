@@ -1,5 +1,6 @@
 package com.example.demo.domain.user.dto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -7,12 +8,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.example.demo.domain.user.entity.User;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class UserDto {
+    private Long id;
     @NotBlank(message = "이름을 입력하세요.")
     private String username;
     @NotBlank(message = "ID(E-mail)를 입력하세요.")
@@ -23,6 +30,9 @@ public class UserDto {
     @NotBlank(message = "비밀번호를 재입력하세요.")
     private String repassword;
     private String role;
+    private LocalDateTime createdAt;
+    private LocalDateTime lastLoginAt;
+    private String introduction;
 
 	//OAUTH2 CLIENT INFO
 	private String provider;
@@ -33,10 +43,11 @@ public class UserDto {
 	public User toEntity(){
 		return User.builder()
                 .username(this.username)
-				.userid(this.userid)
-				.password(this.password)
-				.role("ROLE_USER")
-				.build();
+                .userid(this.userid)
+                .password(this.password)
+                .role(this.role != null ? this.role : "ROLE_USER")
+                .introduction(this.introduction)
+                .build();
 	}
 	//ENTITY->DTO
 	public static UserDto toDto(User user){
@@ -45,6 +56,9 @@ public class UserDto {
                 .userid(user.getUserid())
                 .password(user.getPassword())
                 .role(user.getRole())
+                .createdAt(user.getCreatedAt())
+                .lastLoginAt(user.getLastLoginAt())
+                .introduction(user.getIntroduction())
                 .build();
 	}
 }

@@ -1,8 +1,8 @@
 import '../css/login.scss'
 import { Link, useNavigate } from 'react-router-dom';
 import {useState,useEffect} from 'react'
-import axios from 'axios' // npm axios 설치
-import api from '../api/axiosConfig'; // 새로운 api 인스턴스 임포트
+import axios from 'axios'
+import api from '../api/axiosConfig';
 import { useAuth } from '../api/AuthContext';
 
 const Login = () => {
@@ -31,7 +31,7 @@ const Login = () => {
 
     const handleLogin = async (e) => {
     e.preventDefault()
-    setMessage(null) // 이전 메시지 초기화
+    setMessage(null)
 
     try {
       const resp = await api.post(

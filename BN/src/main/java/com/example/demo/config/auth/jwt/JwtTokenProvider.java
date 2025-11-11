@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.context.event.EventListener;
 
@@ -142,12 +143,12 @@ public class JwtTokenProvider {
         String userid = claims.getSubject(); //userid
 
         // PrincipalDetails 생성
-        PrincipalDetails principalDetails = new PrincipalDetails();
-        Optional<User> userOptional = userRepository.findById(userid);
+        User user = userRepository.findByUserid(userid);
         UserDto userDto = null;
-        if(userOptional.isPresent())
-            userDto = UserDto.toDto(userOptional.get());
-        principalDetails.setUserDto(userDto);
+        if (user == null) {
+            throw new UsernameNotFoundException("아이디가 존재하지 않습니다.");
+        }
+        PrincipalDetails principalDetails = new PrincipalDetails(user);
 
         System.out.println("JwtTokenProvider.getAuthentication UseridPasswordAuthenticationToken : " + accessToken);
         UsernamePasswordAuthenticationToken useridPasswordAuthenticationToken =
@@ -173,7 +174,7 @@ public class JwtTokenProvider {
         }
         catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
-            throw new ExpiredJwtException(null,null,null);
+            throw e;
 
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
@@ -181,6 +182,11 @@ public class JwtTokenProvider {
             log.info("JWT claims string is empty.", e);
         }
         return false;
+    }
+
+    public Date getExpiration(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody().getExpiration();
     }
 
 }

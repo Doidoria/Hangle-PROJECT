@@ -1,12 +1,15 @@
 package com.example.demo.domain.user.entity;
 
-import com.example.demo.domain.myProfile.entity.Profile;
-import com.example.demo.domain.mySetting.entity.Setting;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.context.annotation.Profile;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -14,17 +17,29 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 public class User {
-	@Id
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true, nullable = false)
     private String userid;
-	private String username;
-	private String password;
-	private String role;
+    @Column(nullable = false, length = 50)
+    private String username;
+    @Column(nullable = false)
+    private String password;
+    @Column(nullable = false, length = 20)
+    private String role;
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime lastLoginAt;
 
-    // Profile과의 1:1 관계 설정 (User가 Profile을 소유함)
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Profile profile;
+    @Column(length = 500)
+    private String introduction;  // 자기소개 (null 가능)
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Setting setting;
+    @Column(nullable = true)
+    private String provider;
+    @Column(nullable = true)
+    private String providerId;
 
 }

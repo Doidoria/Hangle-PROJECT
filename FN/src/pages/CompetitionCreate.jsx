@@ -83,7 +83,6 @@ function CompetitionCreate() {
   };
 
   return (
-    <Layout>
       <div className="container comp-create">
         <Link className="back" to="/competitions">← 목록으로</Link>
         <h1>대회 생성</h1>
@@ -151,7 +150,6 @@ function CompetitionCreate() {
           </div>
         </form>
       </div>
-    </Layout>
   );
 }
 export default CompetitionCreate;

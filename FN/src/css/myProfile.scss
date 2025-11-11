@@ -1,4 +1,5 @@
 /* ===== 프로필 상단 ===== */
+.myprofile-wrap{width: 1400px; margin: 0 auto;}
 .profile-header {
   position: relative;
   width: 100%;
@@ -44,12 +45,10 @@
       }
     }
 
-    .profile-actions {
-      display: flex;
-      gap: 0.5rem;
-
-      .follow-btn,
-      .contact-btn {
+    .setting-menu {
+      .menu-item {
+        display: flex;
+        gap: 5px;
         padding: 0.5rem 1.2rem;
         border: none;
         border-radius: 10px;
@@ -58,74 +57,17 @@
         background: var(--primary);
         color: #fff;
         transition: all 0.2s;
+        align-items: center;
 
-        &:hover {
-          background: var(--primary-hover);
+        &:hover {background: var(--primary-hover);}
+
+        .material-symbols-outlined {
+          font-variation-settings:
+            'FILL' 0,
+            'wght' 300,
+            'GRAD' 0,
+            'opsz' 10;
         }
-      }
-    }
-  }
-}
-
-/* ===== 프로필 상단 버튼 영역 ===== */
-.profile-topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background: var(--bg);
-
-  .material-symbols-outlined {
-    font-variation-settings:
-      'FILL' 0,
-      'wght' 400,
-      'GRAD' 0,
-      'opsz' 10;
-  }
-
-  /* 왼쪽: 프로필 편집 버튼 */
-  .edit-profile-btn {
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 0.6rem 1.2rem;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s;
-
-    &:hover {
-      background: var(--primary-hover);
-    }
-  }
-
-  /* 오른쪽: 메뉴 아이템 */
-  .profile-menu {
-    display: flex;
-    align-items: center;
-    gap: 1.8rem;
-
-    .menu-item {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 0.6rem 1.2rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      text-decoration: none;
-      transition: all 0.2s;
-
-      &:hover {
-        background: var(--primary-hover);
       }
     }
   }
@@ -146,9 +88,18 @@
       padding-bottom: 0.4rem;
     }
 
-    .info-text,
-    .info-sub {
+    .info-text {
       color: var(--mute);
+
+      .intro-textarea {
+        width: 100%;
+        font-size: 1rem;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        resize: none;
+        background-color: #f8f8f8;
+      }
     }
   }
 

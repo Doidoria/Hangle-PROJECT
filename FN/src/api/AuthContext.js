@@ -5,18 +5,18 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [isLogin, setIsLogin] = useState(false);
-  const [username, setUsername] = useState('');
-  const [userId, setUserId] = useState(null);
-  const [role, setRole] = useState('');
+  const [username, setUsername] = useState("");
+  const [userid, setUserid] = useState(null);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
-    const storedUserId = localStorage.getItem("userid");
+    const storedUserid = localStorage.getItem("userid");
     const storedRole = localStorage.getItem("role");
 
-    if (storedUsername) {
+    if (storedUsername && storedUserid) {
       setUsername(storedUsername);
-      setUserId(storedUserId);
+      setUserid(storedUserid);
       setRole(storedRole);
       setIsLogin(true);
     }
@@ -27,68 +27,80 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("userid");
     localStorage.removeItem("role");
     setUsername("");
+    setUserid(null);
     setRole("");
-    setUserId(null);
     setIsLogin(false);
   };
 
+  // JWT 토큰 유효성 + 사용자 정보 확인
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await api.get("/validate", { withCredentials: true });
-        setIsLogin(true);
-      } catch {
-        setIsLogin(false);
+        const res = await api.get("/validate", { withCredentials: true });
+        if (res.status === 200) {
+          const userResp = await api.get("/api/user/me", { withCredentials: true });
+          const { username, userid, role } = userResp.data;
+          setUsername(username);
+          setUserid(userid);
+          setRole(role);
+          setIsLogin(true);
+          localStorage.setItem("username", username);
+          localStorage.setItem("userid", userid);
+          localStorage.setItem("role", role);
+        }
+      } catch (err) {
+        const status = err?.response?.status;
+        console.warn("JWT 인증 실패 또는 만료:", status);
+
+        // 401일 경우 자동 재시도 (AccessToken 재발급 후)
+        if (status === 401) {
+          try {
+            const retry = await api.get("/validate", { withCredentials: true });
+            if (retry.status === 200) {
+              console.log("🔁 AccessToken 자동 재발급 완료");
+              const userResp = await api.get("/api/user/me", { withCredentials: true });
+              const { username, userid, role } = userResp.data;
+              setUsername(username);
+              setUserid(userid);
+              setRole(role);
+              setIsLogin(true);
+              localStorage.setItem("username", username);
+              localStorage.setItem("userid", userid);
+              localStorage.setItem("role", role);
+              return;
+            }
+          } catch (reErr) {
+            console.warn("RefreshToken도 만료됨 → 로그아웃");
+            logout();
+          }
+        } else {
+          logout();
+        }
       }
     };
+
     checkAuth();
   }, []);
 
-  //OAuthSuccess 처리
+  // 다른 탭 동기화
   useEffect(() => {
-  const handleStorageChange = () => {
-    const storedUsername = localStorage.getItem("username");
-    const storedUserId = localStorage.getItem("userid");
-    const storedRole = localStorage.getItem("role");
+    const handleStorageChange = () => {
+      const storedUsername = localStorage.getItem("username");
+      const storedUserid = localStorage.getItem("userid");
+      const storedRole = localStorage.getItem("role");
 
-    if (storedUsername && storedUserId) {
-      setUsername(storedUsername);
-      setUserId(storedUserId);
-      setRole(storedRole);
-      setIsLogin(true);
-    } else {
-      setUsername("");
-      setUserId(null);
-      setRole("");
-      setIsLogin(false);
-    }
-  };
-
-  window.addEventListener("storage", handleStorageChange);
-  return () => window.removeEventListener("storage", handleStorageChange);
-}, []);
-
-  // username이 비어 있을 때 localStorage를 다시 읽어와서 반영
-  useEffect(() => {
-    const storedUsername = localStorage.getItem('username');
-    if (storedUsername && username !== storedUsername) {
-      setUsername(storedUsername);
-      setIsLogin(true);
-    }
-  }, [username]);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const resp = await api.get("/validate", { withCredentials: true });
-        console.log("토큰 유효함:", resp.status);
+      if (storedUsername && storedUserid) {
+        setUsername(storedUsername);
+        setUserid(storedUserid);
+        setRole(storedRole);
         setIsLogin(true);
-      } catch (err) {
-        console.log("토큰 만료 또는 비인증:", err);
-        setIsLogin(false);
+      } else {
+        logout();
       }
     };
-    checkAuth();
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   return (
@@ -100,8 +112,8 @@ export function AuthProvider({ children }) {
         setUsername,
         role,
         setRole,
-        userId,
-        setUserId,
+        userid,
+        setUserid,
         logout,
       }}
     >
