@@ -72,7 +72,7 @@ public class LeaderboardController {
         resultList = resultList.stream()
                 .sorted(Comparator
                         .comparing(LeaderboardEntryDto::getCompname, Comparator.nullsLast(String::compareTo))
-                        .thenComparing(LeaderboardEntryDto::getRank, Comparator.nullsLast(Integer::compareTo)))
+                        .thenComparing(LeaderboardEntryDto::getComprank, Comparator.nullsLast(Integer::compareTo)))
                 .toList();
 
         System.out.println("leaderboard"+resultList);
@@ -83,7 +83,7 @@ public class LeaderboardController {
         response.put("keyword", keyword == "" ? "" : keyword);
 
         if(isempty==true){
-            response.put("isEmpty",resultList.isEmpty());
+            response.put("isEmpty",isempty);
         }
 
         return ResponseEntity.ok(response);

@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -53,57 +53,39 @@ public class SecurityConfig {
         return new JwtAuthorizationFilter(userRepository, jwtTokenProvider, redisUtil);
     }
 
-    @Bean
-    @Order(1)
-    public SecurityFilterChain openapiPermitAll(HttpSecurity http) throws Exception {
-        http.securityMatcher(
-                "/v3/api-docs/**",
-                        "/swagger-ui/**",
-                        "/swagger-ui.html"
-                )
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        return http.build();
-    }
-
-//    @Bean
-//    public FilterRegistrationBean<JwtAuthorizationFilter> jwtAuthFilterRegistration(JwtAuthorizationFilter filter) {
-//        FilterRegistrationBean<JwtAuthorizationFilter> registration = new FilterRegistrationBean<>();
-//        registration.setFilter(filter);
-//        registration.setEnabled(false);
-//        return registration;
-//    }
-
 	@Bean
     @Order(2)
 	protected SecurityFilterChain configure(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
+        http.securityMatcher("/api/**"); // 기존 로직 "/**"
         // CORS 활성화
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		// CSRF비활성화
 		http.csrf((config)->{config.disable();});
 
 		//권한체크
-        http.securityMatcher("/**");
         http.authorizeHttpRequests(auth -> {
+            auth.requestMatchers(
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/swagger-resources/**",
+                    "/swagger-resources"
+            ).permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-            auth.requestMatchers("/", "/join", "/login", "/validate").permitAll();
+            auth.requestMatchers("/", "/join", "/login", "/validate", "/oauth2/authorization/**").permitAll();
             auth.requestMatchers(HttpMethod.POST, "/logout").permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll();
-            auth.requestMatchers("/user").hasRole("USER");
-            auth.requestMatchers("/manager").hasRole("MANAGER");
-            auth.requestMatchers("/admin").hasRole("ADMIN");
-            auth.anyRequest().authenticated();
+            auth.requestMatchers("/admin/**").hasRole("ADMIN");
+            auth.requestMatchers("/manager/**").hasAnyRole("MANAGER", "ADMIN");
+//            auth.anyRequest().hasRole("USER"); // USER 이상만 접근 가능
+            auth.anyRequest().permitAll(); // !!임시로 전체 오픈!!
         });
+
 		//-----------------------------------------------------
 		// [수정] 로그인(직접처리 - UserRestController)
 		//-----------------------------------------------------
 		http.formLogin((login)->{
 			login.disable();
-//            login.permitAll();
-//            login.loginPage("/login");
-//            login.successHandler(customLoginSuccessHandler());
-//            login.failureHandler(new CustomAuthenticationFailureHandler());
 		});
 
 		//로그아웃
@@ -133,8 +115,8 @@ public class SecurityConfig {
 		});
 
 		//JWT FILTER ADD
-//        http.addFilterBefore(new JwtAuthorizationFilter(userRepository, jwtTokenProvider, redisUtil), LogoutFilter.class);
         http.addFilterBefore(jwtAuthorizationFilter, LogoutFilter.class);
+
 		//-----------------------------------------------
 		//[추가] CORS
 		//-----------------------------------------------
@@ -143,7 +125,7 @@ public class SecurityConfig {
 		});
 
 		return http.build();
-
+		
 	}
 
 	@Bean
@@ -174,6 +156,7 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
 	}
+
 	//-----------------------------------------------------
 	//[추가] ATHENTICATION MANAGER 설정 - 로그인 직접처리를 위한 BEAN
 	//-----------------------------------------------------
@@ -186,13 +169,20 @@ public class SecurityConfig {
     @Bean
     public AuthenticationSuccessHandler oAuth2LoginSuccessHandler() {
         return (request, response, authentication) -> {
-            // ✅ 1. JWT 생성
+
+            // PrincipalDetails 캐스팅
+            com.example.demo.config.auth.service.PrincipalDetails principalDetails =
+                    (com.example.demo.config.auth.service.PrincipalDetails) authentication.getPrincipal();
+
+            // 사용자 이름 가져오기
+            String username = principalDetails.getUserDto().getUsername();
+            String userid = principalDetails.getUserDto().getUserid();
+
+            // 1. JWT 생성
             TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-
-            // ✅ 2. Redis에 Refresh 저장
+            // 2. Redis에 Refresh 저장
             redisUtil.save("RT:" + authentication.getName(), tokenInfo.getRefreshToken());
-
-            // ✅ 3. 쿠키 생성 (Access + User)
+            // 3. 쿠키 생성 (Access + User)
             ResponseCookie accessCookie = ResponseCookie.from(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken())
                     .httpOnly(true)
                     .secure(true) // HTTPS에서만 사용, SameSite=None 대응
@@ -209,11 +199,15 @@ public class SecurityConfig {
                     .maxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME)
                     .build();
 
+            // React로 username과 함께 리다이렉트
+            String redirectUrl = "http://localhost:3000/oauth-success?username="
+                    + java.net.URLEncoder.encode(username, java.nio.charset.StandardCharsets.UTF_8)
+                    + "&userid=" + java.net.URLEncoder.encode(userid, java.nio.charset.StandardCharsets.UTF_8);
+
             response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
             response.addHeader(HttpHeaders.SET_COOKIE, userCookie.toString());
 
-            // ✅ 4. 프론트엔드로 리다이렉트
-            response.sendRedirect("http://localhost:3000/");
+            response.sendRedirect(redirectUrl);
         };
     }
 

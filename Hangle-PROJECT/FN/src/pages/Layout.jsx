@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom';
-
+import { Outlet } from "react-router-dom";
 import Aside from './aside.jsx'
 import Header from './header.jsx'
 import Footer from './footer.jsx'
@@ -10,7 +9,7 @@ const Layout = ({children}) => {
       <Aside/>
       <Header/>
       <main className='main'>
-         <Outlet/> {/* 추가 */}
+        <Outlet/>
         {children}
       </main>
       <Footer/>

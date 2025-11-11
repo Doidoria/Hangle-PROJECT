@@ -67,6 +67,7 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService {
         System.out.println("oAuth2UserInfo : " + oAuth2UserInfo);
 
         //최초 로그인시 로컬계정 DB 저장 처리
+        String username = oAuth2UserInfo.getName();
         String userid = oAuth2UserInfo.getProvider()+"_"+oAuth2UserInfo.getProviderId();
         String password = passwordEncoder.encode("1234");
         Optional<User> userOptional =  userRepository.findById(userid);
@@ -75,11 +76,12 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService {
         UserDto userDto =null;
         if(userOptional.isEmpty()){
             //최초 로그인(Dto , Entity)
-            userDto = UserDto   .builder()
-                                .userid(userid)
-                                .password(password)
-                                .role("ROLE_USER")
-                                .build();
+            userDto = UserDto.builder()
+                    .userid(userid)
+                    .password(password)
+                    .role("ROLE_USER")
+                    .username(username)
+                    .build();
             User user = userDto.toEntity();
             userRepository.save(user);  //계정 등록
 
@@ -88,7 +90,6 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService {
             User user = userOptional.get();
             userDto = UserDto.toDto(user);
         }
-
 
         // PrincipalDetails 전달
         PrincipalDetails principalDetails = new PrincipalDetails();

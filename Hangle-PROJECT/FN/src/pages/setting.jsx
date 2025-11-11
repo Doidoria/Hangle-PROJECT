@@ -1,12 +1,56 @@
 import Layout from './Layout.jsx'
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from "react";
 import '../css/setting.scss'
+
+import { useState, useEffect } from 'react';
+import api from '../api/axiosConfig';
+import { useAuth } from '../api/AuthContext';
+
 
 const Setting = () => {
 
+    //  상태 관리
+    const { username: currentUsername } = useAuth(); // 현재 사용자 이름
+    const [currentEmail, setCurrentEmail] = useState(''); // DB에서 불러올 현재 이메일
+    const [newEmail, setNewEmail] = useState('');     // 사용자가 입력할 새 이메일
+    const [isEditingEmail, setIsEditingEmail] = useState(false); // 이메일 변경 폼 표시 여부
+    const [message, setMessage] = useState('');
+    const [isError, setIsError] = useState(false);
+    const { userId } = useAuth();
+
+    // 이메일 변경 핸들러 (버튼: "저장" 클릭 시)
+    const handleEmailChange = async () => {
+        setMessage('');
+        setIsError(false);
+
+        // 1. 유효성 검사
+        if (!newEmail || newEmail === currentEmail) {
+            setMessage('새로운 이메일을 정확히 입력해주세요.');
+            setIsError(true);
+            return;
+        }
+
+        try {
+            // 2. API 호출 (PUT /api/settings/email)
+            const resp = await api.put('/api/settings/email', {
+                newEmail: newEmail
+            }); //  newEmail 필드명 일치 확인
+
+            console.log("이메일 변경 성공:", resp.data);
+            setMessage(resp.data || '이메일이 성공적으로 변경되었습니다.');
+            setIsError(false);
+            setCurrentEmail(newEmail); // UI 상의 현재 이메일 업데이트
+            setIsEditingEmail(false); // 폼 닫기
+        } catch (error) {
+            console.error("이메일 변경 실패:", error);
+            const errMsg = error.response?.data || '이메일 변경에 실패했습니다.';
+            setMessage(errMsg);
+            setIsError(true);
+        }
+    };
+
     return (
-        <Layout>
+        <>
             <main className="main">
                 <div className="title-wrap">
                     <h1>설정</h1>
@@ -26,12 +70,58 @@ const Setting = () => {
                     <div className="setting-wrap">
                         {/* 계정 */}
                         <div className="settings-content">
-                            <div className="info-group-container">
-                                <div className="info-group email-group">
-                                    <h2 className="group-title">귀하의 이메일 주소</h2>
-                                    <p className="data-text">유저 아이디</p>
-                                    <button className="action-button">이메일 변경</button>
-                                </div>
+                            <div className="info-group email-group">
+                                <h2 className="group-title">귀하의 이메일 주소</h2>
+                                {/* userId (이메일) 표시 */}
+                                <p className="data-text">{userId || '로그인이 필요합니다.'}</p>
+                                <button className="action-button">이메일 변경</button>
+                                <p className="data-text">{currentEmail || "이메일 정보가 없습니다."}</p>
+
+                                {/*  이메일 변경 폼 */}
+                                {isEditingEmail ? (
+                                    <div style={{ marginTop: '10px' }}>
+                                        <input
+                                            type="email"
+                                            placeholder="새로운 이메일 주소"
+                                            value={newEmail}
+                                            onChange={e => setNewEmail(e.target.value)}
+                                            className="input-field"
+                                            style={{ marginBottom: '10px', padding: '10px', width: '80%' }}
+                                        />
+                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                            <button
+                                                className="action-button primary-button"
+                                                onClick={handleEmailChange} // 폼 저장 함수 연결
+                                            >
+                                                저장
+                                            </button>
+                                            <button
+                                                className="action-button"
+                                                onClick={() => {
+                                                    setIsEditingEmail(false);
+                                                    setNewEmail(''); // 입력 값 초기화
+                                                    setMessage(''); // 메시지 초기화
+                                                }}
+                                            >
+                                                취소
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <button
+                                        className="action-button"
+                                        onClick={() => setIsEditingEmail(true)} // 폼 열기
+                                    >
+                                        이메일 변경
+                                    </button>
+                                )}
+
+                                {/*  메시지 표시 */}
+                                {message && (
+                                    <p style={{ color: isError ? 'red' : 'green', marginTop: '10px' }}>
+                                        {message}
+                                    </p>
+                                )}
                             </div>
                             <hr className="divider" />
                             <div className="verification-section phone-verification">
@@ -128,7 +218,7 @@ const Setting = () => {
                     </div>
                 </section>
             </main>
-        </Layout>
+        </>
     )
 }
 

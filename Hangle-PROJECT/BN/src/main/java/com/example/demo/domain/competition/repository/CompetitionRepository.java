@@ -1,10 +1,10 @@
+// src/main/java/com/example/demo/domain/competition/repository/CompetitionRepository.java
 package com.example.demo.domain.competition.repository;
 
 import com.example.demo.domain.competition.entity.Competition;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-@Repository
-public interface CompetitionRepository extends JpaRepository<Competition, Long>{
-
+public interface CompetitionRepository
+        extends JpaRepository<Competition, Long>, JpaSpecificationExecutor<Competition> {
 }

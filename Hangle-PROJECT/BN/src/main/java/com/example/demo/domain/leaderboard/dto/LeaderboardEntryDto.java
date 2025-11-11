@@ -1,6 +1,5 @@
 package com.example.demo.domain.leaderboard.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,5 +17,5 @@ public class LeaderboardEntryDto {
     private Double score; // 점수
     private Integer attempt; // N번째 제출
     private LocalDateTime submittedAt; //최근 제출 시간
-    private Integer rank;
+    private Integer comprank;
 }

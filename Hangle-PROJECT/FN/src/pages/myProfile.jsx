@@ -6,14 +6,16 @@ import '../css/myProfile.scss'
 const MyProfile = () => {
 
     return (
-        <Layout>
+        <>
             <main className="main">
                 {/* ===== 프로필 상단 버튼 바 ===== */}
                 <div className="profile-topbar">
                     <div className="profile-menu">
                         <div className="menu-item-wrap">
                             <Link to="/setting" className="menu-item">
-                                <span className="material-symbols-outlined gle-icon">settings</span>
+                                <span className="material-symbols-outlined gle-icon">
+                                    settings
+                                </span>
                                 <span>Settings</span>
                             </Link>
                         </div>
@@ -71,7 +73,7 @@ const MyProfile = () => {
                     </section>
                 </div>
             </main>
-        </Layout >
+        </ >
     )
 }
 

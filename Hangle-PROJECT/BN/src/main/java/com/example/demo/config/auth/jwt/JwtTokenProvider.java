@@ -75,6 +75,15 @@ public class JwtTokenProvider {
                 .collect(Collectors.joining(","));
         long now = (new Date()).getTime();
 
+        // role 클레임 추가
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
+
+        // JWT Claims 생성
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userid", authentication.getName());
+        claims.put("role", role);         // 핵심 추가 (ROLE_USER / ROLE_ADMIN 등)
+        claims.put("auth", authorities);  // 기존 auth 필드도 유지
+
         // Access Token 생성 (여기서 받아서 user 정보 넘겨도 됨)
         Date accessTokenExpiresIn = new Date(now + JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME); // 60초후 만료
         String accessToken = Jwts.builder()
@@ -101,7 +110,6 @@ public class JwtTokenProvider {
                 .build();
     }
 
-
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
     public Authentication getAuthentication(String accessToken) {
         // 토큰 복호화
@@ -110,11 +118,26 @@ public class JwtTokenProvider {
         if (claims.get("auth") == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
+
         // 클레임에서 권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get("auth").toString().split(","))
-                        .map(auth -> new SimpleGrantedAuthority(auth))
-                        .collect(Collectors.toList());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        // auth 클레임이 있다면
+        if (claims.get("auth") != null) {
+            authorities.addAll(
+                    Arrays.stream(claims.get("auth").toString().split(","))
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList())
+            );
+        }
+
+        // role 클레임이 있다면 추가 (중복 방지)
+        if (claims.get("role") != null) {
+            String role = claims.get("role").toString();
+            if (authorities.stream().noneMatch(a -> a.getAuthority().equals(role))) {
+                authorities.add(new SimpleGrantedAuthority(role));
+            }
+        }
 
         String userid = claims.getSubject(); //userid
 

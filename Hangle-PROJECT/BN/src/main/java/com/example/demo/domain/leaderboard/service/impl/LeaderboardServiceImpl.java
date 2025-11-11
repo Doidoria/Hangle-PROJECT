@@ -1,16 +1,16 @@
 package com.example.demo.domain.leaderboard.service.impl;
 
-import com.example.demo.domain.competition.entity.Submission;
-import com.example.demo.domain.competition.repository.SubmissionRepository;
 import com.example.demo.domain.leaderboard.dto.LeaderboardEntryDto;
 import com.example.demo.domain.leaderboard.entity.Leaderboard;
 import com.example.demo.domain.leaderboard.repository.LeaderboardRepository;
 import com.example.demo.domain.leaderboard.service.LeaderboardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +34,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                         l.getScore(),
                         l.getAttempt(),
                         l.getSubmittedAt(),
-                        l.getRank()
+                        l.getComprank()
                 ))
                 .collect(Collectors.toList());
         return list;
@@ -55,7 +55,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                         l.getScore(),
                         l.getAttempt(),
                         l.getSubmittedAt(),
-                        l.getRank()
+                        l.getComprank()
                 ))
                 .collect(Collectors.toList());
         return list;
@@ -84,7 +84,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                 currentRank = pos;
                 prevScore = score;
             }
-            lb.setRank(currentRank);
+            lb.setComprank(currentRank);
         }
 
 
@@ -95,5 +95,67 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         return (lb.getCompid() != null) ? lb.getScore() : null;
 //        return (lb.getComp() != null) ? lb.getSubmit().getBest_score() : null;
 
+    }
+
+    //submit 추가
+    public Long leaderBoardAdd(LeaderboardEntryDto dto) throws Exception{
+
+
+//        User user = userRepository.findById(dto.getUserId())
+//                .orElse(null);
+//
+//        Submit submit = submitRepository.findById(dto.getSubmitId())
+//                .orElse(null);
+//        Comp comp = compRepository.findById(dto.getCompId())
+//              .orElse(null);
+//        //submit안에 comp외래키 받은 경우
+//        Comp comp = submit.getComp();
+
+        //dto -> entity
+        Leaderboard leaderboard = Leaderboard.builder()
+                .leaderBoardId(null)
+                .compid(dto.getCompid())
+                .userid(dto.getUserid())
+                .submissionid(dto.getSubmissionid())
+                .compname(dto.getCompname())
+                .username(dto.getUsername())
+                .score(dto.getScore())
+                .attempt(dto.getAttempt())
+                .submittedAt(dto.getSubmittedAt())
+                .comprank(dto.getComprank())
+                .build();
+        leaderboardRepository.save(leaderboard);
+
+        computeRanksPerComp(dto.getCompid()); //rank 업데이트
+
+        return leaderboard.getLeaderBoardId();
+    }
+
+    public Long leaderBoardUpdate(LeaderboardEntryDto dto) throws  Exception{
+
+        //기존 리더보드 가져오기
+        Leaderboard list = leaderboardRepository.findById(dto.getLeaderBoardId()).orElse(null);
+
+        if(list == null){
+            return null;
+        }
+
+        Double oldScore = list.getScore(); //예전 점수
+        Double newScore = dto.getScore();
+
+        if(oldScore >= newScore){
+            list.setAttempt(dto.getAttempt() + 1);
+            list.setSubmittedAt(LocalDateTime.now());
+        }else{
+            list.setSubmittedAt(LocalDateTime.now());
+            list.setAttempt(dto.getAttempt() + 1);
+            list.setScore(newScore);
+        }
+
+        leaderboardRepository.save(list);
+
+        computeRanksPerComp(list.getCompid());
+
+        return list.getLeaderBoardId();
     }
 }

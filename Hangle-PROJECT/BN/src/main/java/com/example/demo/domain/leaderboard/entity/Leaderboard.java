@@ -1,9 +1,8 @@
 package com.example.demo.domain.leaderboard.entity;
 
-import com.example.demo.domain.competition.entity.Competition;
-import com.example.demo.domain.competition.entity.Submission;
-import com.example.demo.domain.user.entity.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -50,5 +49,5 @@ public class Leaderboard {
     private Double score; // 점수
     private Integer attempt; // N번째 제출
     private LocalDateTime submittedAt; //최근 제출 시간
-    private Integer rank;
+    private Integer comprank;
 }

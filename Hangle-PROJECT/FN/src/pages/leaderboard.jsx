@@ -1,17 +1,28 @@
 import Layout from './Layout.jsx'
 import { Link } from 'react-router-dom';
 import '../css/leaderboard.scss'
+import { useState } from 'react';
 
 const Leaderboard = () => {
+    
+    const [leaderboard , setLeaderboard] = useState({});
+    const [compNameList , setCompNameList ] = useState({});
+    const [keyword , setKeyword] = useState("");
+    const [isEmpty , setIsEmpty] = useState(false);
+
+
+
     return (
         <Layout>
 
             <main className="main">
                 <section className="section-wrap">
                     <div>
-                        <h1>이미지 분류 챌린지 (리더보드) 🏆</h1>
+                        <h1>리더보드 🏆</h1>
                         <p>상위권 참가자의 점수를 확인하세요.</p>
                     </div>
+
+                    <h3>대회이름</h3>
                     <div className="card" style={{ overflowX: "auto" }}>
                         <table
                             className="leaderboard"
@@ -26,7 +37,15 @@ const Leaderboard = () => {
                                     <th>최근 제출일</th>
                                 </tr>
                             </thead>
-                            <tbody className="leaderboardBody" />
+                            <tbody className="leaderboardBody">
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </section>
@@ -40,22 +59,3 @@ const Leaderboard = () => {
 
 export default Leaderboard
 
-
-
-//실제 응답 예시
-//[
-//        {
-//        "rank": 1,
-//        "userid": "hyun",
-//        "bestScore": 98.5,
-//        "submissions": 3,
-//        "submittedAt": "2025-11-07T15:20:35"
-//        },
-//        {
-//        "rank": 2,
-//        "userid": "eun",
-//        "bestScore": 95.0,
-//        "submissions": 2,
-//        "submittedAt": "2025-11-07T14:59:12"
-//        }
-//]
