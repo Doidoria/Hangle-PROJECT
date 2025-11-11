@@ -47,7 +47,7 @@ const Competiton = () => {
   );
 
   return (
-    <Layout>
+    <>
       <section className="section-wrap">
         <div className="competiton-title">
           <div>
@@ -67,7 +67,7 @@ const Competiton = () => {
         </div>
         {renderSection()}
       </section>
-    </Layout>
+    </>
   );
 };
 
