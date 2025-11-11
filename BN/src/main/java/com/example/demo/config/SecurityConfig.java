@@ -30,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.context.NullSecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -37,7 +38,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -110,11 +111,12 @@ public class SecurityConfig {
         );
 
 		//SESSION INVALIDATED
+        http.securityContext(c -> c.securityContextRepository(new NullSecurityContextRepository()));
 		http.sessionManagement((sessionManagerConfigure)->{
 			sessionManagerConfigure.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		});
 
-		//JWT FILTER ADD
+        //JWT FILTER ADD
         http.addFilterBefore(jwtAuthorizationFilter, LogoutFilter.class);
 
 		//-----------------------------------------------
@@ -139,7 +141,7 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
         // React 개발 서버 주소만 허용
-        config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000"));
+        config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000")); //"http://localhost:5173"
         // 모든 헤더와 메서드 허용
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -151,6 +153,7 @@ public class SecurityConfig {
         // (이건 쿠키 생성/삭제할 때 맞춰줘야 함)
         // 쿠키 생성 시에도 동일하게 secure=false, SameSite=None으로 만들어야 브라우저 인식됨
         // URL 매핑
+//        config.setMaxAge(3600L); // 1시간 동안 캐싱 (1시간 동안은 매번 OPTIONS 요청을 다시 보내지 않음)
         org.springframework.web.cors.UrlBasedCorsConfigurationSource source =
                 new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -188,7 +191,7 @@ public class SecurityConfig {
             ResponseCookie accessCookie = ResponseCookie.from(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken())
                     .httpOnly(true)
                     .secure(false) // HTTPS에서만 사용, SameSite=None 대응
-                    .sameSite("None")
+                    .sameSite("Lax")
                     .path("/")
                     .maxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000)
                     .build();
@@ -196,7 +199,7 @@ public class SecurityConfig {
             ResponseCookie userCookie = ResponseCookie.from("userid", authentication.getName())
                     .httpOnly(true)
                     .secure(false)
-                    .sameSite("None")
+                    .sameSite("Lax")
                     .path("/")
                     .maxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000)
                     .build();

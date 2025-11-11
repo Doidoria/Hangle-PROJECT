@@ -68,7 +68,25 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService {
 
         //최초 로그인시 로컬계정 DB 저장 처리
         String username = oAuth2UserInfo.getName();
-        String userid = oAuth2UserInfo.getProvider()+"_"+oAuth2UserInfo.getProviderId();
+//        String userid = oAuth2UserInfo.getProvider()+"_"+oAuth2UserInfo.getProviderId();
+        String userid = null;
+        if (provider.startsWith("kakao")) {
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            if (kakaoAccount != null && kakaoAccount.containsKey("email")) {
+                userid = kakaoAccount.get("email").toString();
+            } else {
+                // 혹시 이메일이 없는 경우 fallback
+                userid = "kakao_" + attributes.get("id").toString();
+            }
+        } else if (provider.startsWith("naver")) {
+            Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+            userid = response.get("email") != null ? response.get("email").toString()
+                    : "naver_" + response.get("id");
+        } else if (provider.startsWith("google")) {
+            userid = attributes.get("email") != null ? attributes.get("email").toString()
+                    : "google_" + attributes.get("sub");
+        }
+
         String password = passwordEncoder.encode("1234");
         User user = userRepository.findByUserid(userid);
         if(user == null){

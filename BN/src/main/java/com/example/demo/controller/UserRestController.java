@@ -211,34 +211,18 @@ public class UserRestController {
             user.setUsername(newUsername);
         }
         if (newUserid != null && !newUserid.isBlank() && !newUserid.equals(userid)) {
+
+            if (user.getProvider() != null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "소셜 로그인 사용자는 이메일을 변경할 수 없습니다."));
+            }
             // 아이디 중복 확인
             if (userRepository.findByUserid(newUserid) != null) {
                 return ResponseEntity.badRequest().body(Map.of("error", "이미 존재하는 아이디입니다."));
             }
             user.setUserid(newUserid);
             userRepository.save(user);
-            // 로그아웃 처리 (토큰/쿠키/Redis 정리)
-            // Redis Refresh Token 제거
-            redisUtil.delete("RT:" + currentUserid);
-
-            // Access Token 쿠키 제거
-            Cookie accessCookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, null);
-            accessCookie.setPath("/");
-            accessCookie.setMaxAge(0);
-            accessCookie.setHttpOnly(true);
-            accessCookie.setSecure(false);
-            resp.addCookie(accessCookie);
-
-            // UserID 쿠키 제거
-            Cookie userCookie = new Cookie("userid", null);
-            userCookie.setPath("/");
-            userCookie.setMaxAge(0);
-            userCookie.setHttpOnly(true);
-            userCookie.setSecure(false);
-            resp.addCookie(userCookie);
-
-            // SecurityContext 초기화 (현재 로그인 세션 강제 해제)
-            SecurityContextHolder.clearContext();
+            handleLogoutCleanup(currentUserid, resp);
 
             return ResponseEntity.ok(Map.of(
                     "message", "이메일이 변경되어 로그아웃되었습니다. 다시 로그인해주세요.",
@@ -255,15 +239,38 @@ public class UserRestController {
     }
 
     @DeleteMapping("/api/user/delete")
-    public ResponseEntity<?> deleteUser(Authentication authentication) {
+    public ResponseEntity<?> deleteUser(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
         String userid = authentication.getName();
+        System.out.println("[회원 탈퇴 요청] 현재 로그인된 사용자: " + userid);
+
         User user = userRepository.findByUserid(userid);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "사용자를 찾을 수 없습니다."));
         }
-        userRepository.delete(user);
-        return ResponseEntity.ok(Map.of("message", "계정이 정상적으로 삭제되었습니다."));
+
+        try {
+            userRepository.delete(user);
+            handleLogoutCleanup(authentication.getName(), response);
+            return ResponseEntity.ok(Map.of(
+                    "message", "회원 탈퇴 및 로그아웃이 완료되었습니다."
+            ));
+        } catch (Exception e) {
+            log.error("[회원탈퇴 오류]", e);
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "회원 탈퇴 처리 중 오류 발생"));
+        }
+    }
+
+    private void handleLogoutCleanup(String userid, HttpServletResponse response) {
+        // Redis RT 삭제
+        redisUtil.delete("RT:" + userid);
+        // Access Token 쿠키 제거
+        clearCookie(response, JwtProperties.ACCESS_TOKEN_COOKIE_NAME);
+        // Userid 쿠키 제거
+        clearCookie(response, "userid");
+        // SecurityContext 초기화 (세션 강제 해제)
+        SecurityContextHolder.clearContext();
     }
 
     @Operation(summary = "AccessToken 검증", description = "현재 Access Token이 유효한지 확인합니다.",
@@ -285,5 +292,14 @@ public class UserRestController {
 
         System.out.println("미인증된 상태입니다.");
         return new ResponseEntity<>("",HttpStatus.UNAUTHORIZED);
+    }
+
+    private void clearCookie(HttpServletResponse response, String name) {
+        Cookie cookie = new Cookie(name, null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        response.addCookie(cookie);
     }
 }

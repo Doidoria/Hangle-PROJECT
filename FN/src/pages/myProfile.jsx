@@ -62,16 +62,6 @@ const MyProfile = () => {
         );
     }
 
-    const handleSaveIntroduction = async () => {
-        try {
-            const resp = await api.put('/api/user/introduction', { introduction });
-            console.log('자기소개 수정 완료:', resp.data);
-            setEditing(false);
-        } catch (err) {
-            console.error('자기소개 수정 실패:', err);
-        }
-    };
-
     return (
         <section className="myprofile-wrap">
             <div className="profile-header">
@@ -112,7 +102,7 @@ const MyProfile = () => {
                     <div className="profile-actions">
                         {editing ? (
                             <>
-                                <button className="contact-btn" onClick={async () => {
+                                <button className="follow-btn" onClick={async () => {
                                     try {
                                         const resp = await api.put('/api/user/introduction', { introduction });
                                         console.log('자기소개 수정 완료:', resp.data);

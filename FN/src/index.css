@@ -41,6 +41,8 @@ main{max-width: 1920px;}
     --delete-color-hover:#58090c;
     --bg-primary:#ffffff;
     --bg-hover-light:#ebebeb;
+    --bg-textarea:#ffffff;
+    --textarea-text:#000000;
     
 }
 /* ========= Design Tokens: Dark ========= */
@@ -73,6 +75,8 @@ main{max-width: 1920px;}
     --delete-color-hover:#7c2829;
     --bg-primary:#1c1c1c;
     --bg-hover-light:#333;
+    --bg-textarea:#1e2530;
+    --textarea-text:#fff;
 
     /* comp */
     --compshadow :  rgba(255, 255, 255, 0.436);

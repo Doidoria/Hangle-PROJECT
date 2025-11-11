@@ -1,5 +1,5 @@
 /* ===== 프로필 상단 ===== */
-.myprofile-wrap{width: 1400px; margin: 0 auto;}
+.myprofile-wrap{max-width: 1400px; width: 100%; margin: 0 auto;}
 .profile-header {
   position: relative;
   width: 100%;
@@ -77,6 +77,26 @@
 .profile-body {
   padding: 2rem;
 
+  .profile-actions{
+    display: flex;
+    gap: 7px;
+
+    .follow-btn{
+      width: 50px;
+      height: 30px;
+      background: var(--primary);
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .follow-btn:hover{
+      background: var(--primary-hover);
+    }
+  }
+
   .info-section,
   .badge-section {
     margin-bottom: 5rem;
@@ -98,7 +118,8 @@
         border: 1px solid #ccc;
         border-radius: 8px;
         resize: none;
-        background-color: #f8f8f8;
+        color: var(--textarea-text);
+        background-color: var(--bg-textarea);
       }
     }
   }

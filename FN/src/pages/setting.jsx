@@ -326,7 +326,7 @@ const [currentEmail, setCurrentEmail] = useState(userid || '');
               <div className="delete-account-section verification-section">
                 <h2 className="section-title delete-title">Hangle 계정 삭제</h2>
                 <p className="section-description">Hangle 계정을 영구적으로 삭제하세요.</p>
-                <button className="action-button delete-button" disabled={!isVerified} onClick={handleDeleteAccount}>
+                <button className="action-button delete-button" onClick={handleDeleteAccount}>
                   계정 삭제
                 </button>
               </div>

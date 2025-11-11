@@ -46,17 +46,26 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         //-----------------------------------
         //REDIS 서버에서 REFRESH 토큰 제거
         //----------------------------------
-        Cookie useridCookie = new Cookie("userid",null);
-        useridCookie.setMaxAge(0);
-        useridCookie.setPath("/");
-        response.addCookie(useridCookie);
-        redisUtil.delete("RT:"+authentication.getName());
+        String userid = null;
+        if (authentication != null && authentication.getPrincipal() instanceof PrincipalDetails principal) {
+            userid = principal.getUser().getUserid();
+        }
+
+//        Cookie useridCookie = new Cookie("userid",null);
+//        useridCookie.setMaxAge(0);
+//        useridCookie.setPath("/");
+//        response.addCookie(useridCookie);
+        if (userid != null) {
+            redisUtil.delete("RT:" + userid);
+            log.info("[LOGOUT] Redis RefreshToken 삭제 완료 → " + userid);
+        }
 
         //-----------------------------------
         //발급받은 ACCESS-TOKEN 쿠키제거
         //-----------------------------------
         clearCookie(response, JwtProperties.ACCESS_TOKEN_COOKIE_NAME);
         clearCookie(response, "userid");
+        clearCookie(response, "JSESSIONID"); // 추가: 컨테이너가 다시 세팅 못 하게 즉시 만료
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json;charset=UTF-8");
@@ -65,11 +74,23 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 		//-----------------------------------
 		// TOKEN을 DB에서 삭제
 		//-----------------------------------
-		String token = Arrays.stream(request.getCookies())
-						.filter(cookie -> cookie.getName().equals(JwtProperties.ACCESS_TOKEN_COOKIE_NAME)).findFirst()
-						.map(cookie -> cookie.getValue())
-						.orElse(null);
-		jwtTokenRepository.deleteByAccessToken(token);
+        String token = null;
+        if (request.getCookies() != null) {
+            token = Arrays.stream(request.getCookies())
+                    .filter(c -> JwtProperties.ACCESS_TOKEN_COOKIE_NAME.equals(c.getName()))
+                    .map(Cookie::getValue)
+                    .findFirst()
+                    .orElse(null);
+        }
+        if (token != null) {
+            jwtTokenRepository.deleteByAccessToken(token);
+        }
+
+        var session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();  // JSESSIONID 만료 Set-Cookie 내려감
+        }
+        org.springframework.security.core.context.SecurityContextHolder.clearContext();
 
 		//-----------------------------------
 		//OAUTH2 SERVER 와 연결 끊기
@@ -94,7 +115,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         cookie.setHttpOnly(true);     // 생성 시 동일
         cookie.setSecure(false);      // 로컬환경은 false
         cookie.setMaxAge(0);          // 즉시 만료
-        // cookie.setAttribute("SameSite", "None"); // 로컬에서는 X
+        response.addHeader("Set-Cookie", name + "=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
         response.addCookie(cookie);
     }
 
