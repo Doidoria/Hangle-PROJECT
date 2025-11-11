@@ -14,6 +14,9 @@ import CompetitionList from './pages/CompetitionList';
 import CompetitionDetail from './pages/CompetitionDetail';
 import CompetitionCreate from './pages/CompetitionCreate';
 import ProtectedRoute from './components/ProtectedRoute';
+import InquiryWrite from './pages/InquiryWrite';
+import FaqPage from './pages/FaqPage';
+import MyInquiries from './pages/MyInquiries';
 
 function App() {
   return (
@@ -22,12 +25,15 @@ function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Main />} />
-            <Route path="/myprofile" element={<ProtectedRoute><MyProfile/></ProtectedRoute>} />
+            <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
             <Route path="/setting" element={<Setting />} />
             <Route path="/competiton" element={<ProtectedRoute><Competiton /></ProtectedRoute>} />
-            <Route path="/competitions" element={<ProtectedRoute><CompetitionList/></ProtectedRoute>} />
-            <Route path="/competitions/new" element={<ProtectedRoute requiredRole="ROLE_MANAGER"><CompetitionCreate/></ProtectedRoute>} />
-            <Route path="/competitions/:id" element={<ProtectedRoute><CompetitionDetail/></ProtectedRoute>} />
+            <Route path="/competitions" element={<ProtectedRoute><CompetitionList /></ProtectedRoute>} />
+            <Route path="/competitions/new" element={<ProtectedRoute requiredRole="ROLE_MANAGER"><CompetitionCreate /></ProtectedRoute>} />
+            <Route path="/competitions/:id" element={<ProtectedRoute><CompetitionDetail /></ProtectedRoute>} />
+            <Route path="/FaqPage" element={<FaqPage />} />
+            <Route path="/inquiry/write" element={<ProtectedRoute><InquiryWrite /></ProtectedRoute>} />
+            <Route path="/myprofile/inquiries" element={<ProtectedRoute><MyInquiries /></ProtectedRoute>} />
           </Route>
 
           <Route path="/login" element={<Login />}></Route>
