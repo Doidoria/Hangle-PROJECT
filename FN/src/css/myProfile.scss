@@ -1,0 +1,125 @@
+/* ===== 프로필 상단 ===== */
+.myprofile-wrap{width: 1400px; margin: 0 auto;}
+.profile-header {
+  position: relative;
+  width: 100%;
+  // background: linear-gradient(90deg, #065f46 0%, #10b981 50%, #34d399 100%);
+  border-bottom: 1px solid var(--border);
+
+  .profile-banner {
+    height: 100px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  .profile-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    margin-top: -60px;
+
+    .profile-avatar {
+      img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 5px solid var(--border);
+        background: var(--bg);
+      }
+    }
+
+    .profile-text {
+      flex: 1;
+      margin-left: 1.5rem;
+
+      .username {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .user-meta {
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+    }
+
+    .setting-menu {
+      .menu-item {
+        display: flex;
+        gap: 5px;
+        padding: 0.5rem 1.2rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        background: var(--primary);
+        color: #fff;
+        transition: all 0.2s;
+        align-items: center;
+
+        &:hover {background: var(--primary-hover);}
+
+        .material-symbols-outlined {
+          font-variation-settings:
+            'FILL' 0,
+            'wght' 300,
+            'GRAD' 0,
+            'opsz' 10;
+        }
+      }
+    }
+  }
+}
+
+/* ===== 프로필 본문 ===== */
+.profile-body {
+  padding: 2rem;
+
+  .info-section,
+  .badge-section {
+    margin-bottom: 5rem;
+
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+    }
+
+    .info-text,
+    .info-sub {
+      color: var(--mute);
+    }
+  }
+
+  /* ===== 뱃지 섹션 ===== */
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg);
+      border: 3px solid var(--primary);
+      border-radius: 50%;
+      padding: 0.5rem 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      img {
+        width: 36px;
+        height: 36px;
+      }
+
+      &:hover {
+        box-shadow: 0 0 0 3px var(--ring);
+        border: 3px solid var(--primary-hover);
+      }
+    }
+  }
+}

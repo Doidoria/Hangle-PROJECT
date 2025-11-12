@@ -1,0 +1,109 @@
+import { useAuth } from '../api/AuthContext';
+import { useState, useEffect } from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import api from '../api/axiosConfig';
+import '../css/myProfile.scss'
+
+
+const MyProfile = () => {
+    const { username: currentUsername, userId } = useAuth();
+    const [joinDate, setJoinDate] = useState('');
+    const [lastLogin, setLastLogin] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    };
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            try {
+                console.log("[MyProfile] 사용자 정보 요청 시작...");
+                const res = await api.get('/api/user/me', { withCredentials: true });
+
+                console.log("[MyProfile] 응답 수신:", res);
+
+                if (res.status === 200 && res.data) {
+                    setJoinDate(formatDate(res.data.createdAt) || '가입일 정보 없음');
+                    setLastLogin(formatDate(res.data.lastLoginAt) || '최근 접속 정보 없음');
+                }
+            } catch (err) {
+                console.error('[MyProfile] 사용자 정보 불러오기 실패:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfileData();
+    }, []);
+
+    if (loading) {
+        return (
+            <main className="main">
+                <p style={{ textAlign: 'center', marginTop: '50px' }}>프로필 정보를 불러오는 중...</p>
+            </main>
+        );
+    }
+
+    return (
+        <section className="myprofile-wrap">
+            <div className="profile-header">
+                <div className="profile-banner" />
+                <div className="profile-info">
+                    <div className="profile-avatar">
+                        <img src="https://cdn-icons-png.flaticon.com/512/5997/5997002.png"
+                            alt="user avatar" />
+                    </div>
+                    <div className="profile-text">
+                        <h2 className="username">{currentUsername || ''}</h2>
+                        <p className="user-meta">
+                            {joinDate ? `${joinDate} 가입` : '가입일 정보 없음'} ·{' '}
+                            {lastLogin ? `최근 접속 ${lastLogin}` : '최근 접속 정보 없음'}
+                        </p>
+                        <p className="user-id">{userId}</p>
+                    </div>
+                    <div className="setting-menu">
+                        <Link to="/setting" className="menu-item">
+                            <span className="material-symbols-outlined gle-icon">
+                                settings
+                            </span>
+                            <span>설정</span>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+            {/* ===== 정보 영역 ===== */}
+            <div className="profile-body">
+                <section className="info-section">
+                    <h3>정보</h3>
+                    <p className="info-text">아직 자기소개가 없습니다.</p>
+                    <p className="info-sub">작업 중...</p>
+                    <div className="profile-actions">
+                        <button className="follow-btn">변경</button>
+                        <button className="contact-btn">저장</button>
+                    </div>
+                </section>
+                {/* ===== 뱃지 영역 ===== */}
+                <section className="badge-section">
+                    <h3>뱃지</h3>
+                    <div className="badges">
+                        <div className="badge">
+                            <img
+                                src="https://cdn-icons-png.flaticon.com/512/3702/3702744.png"
+                                alt="Badge"
+                            />
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    )
+}
+
+export default MyProfile

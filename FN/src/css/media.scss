@@ -1,0 +1,39 @@
+/* ========= main 반응형 ========= */
+/* 1024px 이하 */
+@media (max-width: 1024px) {
+  .main {
+    .stats {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+/* 720px 이하 */
+@media (max-width: 720px) {
+  .layout {
+    grid-template-columns: 64px 1fr;
+  }
+
+  .sidebar {
+    padding: 10px 8px;
+  }
+
+  .logo {
+    span.name {
+      display: none;
+    }
+  }
+
+  .nav-item {
+    justify-content: center;
+
+    span {
+      display: none;
+    }
+  }
+
+  .search {
+    .kbd {
+      display: none;
+    }
+  }
+}
