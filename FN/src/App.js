@@ -7,7 +7,7 @@ import Main from './pages/main';
 import Login from './pages/login';
 import OAuthSuccess from './components/OAuthsuccess';
 import Join from './pages/join';
-import Competiton from './pages/competiton';
+import Competition from './pages/competition';
 import Setting from './pages/setting';
 import MyProfile from './pages/myProfile';
 import CompetitionList from './pages/CompetitionList';
@@ -22,16 +22,16 @@ function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Main />} />
-            <Route path="/myprofile" element={<ProtectedRoute><MyProfile/></ProtectedRoute>} />
+            <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
             <Route path="/setting" element={<Setting />} />
-            <Route path="/competiton" element={<ProtectedRoute><Competiton /></ProtectedRoute>} />
-            <Route path="/competitions" element={<ProtectedRoute><CompetitionList/></ProtectedRoute>} />
-            <Route path="/competitions/new" element={<ProtectedRoute requiredRole="ROLE_MANAGER"><CompetitionCreate/></ProtectedRoute>} />
-            <Route path="/competitions/:id" element={<ProtectedRoute><CompetitionDetail/></ProtectedRoute>} />
+            <Route path="/competition" element={<ProtectedRoute><Competition /></ProtectedRoute>} />
+            <Route path="/competitions" element={<ProtectedRoute><CompetitionList /></ProtectedRoute>} />
+            <Route path="/competitions/new" element={<ProtectedRoute><CompetitionCreate /></ProtectedRoute>} />
+            <Route path="/competitions/:id" element={<ProtectedRoute><CompetitionDetail /></ProtectedRoute>} />
           </Route>
 
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/join" element={<Join />}></Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/join" element={<Join />} />
           <Route path="/oauth-success" element={<OAuthSuccess />} />
         </Routes>
       </BR>
