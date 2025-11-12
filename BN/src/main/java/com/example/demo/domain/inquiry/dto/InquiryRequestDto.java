@@ -10,5 +10,4 @@ public class InquiryRequestDto {
     private String title;
     private String content;
 
-    // Getter, Setter, Constructors는 Lombok의 @Getter, @NoArgsConstructor로 처리
 }

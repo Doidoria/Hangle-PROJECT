@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import api from '../api/axiosConfig'; // 기존 Axios 인스턴스 import
+import api from '../api/axiosConfig'; 
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2'; // ProtectedRoute에서 사용하므로 통일성을 위해 import
+import Swal from 'sweetalert2'; 
+import '../css/InquiryWrite.scss'
 
 function InquiryWrite() {
     const [formData, setFormData] = useState({

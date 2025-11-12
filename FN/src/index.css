@@ -1,13 +1,28 @@
-*{box-sizing: border-box}
-html,body {height: 100%}
-body{
+* {
+    box-sizing: border-box
+}
+
+html,
+body {
+    height: 100%
+}
+
+body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
     font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
-a {text-decoration: none;color: #000}
-main{max-width: 1920px;}
+
+a {
+    text-decoration: none;
+    color: #000
+}
+
+main {
+    max-width: 1920px;
+}
+
 /* ========= Design Tokens: Light (default) ========= */
 :root {
     --bg: #F9FAF7;
@@ -32,17 +47,18 @@ main{max-width: 1920px;}
     --text-color: #1c1c1c;
     --text-secondary: #363636;
     --text-secondary-lighter: #444444;
-    --border-color:#7e7e7e;
+    --border-color: #7e7e7e;
     --border-color-light: #dfdfdf;
-    --border-color-dark:#555;
-    --main-color:#10B981;
-    --main-color-hover:#34D399;
-    --delete-color:#9e2d2e;
-    --delete-color-hover:#58090c;
-    --bg-primary:#ffffff;
-    --bg-hover-light:#ebebeb;
-    
+    --border-color-dark: #555;
+    --main-color: #10B981;
+    --main-color-hover: #34D399;
+    --delete-color: #9e2d2e;
+    --delete-color-hover: #58090c;
+    --bg-primary: #ffffff;
+    --bg-hover-light: #ebebeb;
+
 }
+
 /* ========= Design Tokens: Dark ========= */
 .theme-dark {
     --bg: #1E293B;
@@ -64,18 +80,18 @@ main{max-width: 1920px;}
     --text-color: #fff;
     --text-secondary: #aaa;
     --text-secondary-lighter: #888;
-    --border-color:#333;
+    --border-color: #333;
     --border-color-light: #616161;
-    --border-color-dark:#555;
-    --main-color:#10B981;
-    --main-color-hover:#34D399;
-    --delete-color:#ff4d4f;
-    --delete-color-hover:#7c2829;
-    --bg-primary:#1c1c1c;
-    --bg-hover-light:#333;
+    --border-color-dark: #555;
+    --main-color: #10B981;
+    --main-color-hover: #34D399;
+    --delete-color: #ff4d4f;
+    --delete-color-hover: #7c2829;
+    --bg-primary: #1c1c1c;
+    --bg-hover-light: #333;
 
     /* comp */
-    --compshadow :  rgba(255, 255, 255, 0.436);
+    --compshadow: rgba(255, 255, 255, 0.436);
 }
 
 /* ========= Layout ========= */
