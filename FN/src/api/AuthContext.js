@@ -6,17 +6,17 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [isLogin, setIsLogin] = useState(false);
   const [username, setUsername] = useState("");
-  const [userId, setUserId] = useState(null);
+  const [userid, setUserid] = useState(null);
   const [role, setRole] = useState("");
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
-    const storedUserId = localStorage.getItem("userid");
+    const storedUserid = localStorage.getItem("userid");
     const storedRole = localStorage.getItem("role");
 
-    if (storedUsername && storedUserId) {
+    if (storedUsername && storedUserid) {
       setUsername(storedUsername);
-      setUserId(storedUserId);
+      setUserid(storedUserid);
       setRole(storedRole);
       setIsLogin(true);
     }
@@ -27,49 +27,71 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("userid");
     localStorage.removeItem("role");
     setUsername("");
-    setUserId(null);
+    setUserid(null);
     setRole("");
     setIsLogin(false);
   };
 
   // JWT 토큰 유효성 + 사용자 정보 확인
   useEffect(() => {
-    const checkAuthAndFetchUser = async () => {
+    const checkAuth = async () => {
       try {
-        const validateResp = await api.get("/validate", { withCredentials: true });
-        if (validateResp.status === 200) {
-          setIsLogin(true);
-
+        const res = await api.get("/validate", { withCredentials: true });
+        if (res.status === 200) {
           const userResp = await api.get("/api/user/me", { withCredentials: true });
-          if (userResp.status === 200) {
-            const { username, userid, role } = userResp.data;
-            setUsername(username);
-            setUserId(userid);
-            setRole(role);
-
-            localStorage.setItem("username", username);
-            localStorage.setItem("userid", userid);
-            localStorage.setItem("role", role);
-          }
+          const { username, userid, role } = userResp.data;
+          setUsername(username);
+          setUserid(userid);
+          setRole(role);
+          setIsLogin(true);
+          localStorage.setItem("username", username);
+          localStorage.setItem("userid", userid);
+          localStorage.setItem("role", role);
         }
       } catch (err) {
-        console.warn("JWT 인증 실패 또는 만료:", err?.response?.status);
+        const status = err?.response?.status;
+        console.warn("JWT 인증 실패 또는 만료:", status);
+
+        // 401일 경우 자동 재시도 (AccessToken 재발급 후)
+        if (status === 401) {
+          try {
+            const retry = await api.get("/validate", { withCredentials: true });
+            if (retry.status === 200) {
+              console.log("🔁 AccessToken 자동 재발급 완료");
+              const userResp = await api.get("/api/user/me", { withCredentials: true });
+              const { username, userid, role } = userResp.data;
+              setUsername(username);
+              setUserid(userid);
+              setRole(role);
+              setIsLogin(true);
+              localStorage.setItem("username", username);
+              localStorage.setItem("userid", userid);
+              localStorage.setItem("role", role);
+              return;
+            }
+          } catch (reErr) {
+            console.warn("RefreshToken도 만료됨 → 로그아웃");
+            logout();
+          }
+        } else {
+          logout();
+        }
       }
     };
 
-    checkAuthAndFetchUser();
+    checkAuth();
   }, []);
 
   // 다른 탭 동기화
   useEffect(() => {
     const handleStorageChange = () => {
       const storedUsername = localStorage.getItem("username");
-      const storedUserId = localStorage.getItem("userid");
+      const storedUserid = localStorage.getItem("userid");
       const storedRole = localStorage.getItem("role");
 
-      if (storedUsername && storedUserId) {
+      if (storedUsername && storedUserid) {
         setUsername(storedUsername);
-        setUserId(storedUserId);
+        setUserid(storedUserid);
         setRole(storedRole);
         setIsLogin(true);
       } else {
@@ -90,8 +112,8 @@ export function AuthProvider({ children }) {
         setUsername,
         role,
         setRole,
-        userId,
-        setUserId,
+        userid,
+        setUserid,
         logout,
       }}
     >

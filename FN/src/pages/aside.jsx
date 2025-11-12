@@ -8,7 +8,10 @@ const Aside = () => {
                 <span className="dot" aria-hidden="true" />
                 <span className="name">Hangle</span>
             </Link>
-            <Link to="/competitions" className="nav-create active">대회 참여</Link>
+            <Link to="/competiton" className="nav-create active">
+                <img src="/image/+.png" alt="만들기" style={{ width: 14 }} />
+                대회 참여
+            </Link>
             <nav className="nav-group">
                 <Link to="/mydata" className="nav-item" >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>

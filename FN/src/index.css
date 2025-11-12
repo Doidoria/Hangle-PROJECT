@@ -6,8 +6,8 @@ body{
     color: var(--text);
     font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
-a { text-decoration: none; color: var(--text); }
-main { max-width: 1920px; margin: 0 auto; }
+a {text-decoration: none;color: #000}
+main{max-width: 1920px;}
 /* ========= Design Tokens: Light (default) ========= */
 :root {
     --bg: #F9FAF7;
@@ -41,6 +41,8 @@ main { max-width: 1920px; margin: 0 auto; }
     --delete-color-hover:#58090c;
     --bg-primary:#ffffff;
     --bg-hover-light:#ebebeb;
+    --bg-textarea:#ffffff;
+    --textarea-text:#000000;
     
 }
 /* ========= Design Tokens: Dark ========= */
@@ -73,6 +75,8 @@ main { max-width: 1920px; margin: 0 auto; }
     --delete-color-hover:#7c2829;
     --bg-primary:#1c1c1c;
     --bg-hover-light:#333;
+    --bg-textarea:#1e2530;
+    --textarea-text:#fff;
 
     /* comp */
     --compshadow :  rgba(255, 255, 255, 0.436);

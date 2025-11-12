@@ -6,6 +6,7 @@ import axios from 'axios';
 import '../css/competitionStyle/pages/CompetitionCreate.scss';
 import Layout from './Layout.jsx';
 
+// CRA(.env) 기반 API 베이스
 const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8090';
 
 function CompetitionCreate() {

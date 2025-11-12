@@ -19,7 +19,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 //		log.error("CustomAccessDeniedHandler's handle invoke..");
 		response.sendRedirect(request.getContextPath()+"/login?error="+accessDeniedException.getMessage());
 
-
 	}
 
 }

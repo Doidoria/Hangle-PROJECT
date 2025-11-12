@@ -6,7 +6,7 @@ import axios from 'axios';
 import '../css/competitionStyle/pages/CompetitionList.scss';
 import Layout from './Layout';
 
-const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8090';
+const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:8090';
 
 export default function CompetitionList() {
   const [items, setItems] = useState([]);
@@ -57,7 +57,7 @@ export default function CompetitionList() {
 
   return (
     <div>
-    <select value={searchParams.get('sort') || 'createdAt,desc'} onChange={(e) => setSearchParams({ status, keyword, page, size, sort: e.target.value })}>
+      <select onChange={(e) => setSearchParams({ sort: e.target.value })}>
         <option value="createdAt,desc">최신순</option>
         <option value="startAt,asc">시작일 오름차순</option>
         <option value="endAt,asc">마감일 오름차순</option>
@@ -107,6 +107,6 @@ export default function CompetitionList() {
           <button className="btn" onClick={() => movePage(Math.min(totalPages - 1, page + 1))} disabled={page + 1 >= totalPages}>다음</button>
         </div>
       </div>
-  </div>
+    </div>
   );
 }

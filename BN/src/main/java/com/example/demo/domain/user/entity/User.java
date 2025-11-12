@@ -1,7 +1,5 @@
 package com.example.demo.domain.user.entity;
 
-import com.example.demo.domain.myProfile.entity.Profile;
-import com.example.demo.domain.mySetting.entity.Setting;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.context.annotation.Profile;
 
 import java.time.LocalDateTime;
 
@@ -19,7 +18,9 @@ import java.time.LocalDateTime;
 @Builder
 public class User {
     @Id
-    @Column(length = 100) // ✅ 명시적으로 길이 지정 (PK 안정성)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true, nullable = false)
     private String userid;
     @Column(nullable = false, length = 50)
     private String username;
@@ -32,18 +33,15 @@ public class User {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime lastLoginAt;
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(length = 500)
+    private String introduction;  // 자기소개 (null 가능)
 
     @Column(nullable = true)
     private String provider;
     @Column(nullable = true)
     private String providerId;
-
-    // Profile (1:1) - 주인 관계는 Profile 쪽에서 user_id로
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Profile profile;
-
-    // Setting (1:1) - 주인 관계는 Setting 쪽에서 user_id로
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Setting setting;
 
 }

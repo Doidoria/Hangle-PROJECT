@@ -1,6 +1,7 @@
 package com.example.demo.config.auth.service;
 
 import com.example.demo.domain.user.dto.UserDto;
+import com.example.demo.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,42 +18,45 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PrincipalDetails implements UserDetails,OAuth2User {
-	private UserDto userDto;
-	public PrincipalDetails(UserDto userDto){
-		this.userDto = userDto;
+    private User user;
+    private Map<String, Object> attributes;
+    private String access_token;
+	public PrincipalDetails(User user){
+		this.user = user;
 	}
-	//----------------------------
-	// OAuth2User
-	//----------------------------
-	Map<String, Object> attributes;
-	String access_token;
-	@Override
-	public Map<String, Object> getAttributes() {
-		return attributes;
-	}
+
+    public PrincipalDetails(User user, Map<String, Object> attributes) {
+        this.user = user;
+        this.attributes = attributes;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 	@Override
 	public String getName() {
-		return userDto.getUsername();
+		return user.getUsername();
 	}
 	//----------------------------
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection <GrantedAuthority> authorities = new ArrayList();
-		authorities.add(new SimpleGrantedAuthority(userDto.getRole()));
+		authorities.add(new SimpleGrantedAuthority(user.getRole()));
 		return authorities;
 	}
 
 	@Override
 	public String getPassword() {
 		// TODO Auto-generated method stub
-		return userDto.getPassword();
+		return user.getPassword();
 	}
 
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return userDto.getUserid();
+		return user.getUserid();
 	}
 
 	@Override

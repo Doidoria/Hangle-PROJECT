@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,18 +26,20 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.example.demo.domain.user.entity.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Tag(name = "User", description = "사용자 관련 API")
 @RestController
@@ -46,38 +47,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserRestController {
 
-    //    @Autowired
-    final private UserRepository userRepository;
-    //    @Autowired
-    final private PasswordEncoder passwordEncoder;
-    //    @Autowired
-    final private AuthenticationManager authenticationManager;
-    //    @Autowired
-    final private JwtTokenProvider jwtTokenProvider;
-    //    @Autowired
-    final private RedisUtil redisUtil;
-
-    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.",
-            security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping("/api/user/me")
-    public ResponseEntity<?> getUserInfo(Authentication authentication) {
-        // 사용자 식별 (JWT에서 userid 가져오기)
-        String userid = authentication.getName();
-        User user = userRepository.findByUserid(userid);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
-        }
-        // JSON 응답 데이터 구성
-        Map<String, Object> data = new HashMap<>();
-        data.put("username", user.getUsername());
-        data.put("userid", user.getUserid());
-        data.put("role", user.getRole());
-        data.put("createdAt", user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
-        data.put("lastLoginAt", user.getLastLoginAt() != null ? user.getLastLoginAt().toString() : null);
-
-        return ResponseEntity.ok(data);
-    }
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RedisUtil redisUtil;
 
     @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> join_post(@Valid @RequestBody UserDto userDto, BindingResult result) {
@@ -134,6 +108,7 @@ public class UserRestController {
         }
 
         try{
+            System.out.println(">>> login controller in progress: " + user.getUserid());
             //사용자 인증 시도(ID/PW 일치여부 확인)
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDto.getUserid(),userDto.getPassword())
@@ -160,13 +135,13 @@ public class UserRestController {
             accessCookie.setHttpOnly(true);
             accessCookie.setSecure(false); // Only for HTTPS
             accessCookie.setPath("/"); // Define valid paths
-            accessCookie.setMaxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME); // 1 hour expiration
+            accessCookie.setMaxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000); // 1 hour expiration
 
             Cookie userCookie = new Cookie("userid", authentication.getName());
             userCookie.setHttpOnly(true);
             userCookie.setSecure(false); // Only for HTTPS
             userCookie.setPath("/");
-            userCookie.setMaxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME); // 7 days expiration
+            userCookie.setMaxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000); // 7 days expiration
 
             resp.addCookie(accessCookie);
             resp.addCookie(userCookie);
@@ -178,6 +153,170 @@ public class UserRestController {
             return new ResponseEntity(response,HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity(response,HttpStatus.OK);
+    }
+
+    @PutMapping("/api/user/introduction")
+    public ResponseEntity<?> updateIntroduction(@RequestBody Map<String, String> req, Authentication authentication) {
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+        String newIntro = req.get("introduction");
+        user.setIntroduction(newIntro);
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of(
+                "message", "자기소개가 성공적으로 수정되었습니다.",
+                "introduction", newIntro
+        ));
+    }
+
+    @PutMapping("/api/user/update-info")
+    public ResponseEntity<?> updateUserInfo(@RequestBody Map<String, String> req, Authentication authentication, HttpServletResponse resp) {
+        System.out.println("현재 인증된 ID = " + authentication.getName());
+        String currentUserid = authentication.getName();
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+        String newUsername = req.get("username");
+        String newUserid = req.get("userid");
+        if (newUsername != null && !newUsername.isBlank()) {
+            user.setUsername(newUsername);
+        }
+        if (newUserid != null && !newUserid.isBlank() && !newUserid.equals(userid)) {
+
+            if (user.getProvider() != null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "소셜 로그인 사용자는 이메일을 변경할 수 없습니다."));
+            }
+            // 아이디 중복 확인
+            if (userRepository.findByUserid(newUserid) != null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "이미 존재하는 아이디입니다."));
+            }
+            user.setUserid(newUserid);
+            userRepository.save(user);
+            handleLogoutCleanup(currentUserid, resp);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "이메일이 변경되어 로그아웃되었습니다. 다시 로그인해주세요.",
+                    "username", user.getUsername(),
+                    "userid", user.getUserid()
+            ));
+        }
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of(
+                "message", "회원 정보가 성공적으로 수정되었습니다.",
+                "username", user.getUsername(),
+                "userid", user.getUserid()
+        ));
+    }
+
+    @PostMapping("/api/user/profile-image")
+    public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, Authentication authentication) {
+        try {
+            if (file == null || file.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "파일이 비어 있습니다."));
+            }
+
+            // 로그인 사용자 조회
+            String userid = authentication.getName();
+            User user = userRepository.findByUserid(userid);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+            }
+
+            // 업로드 경로 설정
+            String uploadDir = "uploads/profile/";
+            String filename = userid + "_" + System.currentTimeMillis() + ".png";
+            Path uploadPath = Paths.get(uploadDir);
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path filePath = uploadPath.resolve(filename);
+            file.transferTo(filePath.toFile());
+
+            // DB 저장
+            user.setImageUrl("/uploads/profile/" + filename);
+            userRepository.save(user);
+
+            // 응답 반환
+            Map<String, Object> response = new HashMap<>();
+            response.put("profileImageUrl", "/uploads/profile/" + filename);
+            response.put("message", "프로필 이미지가 성공적으로 업로드되었습니다.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "서버 오류: " + e.getMessage()));
+        }
+    }
+
+    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping("/api/user/me")
+    public ResponseEntity<?> getUserInfo(Authentication authentication) {
+        // 사용자 식별 (JWT에서 userid 가져오기)
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+        // JSON 응답 데이터 구성
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", user.getUsername());
+        data.put("userid", user.getUserid());
+        data.put("role", user.getRole());
+        data.put("createdAt", user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
+        data.put("lastLoginAt", user.getLastLoginAt() != null ? user.getLastLoginAt().toString() : null);
+        data.put("introduction", user.getIntroduction());
+        data.put("profileImageUrl", user.getImageUrl());
+
+        return ResponseEntity.ok(data);
+    }
+
+    @DeleteMapping("/api/user/delete")
+    public ResponseEntity<?> deleteUser(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
+        String userid = authentication.getName();
+        System.out.println("[회원 탈퇴 요청] 현재 로그인된 사용자: " + userid);
+
+        User user = userRepository.findByUserid(userid);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+
+        try {
+            userRepository.delete(user);
+            handleLogoutCleanup(authentication.getName(), response);
+            return ResponseEntity.ok(Map.of(
+                    "message", "회원 탈퇴 및 로그아웃이 완료되었습니다."
+            ));
+        } catch (Exception e) {
+            log.error("[회원탈퇴 오류]", e);
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "회원 탈퇴 처리 중 오류 발생"));
+        }
+    }
+
+    private void handleLogoutCleanup(String userid, HttpServletResponse response) {
+        // Redis RT 삭제
+        redisUtil.delete("RT:" + userid);
+        // Access Token 쿠키 제거
+        clearCookie(response, JwtProperties.ACCESS_TOKEN_COOKIE_NAME);
+        // Userid 쿠키 제거
+        clearCookie(response, "userid");
+        // SecurityContext 초기화 (세션 강제 해제)
+        SecurityContextHolder.clearContext();
     }
 
     @Operation(summary = "AccessToken 검증", description = "현재 Access Token이 유효한지 확인합니다.",
@@ -199,5 +338,14 @@ public class UserRestController {
 
         System.out.println("미인증된 상태입니다.");
         return new ResponseEntity<>("",HttpStatus.UNAUTHORIZED);
+    }
+
+    private void clearCookie(HttpServletResponse response, String name) {
+        Cookie cookie = new Cookie(name, null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        response.addCookie(cookie);
     }
 }

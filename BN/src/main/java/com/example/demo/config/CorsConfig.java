@@ -13,7 +13,7 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/v1/**")
+                registry.addMapping("/**") // 모든 경로 허용 (특히 /validate 등)
                         .allowedOrigins(
                                 "http://localhost:3000",
                                 "http://localhost:5173"
@@ -21,6 +21,7 @@ public class CorsConfig {
                         .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true)
+                        .exposedHeaders("Set-Cookie") // 응답 쿠키 허용
                         .maxAge(3600);
             }
         };
