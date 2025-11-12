@@ -34,7 +34,7 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime lastLoginAt;
     @Column(name = "image_url")
-    private String imageUrl;
+    private String profileImageUrl;
 
     @Column(length = 500)
     private String introduction;  // 자기소개 (null 가능)

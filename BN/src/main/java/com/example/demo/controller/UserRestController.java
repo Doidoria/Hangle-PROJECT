@@ -31,6 +31,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -231,20 +234,22 @@ public class UserRestController {
                         .body(Map.of("error", "사용자를 찾을 수 없습니다."));
             }
 
-            // 업로드 경로 설정
-            String uploadDir = "uploads/profile/";
-            String filename = userid + "_" + System.currentTimeMillis() + ".png";
-            Path uploadPath = Paths.get(uploadDir);
+            // 업로드 경로를 절대경로로 지정 (운영/로컬 동일하게 접근 가능)
+            String uploadDir = "C:" + File.separator + "HangleUploads" + File.separator + "profile";
+            File uploadDirFile = new File(uploadDir);
+            Files.createDirectories(uploadDirFile.toPath());
 
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+            String filename = user.getUserid() + "_" + System.currentTimeMillis() + ".png";
+            File destination = new File(uploadDirFile, filename);
+            try (InputStream in = file.getInputStream()) {
+                Files.copy(in, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
 
-            Path filePath = uploadPath.resolve(filename);
-            file.transferTo(filePath.toFile());
+            System.out.println("📂 업로드 시도 경로: " + uploadDir);
+            System.out.println("📄 저장될 파일: " + destination.getAbsolutePath());
 
-            // DB 저장
-            user.setImageUrl("/uploads/profile/" + filename);
+            // DB에 상대경로만 저장
+            user.setProfileImageUrl("/uploads/profile/" + filename);
             userRepository.save(user);
 
             // 응답 반환
@@ -279,7 +284,7 @@ public class UserRestController {
         data.put("createdAt", user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
         data.put("lastLoginAt", user.getLastLoginAt() != null ? user.getLastLoginAt().toString() : null);
         data.put("introduction", user.getIntroduction());
-        data.put("profileImageUrl", user.getImageUrl());
+        data.put("profileImageUrl", user.getProfileImageUrl());
 
         return ResponseEntity.ok(data);
     }

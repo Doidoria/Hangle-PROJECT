@@ -49,7 +49,7 @@ public class UserDto {
                 .password(this.password)
                 .role(this.role != null ? this.role : "ROLE_USER")
                 .introduction(this.introduction)
-                .imageUrl(this.profileImageUrl)
+                .profileImageUrl(this.profileImageUrl)
                 .provider(this.provider)
                 .providerId(this.providerId)
                 .build();
@@ -65,7 +65,7 @@ public class UserDto {
                 .createdAt(user.getCreatedAt())
                 .lastLoginAt(user.getLastLoginAt())
                 .introduction(user.getIntroduction())
-                .profileImageUrl(user.getImageUrl())
+                .profileImageUrl(user.getProfileImageUrl())
                 .provider(user.getProvider())
                 .providerId(user.getProviderId())
                 .build();

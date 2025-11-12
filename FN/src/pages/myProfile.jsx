@@ -4,15 +4,21 @@ import { Link, Navigate } from 'react-router-dom';
 import api from '../api/axiosConfig';
 import '../css/myProfile.scss'
 
+const DEFAULT_AVATAR = '/image/default-avatar.png';
+
+const normalizeProfile = (v) => {
+    if (!v) return DEFAULT_AVATAR;
+    if (v === 'null' || v === 'undefined') return DEFAULT_AVATAR;
+    return v;
+};
 
 const MyProfile = () => {
-    const { username: currentUsername, userid } = useAuth();
+    const { username: currentUsername, userid, profileImage, setProfileImage } = useAuth();
     const [joinDate, setJoinDate] = useState('');
     const [lastLogin, setLastLogin] = useState('');
     const [loading, setLoading] = useState(true);
     const [introduction, setIntroduction] = useState('');
     const [editing, setEditing] = useState(false);
-    const [profileImage, setProfileImage] = useState('');
 
     const formatDate = (dateString, includeTime = false) => {
         if (!dateString) return '';
@@ -32,6 +38,34 @@ const MyProfile = () => {
         return `${y}.${m}.${d} ${ampm} ${hours}:${minutes}`;
     };
 
+    const handleProfileImageChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await api.post('/api/user/profile-image', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                withCredentials: true,
+            });
+            console.log('업로드 응답:', res.data);
+
+            const imageUrl = res.data.profileImageUrl;
+            if (imageUrl && imageUrl !== 'null') {
+                const fullUrl = 'http://localhost:8090' + imageUrl + '?t=' + Date.now();
+                setProfileImage(fullUrl);
+                localStorage.setItem('profileImage', fullUrl);
+            } else {
+                setProfileImage(DEFAULT_AVATAR);
+                localStorage.setItem('profileImage', DEFAULT_AVATAR);
+            }
+        } catch (error) {
+            console.error('프로필 이미지 업로드 실패:', error);
+            alert('프로필 이미지 업로드 중 오류가 발생했습니다.');
+        }
+    };
+
     useEffect(() => {
         const fetchProfileData = async () => {
             try {
@@ -45,14 +79,21 @@ const MyProfile = () => {
                     setLastLogin(formatDate(res.data.lastLoginAt, true) || '최근 접속 정보 없음');
                     setIntroduction(res.data.introduction || '');
 
-                    if (res.data.profileImageUrl) {
-                        setProfileImage("http://localhost:8090" + res.data.profileImageUrl);
+                    const img = res.data.profileImageUrl;
+                    if (img && img !== 'null') {
+                        const fullUrl = 'http://localhost:8090' + img + '?t=' + Date.now();
+                        setProfileImage(fullUrl);
+                        localStorage.setItem('profileImage', fullUrl);
                     } else {
-                        setProfileImage("/image/default-avatar.png");
+                        const safe = normalizeProfile(profileImage);
+                        setProfileImage(safe);
+                        localStorage.setItem('profileImage', safe);
                     }
                 }
             } catch (err) {
                 console.error('[MyProfile] 사용자 정보 불러오기 실패:', err);
+                setProfileImage(DEFAULT_AVATAR);
+                localStorage.setItem('profileImage', DEFAULT_AVATAR);
             } finally {
                 setLoading(false);
             }
@@ -60,35 +101,6 @@ const MyProfile = () => {
 
         fetchProfileData();
     }, []);
-
-    const handleProfileImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const formData = new FormData();
-        formData.append('file', file);
-
-        try {
-            const res = await api.post('/api/user/profile-image', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-                withCredentials: true,
-            });
-
-            console.log("업로드 응답:", res.data);
-
-            const imageUrl = res.data.profileImageUrl || res.data.imageUrl;
-            if (imageUrl) {
-                setProfileImage("http://localhost:8090" + imageUrl + "?t=" + new Date().getTime());
-            } else {
-                setProfileImage("/image/default-avatar.png");
-            }
-            const refresh = await api.get('/api/user/me', { withCredentials: true });
-            console.log("새 사용자 정보:", refresh.data);
-        } catch (error) {
-            console.error("프로필 이미지 업로드 실패:", error);
-            alert('프로필 이미지 업로드 중 오류가 발생했습니다.');
-        }
-    };
 
     if (loading) {
         return (
@@ -104,7 +116,8 @@ const MyProfile = () => {
                 <div className="profile-banner" />
                 <div className="profile-info">
                     <div className="profile-avatar">
-                        <img src={profileImage} alt="user avatar" className="avatar-img" />
+                        <img src={normalizeProfile(profileImage)} onError={(e) => (e.currentTarget.src = DEFAULT_AVATAR)}
+                            alt="user avatar" className="avatar-img"/>
                         {/* 프로필 변경 버튼 */}
                         <label htmlFor="profileUpload" className="profile-upload-btn">
                             프로필 변경

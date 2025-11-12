@@ -38,11 +38,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             throws IOException, ServletException {
 
         String uri = request.getRequestURI();
-        if (uri.startsWith("/v3/api-docs")
-                || uri.startsWith("/swagger-ui")
-                || uri.startsWith("/swagger-resources")
-                || uri.equals("/swagger-ui.html")
-                || request.getMethod().equalsIgnoreCase("OPTIONS")) {
+        if (uri.startsWith("/uploads")
+                || uri.startsWith("/swagger")
+                || uri.startsWith("/v3/api-docs")) {
             chain.doFilter(request, response);
             return;
         }
