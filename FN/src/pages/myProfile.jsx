@@ -6,12 +6,13 @@ import '../css/myProfile.scss'
 
 
 const MyProfile = () => {
-    const { username: currentUsername, userId } = useAuth();
+    const { username: currentUsername, userid } = useAuth();
     const [joinDate, setJoinDate] = useState('');
     const [lastLogin, setLastLogin] = useState('');
     const [loading, setLoading] = useState(true);
     const [introduction, setIntroduction] = useState('');
     const [editing, setEditing] = useState(false);
+    const [profileImage, setProfileImage] = useState('');
 
     const formatDate = (dateString, includeTime = false) => {
         if (!dateString) return '';
@@ -43,6 +44,12 @@ const MyProfile = () => {
                     setJoinDate(formatDate(res.data.createdAt) || '가입일 정보 없음');
                     setLastLogin(formatDate(res.data.lastLoginAt, true) || '최근 접속 정보 없음');
                     setIntroduction(res.data.introduction || '');
+
+                    if (res.data.profileImageUrl) {
+                        setProfileImage("http://localhost:8090" + res.data.profileImageUrl);
+                    } else {
+                        setProfileImage("/image/default-avatar.png");
+                    }
                 }
             } catch (err) {
                 console.error('[MyProfile] 사용자 정보 불러오기 실패:', err);
@@ -53,6 +60,35 @@ const MyProfile = () => {
 
         fetchProfileData();
     }, []);
+
+    const handleProfileImageChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await api.post('/api/user/profile-image', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                withCredentials: true,
+            });
+
+            console.log("업로드 응답:", res.data);
+
+            const imageUrl = res.data.profileImageUrl || res.data.imageUrl;
+            if (imageUrl) {
+                setProfileImage("http://localhost:8090" + imageUrl + "?t=" + new Date().getTime());
+            } else {
+                setProfileImage("/image/default-avatar.png");
+            }
+            const refresh = await api.get('/api/user/me', { withCredentials: true });
+            console.log("새 사용자 정보:", refresh.data);
+        } catch (error) {
+            console.error("프로필 이미지 업로드 실패:", error);
+            alert('프로필 이미지 업로드 중 오류가 발생했습니다.');
+        }
+    };
 
     if (loading) {
         return (
@@ -68,8 +104,13 @@ const MyProfile = () => {
                 <div className="profile-banner" />
                 <div className="profile-info">
                     <div className="profile-avatar">
-                        <img src="https://cdn-icons-png.flaticon.com/512/5997/5997002.png"
-                            alt="user avatar" />
+                        <img src={profileImage} alt="user avatar" className="avatar-img" />
+                        {/* 프로필 변경 버튼 */}
+                        <label htmlFor="profileUpload" className="profile-upload-btn">
+                            프로필 변경
+                        </label>
+                        <input id="profileUpload" type="file" accept="image/*"
+                            style={{ display: 'none' }} onChange={handleProfileImageChange} />
                     </div>
                     <div className="profile-text">
                         <h2 className="username">{currentUsername || ''}</h2>
@@ -77,13 +118,11 @@ const MyProfile = () => {
                             {joinDate ? `${joinDate} 가입` : '가입일 정보 없음'} ·{' '}
                             {lastLogin ? `최근 접속 ${lastLogin}` : '최근 접속 정보 없음'}
                         </p>
-                        <p className="user-id">{userId}</p>
+                        <p className="user-id">{userid}</p>
                     </div>
                     <div className="setting-menu">
                         <Link to="/setting" className="menu-item">
-                            <span className="material-symbols-outlined gle-icon">
-                                settings
-                            </span>
+                            <span className="material-symbols-outlined gle-icon">settings</span>
                             <span>설정</span>
                         </Link>
                     </div>
@@ -94,10 +133,10 @@ const MyProfile = () => {
                 <section className="info-section">
                     <h3>자기 소개</h3>
                     <p className="info-text">
-                        {editing ? ( <textarea value={introduction} onChange={(e) => setIntroduction(e.target.value)} 
-                            className="intro-textarea" rows="4"/>
+                        {editing ? (<textarea value={introduction} onChange={(e) => setIntroduction(e.target.value)}
+                            className="intro-textarea" rows="4" />
                         ) : (
-                        <p className="info-text">{introduction || '아직 자기소개가 없습니다.'}</p>)}
+                            <p className="info-text">{introduction || '아직 자기소개가 없습니다.'}</p>)}
                     </p>
                     <div className="profile-actions">
                         {editing ? (

@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,18 +26,20 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.example.demo.domain.user.entity.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Tag(name = "User", description = "사용자 관련 API")
 @RestController
@@ -154,29 +155,6 @@ public class UserRestController {
         return new ResponseEntity(response,HttpStatus.OK);
     }
 
-    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.",
-            security = {@SecurityRequirement(name = "bearerAuth")})
-    @GetMapping("/api/user/me")
-    public ResponseEntity<?> getUserInfo(Authentication authentication) {
-        // 사용자 식별 (JWT에서 userid 가져오기)
-        String userid = authentication.getName();
-        User user = userRepository.findByUserid(userid);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
-        }
-        // JSON 응답 데이터 구성
-        Map<String, Object> data = new HashMap<>();
-        data.put("username", user.getUsername());
-        data.put("userid", user.getUserid());
-        data.put("role", user.getRole());
-        data.put("createdAt", user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
-        data.put("lastLoginAt", user.getLastLoginAt() != null ? user.getLastLoginAt().toString() : null);
-        data.put("introduction", user.getIntroduction());
-
-        return ResponseEntity.ok(data);
-    }
-
     @PutMapping("/api/user/introduction")
     public ResponseEntity<?> updateIntroduction(@RequestBody Map<String, String> req, Authentication authentication) {
         String userid = authentication.getName();
@@ -236,6 +214,74 @@ public class UserRestController {
                 "username", user.getUsername(),
                 "userid", user.getUserid()
         ));
+    }
+
+    @PostMapping("/api/user/profile-image")
+    public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, Authentication authentication) {
+        try {
+            if (file == null || file.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "파일이 비어 있습니다."));
+            }
+
+            // 로그인 사용자 조회
+            String userid = authentication.getName();
+            User user = userRepository.findByUserid(userid);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+            }
+
+            // 업로드 경로 설정
+            String uploadDir = "uploads/profile/";
+            String filename = userid + "_" + System.currentTimeMillis() + ".png";
+            Path uploadPath = Paths.get(uploadDir);
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path filePath = uploadPath.resolve(filename);
+            file.transferTo(filePath.toFile());
+
+            // DB 저장
+            user.setImageUrl("/uploads/profile/" + filename);
+            userRepository.save(user);
+
+            // 응답 반환
+            Map<String, Object> response = new HashMap<>();
+            response.put("profileImageUrl", "/uploads/profile/" + filename);
+            response.put("message", "프로필 이미지가 성공적으로 업로드되었습니다.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "서버 오류: " + e.getMessage()));
+        }
+    }
+
+    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.",
+            security = {@SecurityRequirement(name = "bearerAuth")})
+    @GetMapping("/api/user/me")
+    public ResponseEntity<?> getUserInfo(Authentication authentication) {
+        // 사용자 식별 (JWT에서 userid 가져오기)
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+        // JSON 응답 데이터 구성
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", user.getUsername());
+        data.put("userid", user.getUserid());
+        data.put("role", user.getRole());
+        data.put("createdAt", user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
+        data.put("lastLoginAt", user.getLastLoginAt() != null ? user.getLastLoginAt().toString() : null);
+        data.put("introduction", user.getIntroduction());
+        data.put("profileImageUrl", user.getImageUrl());
+
+        return ResponseEntity.ok(data);
     }
 
     @DeleteMapping("/api/user/delete")

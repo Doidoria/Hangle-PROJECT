@@ -33,6 +33,8 @@ public class User {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime lastLoginAt;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Column(length = 500)
     private String introduction;  // 자기소개 (null 가능)

@@ -7,6 +7,7 @@ import com.example.demo.config.auth.Handler.CustomLoginSuccessHandler;
 import com.example.demo.config.auth.Handler.CustomLogoutHandler;
 import com.example.demo.config.auth.Handler.CustomLogoutSuccessHandler;
 import com.example.demo.config.auth.jwt.TokenInfo;
+import com.example.demo.config.auth.oauth.PrincipalDetailsOAuth2Service;
 import com.example.demo.config.auth.redis.RedisUtil;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.global.exceptionHandler.CustomAccessDeniedHandler;
@@ -48,6 +49,7 @@ public class SecurityConfig {
 	private final UserRepository userRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RedisUtil redisUtil;
+    private final PrincipalDetailsOAuth2Service principalDetailsOAuth2Service;
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
@@ -105,6 +107,7 @@ public class SecurityConfig {
 		//OAUTH2-CLIENT
 		http.oauth2Login(oauth -> oauth
                 .loginPage("/login") // 커스텀 로그인 페이지 유지
+                .userInfoEndpoint(userInfo -> userInfo.userService(principalDetailsOAuth2Service))
                 .defaultSuccessUrl("http://localhost:3000/", true) // 로그인 성공 후 React 메인 페이지로 리다이렉트
                 .successHandler(oAuth2LoginSuccessHandler())
                 .failureUrl("http://localhost:3000/login?error=true") // 실패 시 React 로그인 페이지로
@@ -130,10 +133,6 @@ public class SecurityConfig {
 		
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 	//-----------------------------------------------------
 	//[추가] CORS
 	//-----------------------------------------------------
