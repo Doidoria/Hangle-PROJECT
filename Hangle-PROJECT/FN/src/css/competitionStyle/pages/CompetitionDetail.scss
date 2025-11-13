@@ -1,0 +1,103 @@
+/* src/components/competitions/css/competitionStyle/pages/CompetitionDetail.scss */
+.comp-detail {
+  .back {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: var(--muted);
+  }
+
+  .hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 24px;
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+    }
+
+    .meta {
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .prize {
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .links {
+      display: flex;
+      gap: 12px;
+    }
+
+    .links .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: .15s;
+      box-shadow: var(--shadow);
+    }
+
+    .links .btn:hover {
+      box-shadow: 0 0 0 3px var(--ring);
+    }
+  }
+
+  .desc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 24px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+  }
+
+  .detail-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px 0;
+
+    .wide-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 28px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      transition: 0.2s;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      }
+
+      h3 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        font-size: 18px;
+        color: var(--primary);
+      }
+
+      .card-content {
+        line-height: 1.8;
+        font-size: 15px;
+      }
+    }
+  }
+
+
+}

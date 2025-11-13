@@ -1,0 +1,196 @@
+.main {
+  grid-area: main;
+  padding: 24px 28px 60px;
+  animation: fadeIn 0.2s ease-out;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .welcome {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: 0.2px;
+    }
+
+    p {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+  }
+
+  .stats {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(6, minmax(120px, 1fr));
+    margin: 14px 0 30px;
+  }
+
+  .tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+
+    h4 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: #0b3f35;
+    }
+
+    .num {
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    // 다크 테마
+    .theme-dark & {
+      h4 {color: #9ae6b4;}
+    }
+  }
+
+  .grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(4, 1fr);
+    justify-items: stretch;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    text-align: left;
+    opacity: 0;
+    transform: translate(50px, 10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+
+    &.animate {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+
+    h3 {
+      font-size: 16px;
+      margin-bottom: 5px;
+      line-height: 1.4;
+    }
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+  p.muted {
+    flex-grow: 1;
+    margin-bottom: 12px;
+  }
+  a.link {
+    align-self: flex-start;
+    font-size: 14px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--badge);
+    color: #065f46;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-weight: 800;
+    font-size: 12px;
+    align-self: flex-start;
+    width: auto;
+
+    .theme-dark & {
+      color: #34d399;
+    }
+  }
+
+  a.link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 700;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .field {
+    margin-bottom: 10px;
+  }
+
+  input[type='email'],
+  input[type='password'] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text);
+
+    &:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--ring);
+    }
+  }
+
+  .chart {
+    height: 120px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--chart-grad);
+  }
+}
+
+// 애니메이션 (카드)
+@keyframes slideInRight {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.card {
+  opacity: 0;
+  transform: translateX(50px);
+  animation: slideInRight 0.5s ease-out forwards;
+
+  // 카드가 순서대로 등장하게 (nth-child로 딜레이 적용)
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  &:nth-child(5) { animation-delay: 0.5s; }
+  &:nth-child(6) { animation-delay: 0.6s; }
+  &:nth-child(7) { animation-delay: 0.7s; }
+  &:nth-child(8) { animation-delay: 0.8s; }
+  &:nth-child(9) { animation-delay: 0.9s; }
+  &:nth-child(10) { animation-delay: 1s; }
+}
