@@ -190,16 +190,16 @@ public class SecurityConfig {
             // 3. 쿠키 생성 (Access + User)
             ResponseCookie accessCookie = ResponseCookie.from(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken())
                     .httpOnly(true)
-                    .secure(false) // HTTPS에서만 사용, SameSite=None 대응
-                    .sameSite("Lax")
+                    .secure(true)
+                    .sameSite("None")
                     .path("/")
                     .maxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000)
                     .build();
 
             ResponseCookie userCookie = ResponseCookie.from("userid", authentication.getName())
                     .httpOnly(true)
-                    .secure(false)
-                    .sameSite("Lax")
+                    .secure(true)
+                    .sameSite("None")
                     .path("/")
                     .maxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000)
                     .build();

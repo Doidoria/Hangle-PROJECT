@@ -134,20 +134,29 @@ public class UserRestController {
             response.put("userid", user.getUserid());
             response.put("token", tokenInfo.getAccessToken());
 
-            Cookie accessCookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken());
-            accessCookie.setHttpOnly(true);
-            accessCookie.setSecure(false); // Only for HTTPS
-            accessCookie.setPath("/"); // Define valid paths
-            accessCookie.setMaxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000); // 1 hour expiration
+            String accessToken = tokenInfo.getAccessToken();
+            String userid = authentication.getName();
+            // Access Token Cookie
+            resp.addHeader(
+                    "Set-Cookie",
+                    JwtProperties.ACCESS_TOKEN_COOKIE_NAME + "=" + accessToken
+                            + "; Path=/"
+                            + "; HttpOnly"
+                            + "; Secure"
+                            + "; SameSite=None"
+                            + "; Max-Age=" + (JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000)
+            );
 
-            Cookie userCookie = new Cookie("userid", authentication.getName());
-            userCookie.setHttpOnly(true);
-            userCookie.setSecure(false); // Only for HTTPS
-            userCookie.setPath("/");
-            userCookie.setMaxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000); // 7 days expiration
-
-            resp.addCookie(accessCookie);
-            resp.addCookie(userCookie);
+            // User ID Cookie
+            resp.addHeader(
+                    "Set-Cookie",
+                    "userid=" + userid
+                            + "; Path=/"
+                            + "; HttpOnly"
+                            + "; Secure"
+                            + "; SameSite=None"
+                            + "; Max-Age=" + (JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000)
+            );
 
         }catch(AuthenticationException e){
             System.out.println("인증실패 : " + e.getMessage());
@@ -330,14 +339,19 @@ public class UserRestController {
     public ResponseEntity<String> validateToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("authentication : " + authentication);
+
+        if (authentication == null) {
+            System.out.println("미인증: authentication == null");
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+        }
+
         Collection<? extends GrantedAuthority> auth =  authentication.getAuthorities();
         auth.forEach(System.out::println);
         boolean hasRoleAnon = auth.stream()
-                // 기본 롤이 ROLE_ANONYMOUS 상태라서 로그인 상태가 아니라고 판단
                 .anyMatch(authority -> "ROLE_ANONYMOUS".equals(authority.getAuthority()));
 
         if (authentication.isAuthenticated() && !hasRoleAnon) {
-            System.out.println("인증된 상태입니다.");
+            System.out.println("인증된 상태입니다. -> " + authentication.getName());
             return new ResponseEntity<>("",HttpStatus.OK);
         }
 
