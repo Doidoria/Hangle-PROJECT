@@ -75,6 +75,30 @@ function MyInquiries() {
 
     const getStatusText = answeredAt => (answeredAt ? '답변 완료' : '접수');
 
+    const handleDelete = async (id, e) => {
+        e.stopPropagation(); // 행 클릭 시 모달 안 뜨게 방지
+
+        const result = await Swal.fire({
+            title: '문의 삭제',
+            text: '정말로 이 문의를 삭제하시겠습니까?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소',
+            confirmButtonColor: '#e11d48', // 붉은색
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await api.delete(`/api/inquiry/${id}`); // 백엔드에서 DELETE 매핑 필요
+                Swal.fire('삭제 완료', '문의가 삭제되었습니다.', 'success');
+                fetchMyInquiries(); // 목록 새로고침
+            } catch (err) {
+                Swal.fire('삭제 실패', '서버 오류로 삭제할 수 없습니다.', 'error');
+            }
+        }
+    };
+
     return (
         <div className="my-inquiries-container">
             <h2>나의 1:1 문의 내역</h2>
@@ -124,18 +148,29 @@ function MyInquiries() {
                             <th>작성일</th>
                             <th>상태</th>
                             <th>답변일</th>
+                            <th> - </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.map((inq) => (
-                            <tr key={inq.id} onClick={() => setModalData(inq)}>
-                                <td>{inq.id}</td>
-                                <td className="title">{inq.title}</td>
+                        {filtered.map((inq, index) => (
+                            <tr key={inq.id}>
+                                <td>{index + 1}</td>
+                                <td className="title" onClick={() => setModalData(inq)}>
+                                    {inq.title}
+                                </td>
                                 <td>{new Date(inq.createdAt).toLocaleDateString()}</td>
                                 <td className={inq.answeredAt ? 'status done' : 'status pending'}>
                                     {getStatusText(inq.answeredAt)}
                                 </td>
                                 <td>{inq.answeredAt ? new Date(inq.answeredAt).toLocaleDateString() : '-'}</td>
+                                <td>
+                                    <button
+                                        className="delete-btn"
+                                        onClick={(e) => handleDelete(inq.id, e)}
+                                    >
+                                        삭제
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -152,19 +187,33 @@ function MyInquiries() {
             {modalData && (
                 <div className="modal-overlay" onClick={() => setModalData(null)}>
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
-                        <h3>{modalData.title}</h3>
                         <p className="modal-date">
                             작성일: {new Date(modalData.createdAt).toLocaleDateString()}
                         </p>
-                        <div className="modal-section">
+                        <h3>{modalData.title}</h3>
+
+                        {/* 문의 내용 카드 */}
+                        <div className="modal-card">
                             <strong>문의 내용</strong>
-                            <p>{modalData.content}</p>
+                            <p>
+                                <span className="material-symbols-outlined faq-icon">question_mark</span>
+                                {modalData.content}
+                            </p>
                         </div>
-                        <div className="modal-section">
+
+                        {/* 답변 내용 카드 */}
+                        <div className="modal-card">
                             <strong>답변</strong>
-                            <p>{modalData.answer || '아직 답변이 등록되지 않았습니다.'}</p>
+                            <p>
+                                <span className="material-symbols-outlined faq-icon">campaign</span>
+                                {modalData.answer || '아직 답변이 등록되지 않았습니다.'}
+                            </p>
                         </div>
-                        <button onClick={() => setModalData(null)}>닫기</button>
+
+                        <button onClick={() => setModalData(null)}>
+                            <span className="material-symbols-outlined">close</span>
+                            닫기
+                        </button>
                     </div>
                 </div>
             )}

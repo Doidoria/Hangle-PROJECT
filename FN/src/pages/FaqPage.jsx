@@ -9,7 +9,7 @@ const faqData = [
     { id: 3, category: "서비스", question: "작성한 문의는 어디서 확인하나요?", answer: "마이페이지 > 1:1 문의 내역에서 확인 가능합니다." },
     { id: 4, category: "서비스", question: "답변은 얼마나 걸리나요?", answer: "평균적으로 1~2 영업일 이내에 답변드립니다." },
     { id: 5, category: "기타", question: "고객센터 이용시간은 어떻게 되나요?", answer: "고객센터는 평일 오전 9시부터 오후 6시까지 운영됩니다." },
-    { id: 6, category: "기타", question: "점심메뉴 추천 해주세요", answer: "돈까스" },
+    { id: 6, category: "기타", question: "점심메뉴 추천 해주세요", answer: "돈까스 ㄱㄱ" },
     { id: 7, category: "기타", question: "수료날짜는 어떻게 되나요?", answer: "수료 날짜는 2025.12.05 입니다." },
 ];
 
@@ -59,7 +59,10 @@ function FaqPage() {
             </div>
 
             <div className="top-faqs">
-                <h3>자주 묻는 질문</h3>
+                <h3>
+                    <span className="material-symbols-outlined">brand_awareness</span>
+                    자주 묻는 질문
+                </h3>
                 <ul>
                     {topFaqs.map((faq) => (
                         <li key={faq.id} onClick={() => setOpenId(faq.id)}>
@@ -68,6 +71,7 @@ function FaqPage() {
                     ))}
                 </ul>
             </div>
+
 
             <div className="faq-list">
                 {filteredFaqs.map((faq) => (
@@ -114,7 +118,12 @@ function FaqItem({ faq, open, onToggle }) {
                 className={`faq-answer-wrapper ${open ? "open" : ""}`}
                 style={{ height }}
             >
-                <div className="faq-answer">{faq.answer}</div>
+                <div className="faq-answer">
+                    <span className="material-symbols-outlined faq-icon">
+                        brand_awareness
+                    </span>
+                    {faq.answer}
+                </div>
             </div>
         </div>
     );
