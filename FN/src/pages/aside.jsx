@@ -14,25 +14,19 @@ const Aside = () => {
             </Link>
             <nav className="nav-group">
                 <Link to="/mydata" className="nav-item" >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                        <path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-                    </svg>
-                    <span>MY데이터</span>
+                    <span class="material-symbols-outlined">dataset</span>
+                    <span>마이데이터</span>
                 </Link>
             </nav>
             <nav className="nav-group">
                 <Link to="/mydata" className="nav-item" >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                        <path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-                    </svg>
+                    <span class="material-symbols-outlined">trophy</span>
                     <span>리더보드</span>
                 </Link>
             </nav>
             <nav className="nav-group">
                 <Link to="/servicecenter" className="nav-item" >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                        <path d="M21 15a4 4 0 0 1-4 4H8l-5 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-                    </svg>
+                    <span class="material-symbols-outlined">support_agent</span>
                     <span>고객센터</span>
                 </Link>
             </nav>

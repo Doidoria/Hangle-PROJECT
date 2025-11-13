@@ -9,7 +9,7 @@ import { useTheme } from '../api/ThemeContext';
 const Setting = () => {
   const [activeTab, setActiveTab] = useState('account');
   const { username: currentUsername, userid } = useAuth();
-const [currentEmail, setCurrentEmail] = useState(userid || '');
+  const [currentEmail, setCurrentEmail] = useState(userid || '');
   const [newEmail, setNewEmail] = useState('');
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [newUsername, setNewUsername] = useState('');
@@ -103,7 +103,7 @@ const [currentEmail, setCurrentEmail] = useState(userid || '');
 
           window.location.href = '/login';
         });
-      } 
+      }
       // 단순 이메일만 수정(로그아웃 아님)
       else {
         Swal.fire({
@@ -224,11 +224,10 @@ const [currentEmail, setCurrentEmail] = useState(userid || '');
             <h2 className="group-title">사용자 이름</h2>
             <p className="data-text">{currentUsername || ''}</p>
             {isEditingUsername ? (
-              <div style={{ marginTop: '10px' }}>
+              <div className="edit-form-container">
                 <input type="text" placeholder="새로운 이름을 입력하세요" value={newUsername}
-                  onChange={(e) => setNewUsername(e.target.value)} className="input-field"
-                  style={{ marginBottom: '10px', padding: '10px', width: '80%' }} />
-                <div style={{ display: 'flex', gap: '10px' }}>
+                  onChange={(e) => setNewUsername(e.target.value)} className="input-field" />
+                <div className="action-buttons-group">
                   <button className="action-button primary-button" onClick={handleUsernameChange}>저장</button>
                   <button className="action-button" onClick={() => { setIsEditingUsername(false); setNewUsername(''); }}>취소</button>
                 </div>
@@ -243,7 +242,9 @@ const [currentEmail, setCurrentEmail] = useState(userid || '');
                       title: '본인 인증 필요',
                       text: '본인 인증 후 이름 변경이 가능합니다.',
                       confirmButtonColor: '#10B981',
-                    }); return;} setIsEditingUsername(true);}}> 이름 변경
+                    }); return;
+                  } setIsEditingUsername(true);
+                }}> 이름 변경
               </Link>
             )}
           </div>
@@ -251,103 +252,115 @@ const [currentEmail, setCurrentEmail] = useState(userid || '');
           {/* 이메일(userid) 변경 섹션 */}
           {activeTab === 'account' && (
             <div className="settings-content">
-              <div className="info-group email-group">
-                <h2 className="group-title">귀하의 이메일 주소</h2>
-                <p className="data-text">{currentEmail || '로그인이 필요합니다.'}</p>
-                {isEditingEmail ? (<div style={{ marginTop: '10px' }}>
-                  <input type="email" placeholder="새로운 이메일 주소를 입력하세요" value={newEmail}
-                    onChange={(e) => setNewEmail(e.target.value)} className="input-field"
-                    style={{ marginBottom: '10px', padding: '10px', width: '80%' }} />
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <button className="action-button primary-button" onClick={handleEmailChange}>저장</button>
-                    <button className="action-button" onClick={() => { setIsEditingEmail(false); setNewEmail(''); }}>취소</button>
+              <div className='setting-card'>
+                <div className="info-group email-group">
+                  <h2 className="group-title">귀하의 이메일 주소</h2>
+                  <p className="data-text">{currentEmail || '로그인이 필요합니다.'}</p>
+                  {isEditingEmail ? (<div style={{ marginTop: '10px' }}>
+                    <input type="email" placeholder="새로운 이메일 주소를 입력하세요" value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)} className="input-field"
+                      style={{ marginBottom: '10px', padding: '10px', width: '80%' }} />
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button className="action-button primary-button" onClick={handleEmailChange}>저장</button>
+                      <button className="action-button" onClick={() => { setIsEditingEmail(false); setNewEmail(''); }}>취소</button>
+                    </div>
                   </div>
-                </div>
-                ) : (
-                  <button className="action-button" onClick={() => { if (!isVerified) {
-                      Swal.fire({
-                        icon: 'warning',
-                        title: '본인 인증 필요',
-                        text: '본인 인증 후 이메일 변경이 가능합니다.',
-                        confirmButtonColor: '#10B981',
-                      }); return;
-                    } setIsEditingEmail(true);}}> 이메일 변경
-                  </button>
-                )}
-              </div>
-              <hr className="divider" />
-              {/* 본인 인증 */}
-              <div className="verification-section phone-verification">
-                <h2 className="section-title">본인 확인</h2>
-                <p className="section-description">
-                  {isVerified ? '본인 인증이 완료되었습니다' : '계정이 인증되지 않았습니다. 전화번호로 인증을 완료해주세요.'}
-                </p>
-                <button className={`action-button primary-button ${isVerified ? 'verified' : ''}`}
-                  onClick={handleVerification} disabled={isVerified}> {isVerified ? '인증 완료' : '본인 인증'}
-                </button>
-              </div>
-              <hr className="divider" />
-              {/* 테마 선택 */}
-              <div className="theme-section verification-section">
-                <h2 className="section-title">테마 변경</h2>
-                <p className="section-description">아래에서 Hangle UI 테마를 선택하세요.</p>
-                <div className="custom-select-container" data-current-value={theme}>
-                  <button className="select-display-button" aria-expanded={isDropdownOpen}
-                    onClick={() => setIsDropdownOpen((prev) => !prev)}>
-                    <img src={theme === 'dark' ? './image/icon_moon(white).png' : './image/icon_sun(black).png'}
-                      alt={theme === 'dark' ? '다크' : '라이트'} />
-                    <span className="selected-text">
-                      {theme === 'dark' ? '다크 테마' : '라이트 테마'}
-                    </span>
-                    <span className="arrow-icon">▼</span>
-                  </button>
-                  {isDropdownOpen && (
-                    <ul className="select-options-list">
-                      <li className={`select-option ${theme === 'dark' ? 'active' : ''}`}
-                        onClick={() => handleThemeSelect('dark')}>
-                        <img src={theme === 'light'
-                          ? './image/icon_moon(black).png'
-                          : './image/icon_moon(white).png'} alt="다크" />
-                        <span>다크 테마</span>
-                      </li>
-                      <li className={`select-option ${theme === 'light' ? 'active' : ''}`}
-                        onClick={() => handleThemeSelect('light')}>
-                        <img src={theme === 'light'
-                          ? './image/icon_sun(black).png'
-                          : './image/icon_sun(white).png'} alt="라이트" />
-                        <span>라이트 테마</span>
-                      </li>
-                    </ul>
+                  ) : (
+                    <button className="action-button" onClick={() => {
+                      if (!isVerified) {
+                        Swal.fire({
+                          icon: 'warning',
+                          title: '본인 인증 필요',
+                          text: '본인 인증 후 이메일 변경이 가능합니다.',
+                          confirmButtonColor: '#10B981',
+                        }); return;
+                      } setIsEditingEmail(true);
+                    }}> 이메일 변경
+                    </button>
                   )}
                 </div>
               </div>
               <hr className="divider" />
+              {/* 본인 인증 */}
+              <div className="setting-card">
+                <div className="verification-section phone-verification">
+                  <h2 className="section-title">본인 확인</h2>
+                  <p className="section-description">
+                    {isVerified ? '본인 인증이 완료되었습니다' : '계정이 인증되지 않았습니다. 전화번호로 인증을 완료해주세요.'}
+                  </p>
+                  <button className={`action-button primary-button ${isVerified ? 'verified' : ''}`}
+                    onClick={handleVerification} disabled={isVerified}> {isVerified ? '인증 완료' : '본인 인증'}
+                  </button>
+                </div>
+              </div>
+              <hr className="divider" />
+              {/* 테마 선택 */}
+              <div className="setting-card">
+                <div className="theme-section verification-section">
+                  <h2 className="section-title">테마 변경</h2>
+                  <p className="section-description">아래에서 Hangle UI 테마를 선택하세요.</p>
+                  <div className="custom-select-container" data-current-value={theme}>
+                    <button className="select-display-button" aria-expanded={isDropdownOpen}
+                      onClick={() => setIsDropdownOpen((prev) => !prev)}>
+                      <img src={theme === 'dark' ? './image/icon_moon(white).png' : './image/icon_sun(black).png'}
+                        alt={theme === 'dark' ? '다크' : '라이트'} />
+                      <span className="selected-text">
+                        {theme === 'dark' ? '다크 테마' : '라이트 테마'}
+                      </span>
+                      <span className="arrow-icon">▼</span>
+                    </button>
+                    {isDropdownOpen && (
+                      <ul className="select-options-list">
+                        <li className={`select-option ${theme === 'dark' ? 'active' : ''}`}
+                          onClick={() => handleThemeSelect('dark')}>
+                          <img src={theme === 'light'
+                            ? './image/icon_moon(black).png'
+                            : './image/icon_moon(white).png'} alt="다크" />
+                          <span>다크 테마</span>
+                        </li>
+                        <li className={`select-option ${theme === 'light' ? 'active' : ''}`}
+                          onClick={() => handleThemeSelect('light')}>
+                          <img src={theme === 'light'
+                            ? './image/icon_sun(black).png'
+                            : './image/icon_sun(white).png'} alt="라이트" />
+                          <span>라이트 테마</span>
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <hr className="divider" />
               {/* 계정 삭제 */}
-              <div className="delete-account-section verification-section">
-                <h2 className="section-title delete-title">Hangle 계정 삭제</h2>
-                <p className="section-description">Hangle 계정을 영구적으로 삭제하세요.</p>
-                <button className="action-button delete-button" onClick={handleDeleteAccount}>
-                  계정 삭제
-                </button>
+              <div className="setting-card">
+                <div className="delete-account-section verification-section">
+                  <h2 className="section-title delete-title">Hangle 계정 삭제</h2>
+                  <p className="section-description">Hangle 계정을 영구적으로 삭제하세요.</p>
+                  <button className="action-button delete-button" onClick={handleDeleteAccount}>
+                    계정 삭제
+                  </button>
+                </div>
               </div>
             </div>
           )}
           {/* 알림 탭 */}
           {activeTab === 'notification' && (
             <div className="notification-settings">
-              <div className="verification-section">
-                <h2 className="section-title">알림 설정</h2>
-                <p className="section-description">Hangle에서 수신하고 싶은 알림 종류를 선택하세요.</p>
-                <div className="notification-options">
-                  <label className="noti-label">
-                    <input type="checkbox" defaultChecked /> 대회 업데이트 및 공지사항 이메일 수신
-                  </label>
-                  <label className="noti-label">
-                    <input type="checkbox" /> 새로운 커뮤니티 댓글 및 멘션 알림
-                  </label>
-                  <label className="noti-label">
-                    <input type="checkbox" defaultChecked /> 주요 플랫폼 변경 사항 알림
-                  </label>
+              <div className='setting-card'>
+                <div className="verification-section">
+                  <h2 className="section-title">알림 설정</h2>
+                  <p className="section-description">Hangle에서 수신하고 싶은 알림 종류를 선택하세요.</p>
+                  <div className="notification-options">
+                    <label className="noti-label">
+                      <input type="checkbox" defaultChecked /> 대회 업데이트 및 공지사항 이메일 수신
+                    </label>
+                    <label className="noti-label">
+                      <input type="checkbox" /> 새로운 커뮤니티 댓글 및 멘션 알림
+                    </label>
+                    <label className="noti-label">
+                      <input type="checkbox" defaultChecked /> 주요 플랫폼 변경 사항 알림
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
