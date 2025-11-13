@@ -7,6 +7,10 @@ function ProtectedRoute({ children, requiredRole }) {
 
   const DEV_MODE = true; // 개발 중엔 true, 배포할 때 false (지워도 됨)
 
+  // 스프링에서 "ROLE_MANAGER" 같은 형태로 줄 수도 있으니까 prefix 제거
+  const normalizedRole =
+    role && role.startsWith("ROLE_") ? role.substring(5) : role;
+
   if (!DEV_MODE && !isLogin) {
     Swal.fire({
       icon: 'warning',
