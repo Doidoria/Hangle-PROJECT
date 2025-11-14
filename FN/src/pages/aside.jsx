@@ -25,7 +25,7 @@ const Aside = () => {
                 </Link>
             </nav>
             <nav className="nav-group">
-                <Link to="/servicecenter" className="nav-item" >
+                <Link to="/FaqPage" className="nav-item" >
                     <span class="material-symbols-outlined">support_agent</span>
                     <span>고객센터</span>
                 </Link>

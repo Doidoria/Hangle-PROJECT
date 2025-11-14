@@ -254,8 +254,8 @@ public class UserRestController {
                 Files.copy(in, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
 
-            System.out.println("📂 업로드 시도 경로: " + uploadDir);
-            System.out.println("📄 저장될 파일: " + destination.getAbsolutePath());
+            System.out.println("[ 업로드 시도 경로 ] : " + uploadDir);
+            System.out.println("[ 저장될 파일 ] : " + destination.getAbsolutePath());
 
             // DB에 상대경로만 저장
             user.setProfileImageUrl("/uploads/profile/" + filename);
