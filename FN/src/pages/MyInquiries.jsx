@@ -101,6 +101,14 @@ function MyInquiries() {
 
     return (
         <div className="my-inquiries-container">
+            {/* 고객센터로 이동 버튼 */}
+            <button
+                className="go-faq-btn"
+                onClick={() => navigate("/FaqPage")}
+            >
+                <span class="material-symbols-outlined">arrow_left</span>
+                <span class="material-symbols-outlined">support_agent</span>
+            </button>
             <h2>나의 1:1 문의 내역</h2>
 
             {/* 통계 카드 */}

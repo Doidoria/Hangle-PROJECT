@@ -7,6 +7,7 @@ import com.example.demo.config.auth.Handler.CustomLoginSuccessHandler;
 import com.example.demo.config.auth.Handler.CustomLogoutHandler;
 import com.example.demo.config.auth.Handler.CustomLogoutSuccessHandler;
 import com.example.demo.config.auth.jwt.TokenInfo;
+import com.example.demo.config.auth.oauth.PrincipalDetailsOAuth2Service;
 import com.example.demo.config.auth.redis.RedisUtil;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.global.exceptionHandler.CustomAccessDeniedHandler;
@@ -30,6 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.context.NullSecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -37,7 +39,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -47,6 +49,7 @@ public class SecurityConfig {
 	private final UserRepository userRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RedisUtil redisUtil;
+    private final PrincipalDetailsOAuth2Service principalDetailsOAuth2Service;
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
@@ -65,6 +68,7 @@ public class SecurityConfig {
 		//권한체크
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers(
+                    "/uploads/**",
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html",
@@ -104,17 +108,19 @@ public class SecurityConfig {
 		//OAUTH2-CLIENT
 		http.oauth2Login(oauth -> oauth
                 .loginPage("/login") // 커스텀 로그인 페이지 유지
+                .userInfoEndpoint(userInfo -> userInfo.userService(principalDetailsOAuth2Service))
                 .defaultSuccessUrl("http://localhost:3000/", true) // 로그인 성공 후 React 메인 페이지로 리다이렉트
                 .successHandler(oAuth2LoginSuccessHandler())
                 .failureUrl("http://localhost:3000/login?error=true") // 실패 시 React 로그인 페이지로
         );
 
 		//SESSION INVALIDATED
+        http.securityContext(c -> c.securityContextRepository(new NullSecurityContextRepository()));
 		http.sessionManagement((sessionManagerConfigure)->{
 			sessionManagerConfigure.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		});
 
-		//JWT FILTER ADD
+        //JWT FILTER ADD
         http.addFilterBefore(jwtAuthorizationFilter, LogoutFilter.class);
 
 		//-----------------------------------------------
@@ -128,10 +134,6 @@ public class SecurityConfig {
 		
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 	//-----------------------------------------------------
 	//[추가] CORS
 	//-----------------------------------------------------
@@ -139,7 +141,7 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
         // React 개발 서버 주소만 허용
-        config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000"));
+        config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000")); //"http://localhost:5173"
         // 모든 헤더와 메서드 허용
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -151,6 +153,7 @@ public class SecurityConfig {
         // (이건 쿠키 생성/삭제할 때 맞춰줘야 함)
         // 쿠키 생성 시에도 동일하게 secure=false, SameSite=None으로 만들어야 브라우저 인식됨
         // URL 매핑
+//        config.setMaxAge(3600L); // 1시간 동안 캐싱 (1시간 동안은 매번 OPTIONS 요청을 다시 보내지 않음)
         org.springframework.web.cors.UrlBasedCorsConfigurationSource source =
                 new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -187,7 +190,7 @@ public class SecurityConfig {
             // 3. 쿠키 생성 (Access + User)
             ResponseCookie accessCookie = ResponseCookie.from(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken())
                     .httpOnly(true)
-                    .secure(false) // HTTPS에서만 사용, SameSite=None 대응
+                    .secure(true)
                     .sameSite("None")
                     .path("/")
                     .maxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000)
@@ -195,7 +198,7 @@ public class SecurityConfig {
 
             ResponseCookie userCookie = ResponseCookie.from("userid", authentication.getName())
                     .httpOnly(true)
-                    .secure(false)
+                    .secure(true)
                     .sameSite("None")
                     .path("/")
                     .maxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000)

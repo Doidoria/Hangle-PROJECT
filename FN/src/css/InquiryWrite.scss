@@ -1,4 +1,5 @@
 .inquiry-write-container {
+    position: relative;
     padding: 30px;
     max-width: 700px;
     margin: 0 auto;
@@ -59,5 +60,38 @@
         &:hover {
             background: var(--primary-hover);
         }
+    }
+}
+
+/* 고객센터 이동 버튼 */
+.go-faq-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    background: var(--bg-hover-light);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    .material-symbols-outlined {
+        font-size: 18px;
+    }
+
+    &:hover {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+        transform: translateX(-2px);
     }
 }

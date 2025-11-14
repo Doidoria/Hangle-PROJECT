@@ -89,15 +89,16 @@ public class JwtTokenProvider {
         Date accessTokenExpiresIn = new Date(now + JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME); // 60초후 만료
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("userid",authentication.getName()) //정보저장
-                .claim("auth", authorities)//정보저장
+                .addClaims(claims)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME))    //1일: 24 * 60 * 60 * 1000 = 86400000
+                .setSubject(authentication.getName())
+                .claim("userid", authentication.getName())
+                .setExpiration(new Date(now + JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 

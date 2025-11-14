@@ -1,5 +1,3 @@
-// src/main/java/com/example/demo/service/InquiryService.java
-
 package com.example.demo.config.auth.service;
 
 import com.example.demo.domain.inquiry.dto.InquiryRequestDto;

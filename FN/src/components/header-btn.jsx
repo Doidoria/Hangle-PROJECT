@@ -96,12 +96,18 @@ function HeaderButtons() {
 };
 
 //프로필 버튼
-function Profilebtn(){
-  return(
-    <Link to='/myprofile' id="profileBtn" className="profile-btn" aria-label="프로필">
-      <div className="avatar">SD</div>
+function Profilebtn() {
+  const { profileImage } = useAuth();
+  const DEFAULT_AVATAR = "/image/default-avatar.png";
+  const safeSrc = !profileImage || profileImage === "null" || profileImage === "undefined"
+      ? DEFAULT_AVATAR : profileImage;
+
+  return (
+    <Link to="/myprofile" id="profileBtn" className="profile-btn" aria-label="프로필">
+      <img src={safeSrc} onError={(e) => (e.currentTarget.src = DEFAULT_AVATAR)}
+        alt="Profile" className="avatar-img"/>
     </Link>
-  )
+  );
 }
 
 export {SearchBox, ThemeToggle, HeaderButtons, Profilebtn};

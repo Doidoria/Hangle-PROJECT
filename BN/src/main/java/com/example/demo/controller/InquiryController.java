@@ -2,10 +2,10 @@
 
 package com.example.demo.controller;
 
-import com.example.demo.domain.inquiry.dto.InquiryRequestDto;
-import com.example.demo.domain.inquiry.dto.InquiryResponseDto;
 import com.example.demo.config.auth.service.InquiryService;
 import com.example.demo.config.auth.service.PrincipalDetails;
+import com.example.demo.domain.inquiry.dto.InquiryRequestDto;
+import com.example.demo.domain.inquiry.dto.InquiryResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

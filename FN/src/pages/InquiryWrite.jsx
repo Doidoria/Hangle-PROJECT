@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import api from '../api/axiosConfig'; 
+import api from '../api/axiosConfig';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
 import '../css/InquiryWrite.scss'
 
 function InquiryWrite() {
@@ -55,9 +55,16 @@ function InquiryWrite() {
 
     return (
         <div className="inquiry-write-container">
+            {/* 고객센터로 이동 버튼 */}
+            <button
+                className="go-faq-btn"
+                onClick={() => navigate("/FaqPage")}
+            >
+                <span class="material-symbols-outlined">arrow_left</span>
+                <span class="material-symbols-outlined">support_agent</span>
+            </button>
             <h2>1:1 문의 작성</h2>
             <form onSubmit={handleSubmit}>
-                {/* 폼 UI 구성은 이전에 제공된 코드를 참고하여 자유롭게 스타일링하세요. */}
                 <div>
                     <label htmlFor="title">제목</label>
                     <input
