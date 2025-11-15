@@ -59,6 +59,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.4.5'
 	implementation 'org.springframework.session:spring-session-data-redis:3.4.3'
 
+    // SIMPLE (PortOne)
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
 	//TEST
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'

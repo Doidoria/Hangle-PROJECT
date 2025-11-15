@@ -5,7 +5,6 @@ import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import com.example.demo.config.auth.jwt.TokenInfo;
 import com.example.demo.config.auth.redis.RedisUtil;
 import com.example.demo.domain.user.dto.UserDto;
-import com.example.demo.domain.user.repository.JwtTokenRepository;
 import com.example.demo.domain.user.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -34,11 +33,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.StandardCopyOption;
-import java.util.Optional;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
@@ -234,7 +230,6 @@ public class UserRestController {
             if (file == null || file.isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of("error", "파일이 비어 있습니다."));
             }
-
             // 로그인 사용자 조회
             String userid = authentication.getName();
             User user = userRepository.findByUserid(userid);
@@ -242,7 +237,6 @@ public class UserRestController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "사용자를 찾을 수 없습니다."));
             }
-
             // 업로드 경로를 절대경로로 지정 (운영/로컬 동일하게 접근 가능)
             String uploadDir = "C:" + File.separator + "HangleUploads" + File.separator + "profile";
             File uploadDirFile = new File(uploadDir);
@@ -253,7 +247,6 @@ public class UserRestController {
             try (InputStream in = file.getInputStream()) {
                 Files.copy(in, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
-
             System.out.println("[ 업로드 시도 경로 ] : " + uploadDir);
             System.out.println("[ 저장될 파일 ] : " + destination.getAbsolutePath());
 
@@ -272,6 +265,26 @@ public class UserRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "서버 오류: " + e.getMessage()));
         }
+    }
+
+    @PutMapping("/api/user/theme")
+    public ResponseEntity<?> updateTheme(@RequestBody Map<String, String> req, Authentication authentication) {
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+        String theme = req.get("theme");
+        if (!theme.equals("light") && !theme.equals("dark")) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "올바른 테마 값이 아닙니다."));
+        }
+        user.setTheme(theme);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "테마가 저장되었습니다.", "theme", theme));
     }
 
     @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.",
@@ -294,6 +307,7 @@ public class UserRestController {
         data.put("lastLoginAt", user.getLastLoginAt() != null ? user.getLastLoginAt().toString() : null);
         data.put("introduction", user.getIntroduction());
         data.put("profileImageUrl", user.getProfileImageUrl());
+        data.put("theme", user.getTheme());
 
         return ResponseEntity.ok(data);
     }

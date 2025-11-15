@@ -16,6 +16,7 @@ export function AuthProvider({ children }) {
   const [userid, setUserid] = useState(null);
   const [role, setRole] = useState("");
   const [profileImage, setProfileImage] = useState(DEFAULT_AVATAR);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
@@ -53,17 +54,18 @@ export function AuthProvider({ children }) {
         const res = await api.get("/validate", { withCredentials: true });
         if (res.status === 200) {
           const userResp = await api.get("/api/user/me", { withCredentials: true });
-          const { username, userid, role, profileImageUrl } = userResp.data;
+          const { username, userid, role, profileImageUrl, theme } = userResp.data;
 
+          if (theme) { localStorage.setItem("theme", theme); }
           const validProfile = profileImageUrl && profileImageUrl !== "null"
-              ? "http://localhost:8090" + profileImageUrl
-              : DEFAULT_AVATAR;
-          
+            ? "http://localhost:8090" + profileImageUrl : DEFAULT_AVATAR;
+
           setUsername(username);
           setUserid(userid);
           setRole(role);
           setProfileImage(validProfile);
           setIsLogin(true);
+          setIsLoading(false);
           localStorage.setItem("username", username);
           localStorage.setItem("userid", userid);
           localStorage.setItem("role", role);
@@ -82,15 +84,16 @@ export function AuthProvider({ children }) {
               const userResp = await api.get("/api/user/me", { withCredentials: true });
               const { username, userid, role, profileImageUrl } = userResp.data;
 
-              const validProfile =profileImageUrl && profileImageUrl !== "null"
-                  ? "http://localhost:8090" + profileImageUrl
-                  : DEFAULT_AVATAR;
+              if (theme) { localStorage.setItem("theme", theme); }
+              const validProfile = profileImageUrl && profileImageUrl !== "null"
+                ? "http://localhost:8090" + profileImageUrl : DEFAULT_AVATAR;
 
               setUsername(username);
               setUserid(userid);
               setRole(role);
               setProfileImage(validProfile);
               setIsLogin(true);
+              setIsLoading(false);
               localStorage.setItem("username", username);
               localStorage.setItem("userid", userid);
               localStorage.setItem("role", role);
@@ -124,6 +127,7 @@ export function AuthProvider({ children }) {
         setRole(storedRole);
         setProfileImage(normalizeProfile(storedProfile));
         setIsLogin(true);
+        setIsLoading(false);
       } else {
         logout();
       }
@@ -147,6 +151,7 @@ export function AuthProvider({ children }) {
         logout,
         profileImage,
         setProfileImage,
+        isLoading,
       }}
     >
       {children}
