@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface CompetitionRepository
         extends JpaRepository<Competition, Long>, JpaSpecificationExecutor<Competition> {
+
 }

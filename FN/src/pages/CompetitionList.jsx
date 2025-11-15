@@ -63,6 +63,7 @@ export default function CompetitionList() {
     setSearchParams(next);
   };
 
+  
   return (
     <section className="container" style={{padding:'16px'}}>
       <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>

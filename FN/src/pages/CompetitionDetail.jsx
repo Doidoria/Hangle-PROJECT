@@ -9,6 +9,10 @@ export default function CompetitionDetail() {
   const [comp, setComp] = useState(null);
   const [state, setState] = useState({ loading: false, error: null });
 
+  // ★ 추가됨: 파일 선택 상태
+  const [selectedFile, setSelectedFile] = useState(null); // 선택된 csv 파일
+  const [fileName, setFileName] = useState(""); // 화면에 표시될 파일명
+
   useEffect(() => {
     (async () => {
       setState({ loading: true, error: null });
@@ -17,7 +21,6 @@ export default function CompetitionDetail() {
         setComp(res.data);
         setState({ loading: false, error: null });
       } catch (e) {
-        // 실패 시 예시 데이터로 채워서 화면은 유지
         setComp({
           id,
           title: '예시 대회',
@@ -49,6 +52,41 @@ export default function CompetitionDetail() {
     const diff = Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24));
     return diff;
   }, [comp?.endAt]);
+
+  // ★ 추가됨: 파일 선택 핸들러
+  const handleFileChange = (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (file) {
+    console.log("선택된 파일:", file.name);   // 콘솔 확인용
+    setSelectedFile(file);
+    setFileName(file.name);
+  } else {
+    setSelectedFile(null);
+    setFileName("");
+  }
+};
+
+  // ★ 추가됨: 제출하기 버튼 동작
+  const handleSubmitCSV = async () => {
+    if (!selectedFile) {
+      alert("CSV 파일을 선택해주세요.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const res = await api.post(`/api/competitions/${id}/submit`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      alert(`"${fileName}" 제출 완료! (대회 ID: ${id})`);
+    } catch (err) {
+      console.error(err);
+      alert("CSV 제출 중 오류 발생");
+    }
+  };
 
   if (state.loading) return <div style={{ padding: 24 }}>불러오는 중...</div>;
   if (!comp) return <div style={{ padding: 24 }}>데이터가 없습니다.</div>;
@@ -182,6 +220,36 @@ export default function CompetitionDetail() {
       <section className="desc">
         <h3>📝 대회 설명</h3>
         <p>{comp.description || '설명이 없습니다.'}</p>
+      </section>
+
+            {/* ★ CSV 제출 UI (파일명 표시 버전) */}
+      <section className="csv-submit" style={{ marginTop: 40 }}>
+        <h3>📤 결과 제출</h3>
+        <p className="muted">
+          예측 결과 CSV 파일을 업로드하세요. 제출 시 점수가 자동 계산됩니다.
+        </p>
+
+        <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* 기본 input: 브라우저가 자동으로 파일명도 보여줌 */}
+          <input
+            type="file"
+            accept=".csv"
+            onChange={handleFileChange}   // ★ 여기 꼭 연결
+          />
+
+          {/* 옆에 내가 제어하는 텍스트도 같이 표시 */}
+          <span>
+            {fileName || "선택된 파일 없음"}
+          </span>
+        </div>
+
+        <button
+          className="btn"
+          style={{ marginTop: 12 }}
+          onClick={handleSubmitCSV}
+        >
+          제출하기
+        </button>
       </section>
     </div>
   );
