@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import { Link } from 'react-router-dom';
-import Layout from './Layout.jsx'
 import '../css/competiton.scss'
 
 const Competiton = () => {
@@ -31,9 +30,8 @@ const Competiton = () => {
         <span className="card-title">데이터셋</span>
         <h3>데이터 다운로드</h3>
         <p className="muted">Train/Test 파일을 내려받아 학습하세요.</p>
-        <a href="./data/train.csv" className="link">train.csv 다운로드</a>
-        <br />
-        <a href="./data/test.csv" className="link">test.csv 다운로드</a>
+        <Link href="./data/train.csv" className="link">train.csv 다운로드</Link>
+        <Link href="./data/test.csv" className="link">test.csv 다운로드</Link>
       </article>
       {/* 제출 */}
       <article className="card">

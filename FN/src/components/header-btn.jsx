@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../api/AuthContext.js";
+import { useTheme } from '../api/ThemeContext';
 import api from '../api/axiosConfig';
 
 function SearchBox() {
@@ -26,40 +27,35 @@ function SearchBox() {
           <path d="M21 21l-4.3-4.3" />
         </svg>
       </span>
-      <input ref={inputRef} type="search" placeholder="검색 (데이터셋, 대회, 사용자…)" aria-label="검색"/>
+      <input ref={inputRef} type="search" placeholder="검색 (데이터셋, 대회, 사용자…)" aria-label="검색" />
       <span className="kbd">/</span>
     </div>
   );
 }
 
-// 다크, 라이트 버튼
+// 다크, 라이트 모드
 function ThemeToggle() {
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("theme") ||
-      (window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light");
-  });
+  const { theme, setTheme } = useTheme();
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("theme-dark", theme === "dark");
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+  const handleToggle = async () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
 
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const listener = (e) => {
-      if (!localStorage.getItem("theme")) {
-        setTheme(e.matches ? "dark" : "light");
-      }
-    };
-    mq.addEventListener("change", listener);
-    return () => mq.removeEventListener("change", listener);
-  }, []);
+    try {
+      await api.put("/api/user/theme", { theme: newTheme });
+      localStorage.setItem("theme", newTheme);
+    } catch (err) {
+      console.error("테마 저장 실패", err);
+    }
+  };
 
   return (
-    <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="toggle">
-      {theme === "dark" ? "🌙 다크" : "☀️ 라이트"}
+    <button onClick={handleToggle} className="toggle" aria-label="테마 전환">
+      {theme === "dark" ? (
+        <img src="./image/icon_moon(white).png" alt="다크 모드" className="theme-icon" />
+      ) : (
+        <img src="./image/icon_sun(black).png" alt="라이트 모드" className="theme-icon" />
+      )}
     </button>
   );
 }
@@ -76,7 +72,7 @@ function HeaderButtons() {
   }
 
   const handleLogout = async () => {
-    
+
     try {
       const resp = await api.post("/logout", {}, { withCredentials: true });
       console.log("로그아웃 응답:", resp.data);
@@ -108,12 +104,18 @@ function HeaderButtons() {
 };
 
 //프로필 버튼
-function Profilebtn(){
-  return(
-    <Link to='/myprofile' id="profileBtn" className="profile-btn" aria-label="프로필">
-      <div className="avatar">SD</div>
+function Profilebtn() {
+  const { profileImage } = useAuth();
+  const DEFAULT_AVATAR = "/image/default-avatar.png";
+  const safeSrc = !profileImage || profileImage === "null" || profileImage === "undefined"
+    ? DEFAULT_AVATAR : profileImage;
+
+  return (
+    <Link to="/myprofile" id="profileBtn" className="profile-btn" aria-label="프로필">
+      <img src={safeSrc} onError={(e) => (e.currentTarget.src = DEFAULT_AVATAR)}
+        alt="Profile" className="avatar-img" />
     </Link>
-  )
+  );
 }
 
-export {SearchBox, ThemeToggle, HeaderButtons, Profilebtn};
+export { SearchBox, ThemeToggle, HeaderButtons, Profilebtn };

@@ -20,7 +20,7 @@ public class CustomLogoutHandler implements LogoutHandler {
 		log.info("CustomLogoutHandler's logout invoke");
 
 		PrincipalDetails principalDetails = (PrincipalDetails)authentication.getPrincipal();
-		String provider = principalDetails.getUserDto().getProvider();
+		String provider = principalDetails.getUser().getProvider();
 		if(provider!=null && provider.startsWith("kakao")){
 
 		}else if(provider!=null && provider.startsWith("naver")){

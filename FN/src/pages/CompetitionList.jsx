@@ -56,7 +56,7 @@ export default function CompetitionList() {
   const totalPages = Math.max(1, Math.ceil(pageInfo.total / pageInfo.size));
 
   return (
-    <Layout>
+    <div>
       <select onChange={(e) => setSearchParams({ sort: e.target.value })}>
         <option value="createdAt,desc">최신순</option>
         <option value="startAt,asc">시작일 오름차순</option>
@@ -107,6 +107,6 @@ export default function CompetitionList() {
           <button className="btn" onClick={() => movePage(Math.min(totalPages - 1, page + 1))} disabled={page + 1 >= totalPages}>다음</button>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }

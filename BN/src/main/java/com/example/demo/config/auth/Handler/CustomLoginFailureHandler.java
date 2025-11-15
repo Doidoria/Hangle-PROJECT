@@ -22,6 +22,4 @@ public class CustomLoginFailureHandler implements AuthenticationFailureHandler {
 		response.sendRedirect(request.getContextPath()+"/login?error="+exception.getMessage());
 	}
 
-
-
 }
