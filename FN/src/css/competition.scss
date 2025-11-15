@@ -1,0 +1,218 @@
+.section-wrap {
+  grid-area: main;
+  padding: 30px 35px;
+  animation: fadeIn 0.2s ease-out;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* 타이틀 영역 */
+  .competition-title {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: 0.2px;
+    }
+
+    p {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+  }
+
+  /* 공통 그리드 기본값 (다른 페이지도 같이 사용) */
+  .grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: stretch;
+  }
+
+  .competition-section {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* 한 줄에 카드 1개 */
+  .competition-list {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    text-align: left;
+    opacity: 0;
+    transform: translate(50px, 10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+
+    &.animate {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+
+    h3 {
+      font-size: 16px;
+      margin-bottom: 5px;
+      line-height: 1.4;
+    }
+
+    p.muted {
+      margin-bottom: 5px;
+      color: var(--muted);
+    }
+
+    p.muted.small {
+      font-size: 13px;
+    }
+
+    a.link {
+      align-self: flex-start;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    input[type='file'] {
+      margin: 10px 0;
+    }
+
+    button.btn {
+      align-self: flex-start;
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+
+      &:hover {
+        background: #0c7662;
+      }
+    }
+  }
+
+  .card-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--badge);
+    color: #065f46;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-weight: 800;
+    font-size: 12px;
+    align-self: flex-start;
+    width: auto;
+
+    .theme-dark & {
+      color: #34d399;
+    }
+  }
+
+  /* ============================
+     대회 카드 내부 3분할 레이아웃
+     ============================ */
+  .competition-card {
+    .card-top {
+      margin-bottom: 16px;
+    }
+
+    .card-main {
+      display: flex;
+      gap: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+      flex-wrap: nowrap;
+    }
+
+    .card-col {
+      flex: 1;
+      min-width: 0;
+
+      h4 {
+        margin: 0 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+    }
+
+    .card-info {
+      .meta-list {
+        margin: 8px 0 12px;
+        padding-left: 16px;
+
+        li {
+          font-size: 14px;
+          margin-bottom: 2px;
+        }
+      }
+    }
+
+    .card-download {
+      .download-links {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 6px;
+      }
+    }
+
+    .card-submit {
+      /* 필요하면 여기에 추가 스타일링 */
+    }
+  }
+
+  /* 좁은 화면에서는 세로로 쌓이도록 */
+  @media (max-width: 1024px) {
+    .competition-card {
+      .card-main {
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+/* 카드 애니메이션 공통 */
+@keyframes slideInRight {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.card {
+  opacity: 0;
+  transform: translateX(50px);
+  animation: slideInRight 0.5s ease-out forwards;
+
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+}
