@@ -165,26 +165,6 @@ const Setting = () => {
     );
   };
 
-  // 본인 인증
-  // const handleVerification = async () => {
-  //   const result = await Swal.fire({ icon: 'question',
-  //     title: '본인 인증',
-  //     text: '휴대폰 본인 인증을 진행하시겠습니까?',
-  //     showCancelButton: true,
-  //     confirmButtonText: '진행하기',
-  //     cancelButtonText: '취소',
-  //     confirmButtonColor: '#10B981',
-  //   });
-
-  //   if (result.isConfirmed) {
-  //     setIsVerified(true);
-  //     Swal.fire({ icon: 'success', title: '인증 완료',
-  //       text: '본인 인증이 성공적으로 완료되었습니다.',
-  //       confirmButtonColor: '#10B981',
-  //     });
-  //   }
-  // };
-
   // 계정 삭제
   const handleDeleteAccount = async () => {
     if (!isVerified) {
@@ -234,10 +214,6 @@ const Setting = () => {
       console.error("테마 저장 실패:", err);
     }
   };
-
-  // if (isLoading) {
-  //   return <main className="main">불러오는 중...</main>;
-  // }
 
   return (
     <section className="setting-wrap">
@@ -291,7 +267,7 @@ const Setting = () => {
               <div className='setting-card'>
                 <div className="info-group email-group">
                   <h2 className="group-title">귀하의 이메일 주소</h2>
-                  <p className="data-text">{currentEmail || '로그인이 필요합니다.'}</p>
+                  <p className="data-text">{userid ? currentEmail : ""}</p>
                   {isEditingEmail ? (<div style={{ marginTop: '10px' }}>
                     <input type="email" placeholder="새로운 이메일 주소를 입력하세요" value={newEmail}
                       onChange={(e) => setNewEmail(e.target.value)} className="input-field"

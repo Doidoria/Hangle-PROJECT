@@ -84,10 +84,10 @@ const Join = () => {
                   <option value="017">017</option>
                   <option value="018">018</option>
                   <option value="019">019</option>
-              </select> -
+              </select>
               <input type="text" id="phone2" name="phone2" placeholder="1234" maxLength="4"
                      value={phone2}
-                     onChange={e => setPhone2(e.target.value.replace(/[^0-9]/g, ''))} required /> -
+                     onChange={e => setPhone2(e.target.value.replace(/[^0-9]/g, ''))} required />
               <input type="text" id="phone3" name="phone3" placeholder="5678" maxLength="4"
                      value={phone3}
                      onChange={e => setPhone3(e.target.value.replace(/[^0-9]/g, ''))} required />
