@@ -25,7 +25,7 @@ function App() {
             <Route path="/myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
             <Route path="/setting" element={<Setting />} />
             <Route path="/competitions/user" element={<Competition />} />
-            <Route path="/competitions/:id" element={<CompetitionDetail />} />
+            <Route path="/competitions/:id" element={<ProtectedRoute><CompetitionDetail /></ProtectedRoute>} />
             {/* <Route path="/competitions/list" element={<ProtectedRoute requiredRole="MANAGER"><CompetitionList /></ProtectedRoute>} /> */}
             <Route path="/competitions/list" element={<ProtectedRoute><CompetitionList /></ProtectedRoute>} />
             {/* <Route path="/competitions/new" element={<ProtectedRoute requiredRole="MANAGER"><CompetitionCreate /></ProtectedRoute>} /> */}

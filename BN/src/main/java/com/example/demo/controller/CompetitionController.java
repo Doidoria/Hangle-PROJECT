@@ -18,7 +18,6 @@ import org.springframework.security.core.Authentication;
 import com.example.demo.domain.competition.repository.CSVSave;
 
 
-
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -75,7 +74,7 @@ public class CompetitionController {
     }
 
     // CSV 제출
-    @PostMapping("/{competitionId}/submit")  // ★ 수정됨
+    @PostMapping("/{competitionId}/submit")
     public ResponseEntity<?> submitResult(
             @PathVariable Long competitionId,
             @RequestParam("file") MultipartFile file,
@@ -88,18 +87,27 @@ public class CompetitionController {
                         .body(Map.of("error", "파일이 비어있습니다."));
             }
 
-            String username = authentication != null ? authentication.getName() : "anonymous";
+            // --- ★ 파일 저장 경로 수정: 절대 경로 사용으로 안정화 ★ ---
+            // 1. 애플리케이션의 현재 작업 디렉토리(프로젝트 루트)를 기반 경로로 사용합니다.
+            String baseDir = System.getProperty("user.dir");
+            String relativeUploadDir = "uploads/submissions/";
 
-            String uploadDir = "uploads/submissions/";
-            Path uploadPath = Paths.get(uploadDir);
+//             2. 절대 경로를 생성합니다. (예: C:/project-root/uploads/submissions)
+            Path uploadPath = Paths.get(baseDir, relativeUploadDir);
+            // --- ★ 파일 저장 경로 수정 끝 ★ ---
+
 
             if (!Files.exists(uploadPath)) {
+                // 상위 디렉토리가 없으면 모두 생성
                 Files.createDirectories(uploadPath);
             }
+
+            String username = authentication != null ? authentication.getName() : "anonymous";
 
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             Path filePath = uploadPath.resolve(fileName);
 
+            // 파일 전송 (이제 안정적인 경로를 참조합니다)
             file.transferTo(filePath.toFile());
 
             CompetitionCSVSave saveEntity = CompetitionCSVSave.builder()
@@ -151,4 +159,3 @@ public class CompetitionController {
 
 
 }
-

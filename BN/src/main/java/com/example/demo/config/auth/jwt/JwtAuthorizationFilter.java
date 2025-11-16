@@ -47,6 +47,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
+        // -------------------------------
+        // 2) 🔥 제출 API 우회 (JWT 필터 스킵)
+        // -------------------------------
+        if (uri.matches("^/api/competitions/\\d+/submit$")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String token = null;
         String userid = null;
 
