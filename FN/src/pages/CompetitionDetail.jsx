@@ -118,8 +118,23 @@ export default function CompetitionDetail() {
               {daysLeft === null
                 ? '-'
                 : daysLeft >= 0
-                ? `${daysLeft}일 남음`
-                : `마감 (${Math.abs(daysLeft)}일 경과)`}
+                  ? `${daysLeft}일 남음`
+                  : `마감 (${Math.abs(daysLeft)}일 경과)`}
+            </p>
+          </div>
+        </article>
+
+        <article className="wide-card">
+          <h3>🧾 기본 정보</h3>
+          <div className="card-content">
+            <p>
+              <strong>제목:</strong> {comp.title}
+            </p>
+            <p>
+              <strong>요약:</strong> {comp.summary || '—'}
+            </p>
+            <p>
+              <strong>ID:</strong> {comp.id}
             </p>
           </div>
         </article>
@@ -162,20 +177,7 @@ export default function CompetitionDetail() {
           </div>
         </article>
 
-        <article className="wide-card">
-          <h3>🧾 기본 정보</h3>
-          <div className="card-content">
-            <p>
-              <strong>제목:</strong> {comp.title}
-            </p>
-            <p>
-              <strong>요약:</strong> {comp.summary || '—'}
-            </p>
-            <p>
-              <strong>ID:</strong> {comp.id}
-            </p>
-          </div>
-        </article>
+
       </div>
 
       {/* 상세 설명 */}

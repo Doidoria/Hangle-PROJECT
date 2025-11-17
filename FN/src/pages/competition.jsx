@@ -214,8 +214,8 @@ const Competition = () => {
     <section className="section-wrap">
       <div className="competition-title">
         <div>
-          <h1>이미지 분류 챌린지</h1>
-          <p>Transfer Learning으로 고양이·강아지를 분류하세요!</p>
+          <h1>대회 참여</h1>
+          <p>다양한 대회에 참여해보세요!</p>
         </div>
       </div>
       <Section />

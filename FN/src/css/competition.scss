@@ -136,8 +136,36 @@
      대회 카드 내부 3분할 레이아웃
      ============================ */
   .competition-card {
+    /* 상단: 왼쪽 제목, 오른쪽 '자세히 보기' */
     .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 16px;
+    }
+
+    .card-top-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      h3 {
+        margin: 0;
+      }
+    }
+
+    /* 상단 우측 버튼 스타일 (btn + btn-ghost) */
+    .btn.btn-ghost {
+      align-self: auto;
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 6px 12px;
+      border-radius: 999px;
+
+      &:hover {
+        background: rgba(16, 185, 129, 0.06);
+      }
     }
 
     .card-main {
@@ -183,6 +211,22 @@
     .card-submit {
       /* 필요하면 여기에 추가 스타일링 */
     }
+
+    /* 하단: 파일 선택 + 제출 버튼 → 오른쪽 하단 정렬 */
+    .card-bottom {
+      margin-top: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+
+      input[type='file'] {
+        margin: 0;
+      }
+    }
   }
 
   /* 좁은 화면에서는 세로로 쌓이도록 */
@@ -190,6 +234,10 @@
     .competition-card {
       .card-main {
         flex-direction: column;
+      }
+
+      .card-bottom {
+        justify-content: flex-start;
       }
     }
   }
