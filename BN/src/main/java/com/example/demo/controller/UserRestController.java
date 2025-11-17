@@ -224,6 +224,61 @@ public class UserRestController {
         ));
     }
 
+    @PutMapping("/api/user/change-password")
+    public ResponseEntity<?> changePassword(
+            @RequestBody Map<String, String> req,
+            Authentication authentication,
+            HttpServletResponse response
+    ) {
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+
+        if (user == null) {
+            return ResponseEntity.status(404)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+
+        String currentPw = req.get("currentPassword");
+        String newPw = req.get("newPassword");
+        String confirmPw = req.get("confirmPassword");
+
+        if (currentPw == null || newPw == null || confirmPw == null) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "모든 입력값을 채워주세요."));
+        }
+
+        // 현재 비밀번호 검증
+        if (!passwordEncoder.matches(currentPw, user.getPassword())) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "현재 비밀번호가 올바르지 않습니다."));
+        }
+
+        // 새 비밀번호 = 확인 비밀번호 동일 체크
+        if (!newPw.equals(confirmPw)) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "새 비밀번호가 서로 일치하지 않습니다."));
+        }
+
+        // 동일한 비밀번호 방지
+        if (passwordEncoder.matches(newPw, user.getPassword())) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "기존 비밀번호와 다른 비밀번호를 사용해주세요."));
+        }
+
+        // 비밀번호 업데이트
+        user.setPassword(passwordEncoder.encode(newPw));
+        userRepository.save(user);
+
+        // 로그아웃 처리 (토큰, RT 삭제)
+        redisUtil.delete("RT:" + userid);
+        response.addCookie(new Cookie("access-token", null));
+        response.addCookie(new Cookie("userid", null));
+
+        return ResponseEntity.ok(Map.of(
+                "message", "비밀번호가 변경되었습니다. 다시 로그인해주세요."
+        ));
+    }
+
     @PostMapping("/api/user/profile-image")
     public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, Authentication authentication) {
         try {

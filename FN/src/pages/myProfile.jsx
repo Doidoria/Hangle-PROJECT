@@ -132,7 +132,6 @@ const MyProfile = () => {
 
     return (
         <section className="profile-page">
-            {/* ===== 상단 프로필 헤더 ===== */}
             <div className="profile-header">
                 <div className="banner"></div>
                 <div className="profile-main">
