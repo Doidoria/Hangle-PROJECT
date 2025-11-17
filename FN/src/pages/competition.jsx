@@ -9,7 +9,7 @@ const Competition = () => {
   const [competitions, setCompetitions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
-  const [files, setFiles] = useState({}); // 각 대회별 업로드 파일 저장용
+  const [files, setFiles] = useState({}); // 각 대회별 업로드 파일
 
   useEffect(() => {
     const fetchCompetitions = async () => {
@@ -72,7 +72,7 @@ const Competition = () => {
     alert(
       `"${file.name}" 제출 완료! (대회 ID: ${competitionId})\n점수 계산 중이라고 가정합니다.`
     );
-    // 실제 구현 시: 여기서 FormData 업로드 + 응답 보고 이동
+    // 실제 구현 시: FormData 업로드 후 응답 보고 이동
     // setTimeout(() => navigate("/leaderboard"), 800);
   };
 
@@ -104,7 +104,6 @@ const Competition = () => {
 
     return (
       <div className="competition-section">
-        {/* 한 줄에 한 대회 카드 */}
         <div className="grid competition-list">
           {competitions.map((competition) => {
             const {
@@ -120,15 +119,23 @@ const Competition = () => {
 
             return (
               <article key={id} className="card competition-card">
-                {/* 상단 타이틀 영역 */}
+                {/* 상단: 왼쪽 제목, 오른쪽 자세히 보기 */}
                 <div className="card-top">
-                  <span className="card-title">대회 카드</span>
-                  <h3>{title || "대회 제목 미정"}</h3>
+                  <div className="card-top-left">
+                    <span className="card-title">대회 카드</span>
+                    <h3>{title || "대회 제목 미정"}</h3>
+                  </div>
+                  <button
+                    className="btn btn-ghost"
+                    onClick={() => navigate(`/competitions/${id}`)}
+                  >
+                    자세히 보기
+                  </button>
                 </div>
 
-                {/* 가로 3등분 레이아웃 */}
+                {/* 가운데: 3등분 레이아웃 */}
                 <div className="card-main">
-                  {/* 1) 대회 정보 컬럼 */}
+                  {/* 1) 대회 정보 */}
                   <div className="card-col card-info">
                     <h4>대회 정보</h4>
                     <p className="muted">
@@ -148,21 +155,14 @@ const Competition = () => {
                         <li>총 상금: {prizeTotal.toLocaleString()}원</li>
                       )}
                     </ul>
-                    <button
-                      className="btn"
-                      onClick={() => navigate(`/competitions/${id}`)}
-                    >
-                      자세히 보기
-                    </button>
                   </div>
 
-                  {/* 2) 데이터 다운로드 컬럼 */}
+                  {/* 2) 데이터 다운로드 */}
                   <div className="card-col card-download">
                     <h4>데이터 다운로드</h4>
                     <p className="muted small">
                       Train / Test 파일을 내려받아 모델을 학습하세요.
                     </p>
-                    {/* 나중에 competition.datasetUrl 등으로 교체 가능 */}
                     <div className="download-links">
                       <a href="/data/train.csv" className="link" download>
                         train.csv 다운로드
@@ -177,26 +177,30 @@ const Competition = () => {
                     </div>
                   </div>
 
-                  {/* 3) 결과 제출 컬럼 */}
+                  {/* 3) 결과 제출 (설명만) */}
                   <div className="card-col card-submit">
                     <h4>결과 제출</h4>
                     <p className="muted small">
                       예측 결과 CSV를 업로드하면 점수가 자동 계산된다고
                       가정합니다.
                     </p>
-                    <input
-                      type="file"
-                      accept=".csv,text/csv"
-                      aria-label={`대회 ${id} 예측 결과 CSV 업로드`}
-                      onChange={(e) => handleFileChange(id, e)}
-                    />
-                    <button
-                      className="btn"
-                      onClick={() => submitFile(id)}
-                    >
-                      제출하기
-                    </button>
                   </div>
+                </div>
+
+                {/* 하단: 파일 선택 + 제출하기 → 오른쪽 하단 정렬 */}
+                <div className="card-bottom">
+                  <input
+                    type="file"
+                    accept=".csv,text/csv"
+                    aria-label={`대회 ${id} 예측 결과 CSV 업로드`}
+                    onChange={(e) => handleFileChange(id, e)}
+                  />
+                  <button
+                    className="btn"
+                    onClick={() => submitFile(id)}
+                  >
+                    제출하기
+                  </button>
                 </div>
               </article>
             );
