@@ -20,7 +20,7 @@ function SearchBox() {
   }, []);
 
   return (
-    <div className="search" role="search">
+    <div className="header-search" role="search">
       <span className="icon" aria-hidden="true">
         <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
           <circle cx={11} cy={11} r={7} />

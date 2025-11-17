@@ -6,9 +6,7 @@ import com.example.demo.config.auth.jwt.TokenInfo;
 import com.example.demo.config.auth.redis.RedisUtil;
 import com.example.demo.domain.user.dto.UserDto;
 import com.example.demo.domain.user.repository.UserRepository;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,7 +38,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@Tag(name = "User", description = "사용자 관련 API")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -72,16 +69,7 @@ public class UserRestController {
 
         return ResponseEntity.ok(Map.of("message", "회원가입이 완료되었습니다."));
     }
-    //Header 방식 (Authorization: Bearer <token>)
-    // - XXS 공격에 매우취약 - LocalStorage / SessionStorage에 저장시 문제 발생
-    // - 쿠키방식이 비교적 안전
-    @Operation(
-            summary = "로그인",
-            description = """
-        사용자 아이디(이메일)과 비밀번호를 입력해 JWT Access Token을 발급받습니다.<br><br>
-        발급된 토큰은 Swagger UI 상단의 <b>Authorize</b> 버튼을 눌러 입력하면,<br>
-        인증이 필요한 API(`/user`, `/validate`, `/api/users/me`) 호출 시 자동으로 적용됩니다.<br><br>
-        예시 입력:<br><code>Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</code>""")
+
     @PostMapping(value = "/login" , consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String,Object>> login(@RequestBody UserDto userDto, HttpServletResponse resp) throws IOException {
         log.info("POST /login..." + userDto);
@@ -343,8 +331,6 @@ public class UserRestController {
         return ResponseEntity.ok(Map.of("message", "테마가 저장되었습니다.", "theme", theme));
     }
 
-    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.",
-            security = {@SecurityRequirement(name = "bearerAuth")})
     @GetMapping("/api/user/me")
     public ResponseEntity<?> getUserInfo(Authentication authentication) {
         // 사용자 식별 (JWT에서 userid 가져오기)
@@ -403,8 +389,7 @@ public class UserRestController {
         SecurityContextHolder.clearContext();
     }
 
-    @Operation(summary = "AccessToken 검증", description = "현재 Access Token이 유효한지 확인합니다.",
-            security = {@SecurityRequirement(name = "bearerAuth")})
+
     @GetMapping("/validate")
     public ResponseEntity<String> validateToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
