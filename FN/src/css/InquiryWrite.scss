@@ -34,7 +34,7 @@
         padding: 12px 14px;
         border: 1px solid var(--border);
         border-radius: 10px;
-        background: var(--surface);
+        background: var(--top-faqs-bg);
         color: var(--text);
         font-size: 15px;
 
@@ -85,7 +85,7 @@
     transition: all 0.2s ease;
 
     .material-symbols-outlined {
-        font-size: 18px;
+        font-size: 20px;
     }
 
     &:hover {

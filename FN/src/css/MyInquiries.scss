@@ -85,7 +85,7 @@
             border: 1px solid var(--border);
             border-radius: 6px;
             font-size: 14px;
-            background: var(--surface);
+            background: var(--top-faqs-bg);
             color: var(--text);
             transition: all 0.2s;
         }
@@ -312,7 +312,7 @@
     align-items: center;
     gap: 6px;
 
-    background: var(--bg-hover-light);
+    background: var(--top-faqs-bg);
     border: 1px solid var(--border);
     padding: 8px 14px;
     border-radius: 8px;
@@ -322,10 +322,6 @@
     color: var(--text-secondary);
     cursor: pointer;
     transition: all 0.2s ease;
-
-    .material-symbols-outlined {
-        font-size: 18px;
-    }
 
     &:hover {
         background: var(--primary);

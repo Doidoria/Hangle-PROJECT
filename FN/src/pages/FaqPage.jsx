@@ -122,7 +122,9 @@ function FaqItem({ faq, open, onToggle }) {
                     <span className="material-symbols-outlined faq-icon">
                         brand_awareness
                     </span>
-                    {faq.answer}
+                    <span className="faq-answer-text">
+                        {faq.answer}
+                    </span>
                 </div>
             </div>
         </div>
