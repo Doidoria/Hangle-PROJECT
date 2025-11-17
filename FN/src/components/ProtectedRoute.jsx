@@ -3,11 +3,47 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../api/AuthContext";
 
 function ProtectedRoute({ children, requiredRole }) {
-  const { isLogin, role } = useAuth();
+  const { isLogin, role, isLoading } = useAuth(); // 👈 isLoading 가져오기
 
-  const DEV_MODE = true; // 개발 중엔 true, 배포할 때 false (지워도 됨)
+  // ---------------------------------------
+  // 1. 로딩 중일 때 (role 상태가 결정되지 않았을 때)는 대기
+  if (isLoading) {
+    // 로딩 스피너나 null을 반환하여 대기
+    return <div>Loading...</div>; // 또는 <LoadingSpinner />
+  }
+  // ---------------------------------------
 
-  if (!DEV_MODE && !isLogin) {
+
+  // 역할 불일치 문제를 해결하기 위해, role 값을 표준화합니다. (기존 로직 유지)
+  const userRole = role ? role.toUpperCase() : null;
+  const required = requiredRole ? requiredRole.toUpperCase() : null;
+
+  // 역할 포맷이 'ROLE_ADMIN' vs 'ADMIN'처럼 달라도 허용하도록 유연하게 검증합니다.
+  let hasRequiredRole = false;
+  if (required) {
+    // 1. 사용자 역할이 필수 역할과 정확히 일치하는 경우 (예: 'ROLE_ADMIN' === 'ROLE_ADMIN')
+    if (userRole === required) {
+      hasRequiredRole = true;
+    }
+    // 2. 'ROLE_' 접두사를 제거한 후 일치하는 경우 (예: 'ADMIN' === 'ADMIN' 또는 'ROLE_ADMIN' === 'ADMIN')
+    else if (userRole && userRole.includes('_')) {
+      // 사용자 역할이 'ROLE_ADMIN'인데, 필수 역할이 'ADMIN'인 경우
+      if (userRole.replace('ROLE_', '') === required) {
+        hasRequiredRole = true;
+      }
+    } else if (required.includes('_')) {
+      // 사용자 역할이 'ADMIN'인데, 필수 역할이 'ROLE_ADMIN'인 경우
+      if (required.replace('ROLE_', '') === userRole) {
+        hasRequiredRole = true;
+      }
+    }
+  } else {
+    // requiredRole이 설정되지 않았으면, 로그인만 되어 있으면 접근 허용
+    hasRequiredRole = true;
+  }
+
+
+  if (!isLogin) {
     Swal.fire({
       icon: 'warning',
       title: '로그인이 필요합니다',
@@ -18,7 +54,8 @@ function ProtectedRoute({ children, requiredRole }) {
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRole && role !== requiredRole) {
+  // requiredRole이 설정되었는데, 접근 권한이 없는 경우
+  if (requiredRole && !hasRequiredRole) {
     Swal.fire({
       icon: 'error',
       title: '접근 권한이 없습니다',

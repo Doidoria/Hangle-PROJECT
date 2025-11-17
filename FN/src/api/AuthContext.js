@@ -16,6 +16,7 @@ export function AuthProvider({ children }) {
   const [userid, setUserid] = useState(null);
   const [role, setRole] = useState("");
   const [profileImage, setProfileImage] = useState(DEFAULT_AVATAR);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
@@ -32,6 +33,7 @@ export function AuthProvider({ children }) {
     } else {
       setProfileImage(DEFAULT_AVATAR);
     }
+    // 2. 초기 로컬 스토리지 로딩이 끝난 후, 인증 체크 로직이 이어지므로 여기서는 아직 false로 두지 않습니다.
   }, []);
 
   const logout = () => {
@@ -44,11 +46,13 @@ export function AuthProvider({ children }) {
     setRole("");
     setIsLogin(false);
     setProfileImage(DEFAULT_AVATAR);
+    setIsLoading(false); 
   };
 
   // JWT 토큰 유효성 + 사용자 정보 확인
   useEffect(() => {
     const checkAuth = async () => {
+      setIsLoading(true); 
       try {
         const res = await api.get("/validate", { withCredentials: true });
         if (res.status === 200) {
@@ -56,9 +60,9 @@ export function AuthProvider({ children }) {
           const { username, userid, role, profileImageUrl } = userResp.data;
 
           const validProfile = profileImageUrl && profileImageUrl !== "null"
-              ? "http://localhost:8090" + profileImageUrl
-              : DEFAULT_AVATAR;
-          
+            ? "http://localhost:8090" + profileImageUrl
+            : DEFAULT_AVATAR;
+
           setUsername(username);
           setUserid(userid);
           setRole(role);
@@ -82,9 +86,9 @@ export function AuthProvider({ children }) {
               const userResp = await api.get("/api/user/me", { withCredentials: true });
               const { username, userid, role, profileImageUrl } = userResp.data;
 
-              const validProfile =profileImageUrl && profileImageUrl !== "null"
-                  ? "http://localhost:8090" + profileImageUrl
-                  : DEFAULT_AVATAR;
+              const validProfile = profileImageUrl && profileImageUrl !== "null"
+                ? "http://localhost:8090" + profileImageUrl
+                : DEFAULT_AVATAR;
 
               setUsername(username);
               setUserid(userid);
@@ -104,6 +108,8 @@ export function AuthProvider({ children }) {
         } else {
           logout();
         }
+      } finally {
+        setIsLoading(false); 
       }
     };
 
@@ -147,6 +153,7 @@ export function AuthProvider({ children }) {
         logout,
         profileImage,
         setProfileImage,
+        isLoading, 
       }}
     >
       {children}

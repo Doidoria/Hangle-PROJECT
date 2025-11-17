@@ -1,3 +1,5 @@
+/* MyInquiries.scss */
+
 .my-inquiries-container {
     position: relative;
     padding: 20px;
@@ -7,14 +9,12 @@
     h2 {
         text-align: center;
         margin-bottom: 40px;
-        /* 기존 80px → 축소 */
         font-weight: 700;
         color: var(--primary);
         font-size: 32px;
         position: relative;
         padding-bottom: 15px;
 
-        /* 타이틀 아래 구분선 */
         &::after {
             content: "";
             position: absolute;
@@ -24,7 +24,6 @@
             width: 200px;
             height: 2px;
             background: var(--border);
-            /* 연한 회색 */
             border-radius: 10px;
         }
     }
@@ -202,6 +201,7 @@
 
         /* ================= 문의 / 답변 카드 ================= */
         .modal-card {
+            /* 배경색 통일 (관리자 모달에도 적용됨) */
             background: var(--inquiry-details);
             border-radius: 8px;
             padding: 15px 20px;
@@ -213,7 +213,6 @@
             strong {
                 font-size: 14px;
                 color: #555;
-                /* 제목 더 분명하게 */
             }
 
             p {
@@ -223,12 +222,19 @@
                 font-size: 15px;
                 line-height: 1.6;
                 color: var(--text);
+
+                .faq-icon {
+                    font-size: 20px;
+                    color: var(--primary);
+                    /* 아이콘 색상 통일 */
+                    margin-top: 2px;
+                }
             }
 
-            .faq-icon {
-                font-size: 20px;
-                color: var(--main-color);
-                margin-top: 2px;
+            /* 유저 답변일 표시 텍스트 스타일 */
+            .text-xs {
+                font-size: 12px;
+                color: #6b7280;
             }
         }
 
@@ -236,7 +242,7 @@
         button {
             align-self: center;
             padding: 10px 25px;
-            background: var(--green);
+            background: #6b7280;
             color: var(--text-on-primary);
             border: none;
             border-radius: 8px;
@@ -247,16 +253,9 @@
             align-items: center;
             gap: 5px;
 
+            /* 유저 모달의 닫기 버튼은 초록색 */
             &:hover {
-                box-shadow: 0 4px 12px rgba(16, 17, 17, 0.3);
-            }
-
-            .material-symbols-outlined {
-                font-variation-settings:
-                    'FILL' 0,
-                    'wght' 500,
-                    'GRAD' 0,
-                    'opsz' 24;
+                background: #4b5563;
             }
         }
     }
@@ -298,39 +297,10 @@
     }
 }
 
-/* FAQ 스타일 */
-.faq-answer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    line-height: 1.6;
-    padding: 10px;
-    background: #fafafa;
-    border-left: 3px solid var(--main-color);
-    border-radius: 6px;
-}
+/* FAQ 스타일 (사용하지 않으므로 주석 처리하거나 제거 가능) */
+/* .faq-answer { ... }
+.faq-icon { ... } */
 
-.faq-icon {
-    font-size: 22px;
-    color: var(--main-color);
-}
-
-/* FAQ 스타일 */
-.faq-answer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    line-height: 1.6;
-    padding: 10px;
-    background: #fafafa;
-    border-left: 3px solid var(--main-color);
-    border-radius: 6px;
-}
-
-.faq-icon {
-    font-size: 22px;
-    color: var(--main-color);
-}
 
 /* 고객센터 이동 버튼 */
 .go-faq-btn {

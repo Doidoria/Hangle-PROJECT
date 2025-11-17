@@ -3,14 +3,14 @@ package com.example.demo.domain.inquiry.entity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data; // @Getter, @Setter 등을 포함하는 @Data로 변경
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
+@Data // @Getter, @Setter 등을 포함하도록 수정
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Inquiry {
 
@@ -25,7 +25,7 @@ public class Inquiry {
     private String content; // 문의 내용
 
     @Column(nullable = false)
-    private Long userId; // 문의 작성자 (UserRestController에서 사용한 User ID를 참조)
+    private Long userId; // 문의 작성자 (User ID를 참조)
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -35,7 +35,14 @@ public class Inquiry {
     @Column(updatable = false)
     private LocalDateTime createdAt; // 작성일시
 
-    // 답변 관련 필드는 Answer Entity가 있다면 여기에 @OneToOne 등으로 연결할 수 있습니다.
+    // =========================================================
+    // ↓ 관리자 답변 기능 추가를 위한 필드
+    // =========================================================
+
+    @Column(columnDefinition = "TEXT")
+    private String answerContent; // 관리자 답변 내용
+
+    private LocalDateTime answerDate; // 답변 완료일 (답변 시점 기록)
 
     @Builder
     public Inquiry(String title, String content, Long userId) {
@@ -45,6 +52,18 @@ public class Inquiry {
         this.status = InquiryStatus.PENDING; // 초기 상태는 '대기'
     }
 
+    // =========================================================
+    // ↓ 비즈니스 로직
+    // =========================================================
+
+    // 관리자 답변 등록 메서드
+    public void addAnswer(String answerContent) {
+        this.answerContent = answerContent;
+        this.answerDate = LocalDateTime.now();
+        this.status = InquiryStatus.ANSWERED;
+    }
+
+    // InquiryStatus Enum은 기존 코드를 따르며, InquiryService와 DTO에서도 이 클래스를 참조합니다.
     public enum InquiryStatus {
         PENDING, // 답변 대기
         ANSWERED // 답변 완료
