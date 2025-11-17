@@ -1,6 +1,7 @@
 package com.example.demo.domain.leaderboard.entity;
 
 import com.example.demo.domain.competition.entity.Competition;
+import com.example.demo.domain.submmitex.entity.Submission;
 import com.example.demo.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,17 +31,19 @@ public class Leaderboard {
     @JoinColumn(name="userid")
     private User user; //유저명, 유저 아이디
 
-    private Long submissionid;
-    private Double score; // 점수
+    @ManyToOne
+    @JoinColumn(name="submission_id")
+    private Submission submission;
+//    private Long submissionid;
+//    private Double score; // 점수
+
     private Integer attempt; // N번째 제출
     private LocalDateTime submittedAt; //최근 제출 시간
 
     private Integer comprank;
 
 
-    //    @OneToOne
-//    @JoinColumn(name="submissionid")
-//    private Submission submission;
+
 
 
 //    @Id

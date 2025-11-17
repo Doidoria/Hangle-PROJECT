@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface LeaderboardRepository extends JpaRepository<Leaderboard,Long> {
@@ -17,7 +18,8 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard,Long> {
             SELECT l FROM Leaderboard l
             JOIN FETCH l.competition c
             JOIN FETCH l.user u
-            ORDER BY  c.id ASC, l.score DESC
+            JOIN FETCH l.submission s
+            ORDER BY  c.id ASC, s.score DESC
     """)
     List<Leaderboard> findAllOrderByCompThenScore();
 
@@ -26,42 +28,26 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard,Long> {
     SELECT l FROM Leaderboard l
     JOIN FETCH l.competition c
     JOIN FETCH l.user u
+    JOIN FETCH l.submission s
     WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%'))
        OR LOWER(c.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
-    ORDER BY  c.id ASC, l.score DESC, l.submittedAt ASC
+    ORDER BY  c.id ASC, s.score DESC, l.submittedAt ASC
     """)
     List<Leaderboard> searchAllByKeyword(@Param("keyword") String keyword);
 
     List<Leaderboard> findByCompetition_Id(Long competitionid);
 
+    @Query("""
+    SELECT l FROM Leaderboard l
+    WHERE l.competition.id = :competitionId
+      AND l.user.id = :userId
+""")
+    Optional<Leaderboard> findByCompetitionIdAndUserId(
+            @Param("competitionId") Long competitionId,
+            @Param("userId") Long userId
+    );
 
-    // ========================
-    // FK받은 경우
-    // ========================
 
-    //순위 조회
-//    @Query("""
-//            SELECT l FROM Leaderboard l
-//            JOIN FETCH l.comp c
-//            JOIN FETCH l.user u
-//            JOIN FETCH l.submit s
-//            ORDER BY c.compId ASC, s.best_score DESC
-//    """)
-//    List<Leaderboard> findAllOrderByCompThenScore();
-
-//    //서치 compId 비동기 처리
-//    @Query("""
-//    SELECT l FROM Leaderboard l
-//    JOIN FETCH l.comp c
-//    JOIN FETCH l.user u
-//    JOIN FETCH l.submit s
-//    WHERE LOWER(u.userName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-//       OR LOWER(c.compName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-//    ORDER BY c.compId ASC, s.best_score DESC, l.last_submit_time ASC
-//""")
-//    List<Leaderboard> searchAllByKeyword(@Param("keyword") String keyword);
-//
-//    List<Leaderboard> findByComp_CompId(Long compId);
 
 
 }

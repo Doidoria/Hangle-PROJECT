@@ -5,6 +5,7 @@ import com.example.demo.domain.leaderboard.dto.LeaderboardEntryDto;
 import com.example.demo.domain.leaderboard.entity.Leaderboard;
 import com.example.demo.domain.leaderboard.repository.LeaderboardRepository;
 import com.example.demo.domain.leaderboard.service.LeaderboardService;
+import com.example.demo.domain.submmitex.entity.Submission;
 import com.example.demo.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,10 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                         l.getUser().getId(),
                         l.getUser().getUserid(),
                         l.getUser().getUsername(),
-                        l.getSubmissionid(),
-                        l.getScore(),
+                        l.getSubmission().getSubmitId(),
+                        l.getSubmission().getScore(),
+//                        l.getSubmissionid(),
+//                        l.getScore(),
                         l.getAttempt(),
                         l.getSubmittedAt(),
                         l.getComprank()
@@ -55,8 +58,10 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                         l.getUser().getId(),
                         l.getUser().getUserid(),
                         l.getUser().getUsername(),
-                        l.getSubmissionid(),
-                        l.getScore(),
+                        l.getSubmission().getSubmitId(),
+                        l.getSubmission().getScore(),
+//                        l.getSubmissionid(),
+//                        l.getScore(),
                         l.getAttempt(),
                         l.getSubmittedAt(),
                         l.getComprank()
@@ -96,34 +101,26 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         leaderboardRepository.saveAll(leaderboardList);
     }
     private Double getCompScore(Leaderboard lb) {
-        return (lb.getCompetition().getId() != null) ? lb.getScore() : null;
-//        return (lb.getComp() != null) ? lb.getSubmit().getBest_score() : null;
+//      return (lb.getCompetition().getId() != null) ? lb.getScore() : null;
+        return  lb.getSubmission().getScore();
 
     }
 
-    //submit 추가
-    public Long leaderBoardAdd(LeaderboardEntryDto dto, User user,Competition competition) throws Exception{
-
-
-//        User user = userRepository.findById(dto.getUserId())
-//                .orElse(null);
-//
-//        Submit submit = submitRepository.findById(dto.getSubmitId())
-//                .orElse(null);
-//        Comp comp = compRepository.findById(dto.getCompId())
-//              .orElse(null);
-
+    //submit => submissionid, score
+    //submitservice에 추가 : 예시 버전 submitex에 있음
+    public Long leaderBoardAdd(User user, Competition competition, Submission submission){
 
         //dto -> entity
         Leaderboard leaderboard = Leaderboard.builder()
                 .leaderBoardId(null)
                 .competition(competition)
                 .user(user)
-                .submissionid(dto.getSubmissionid())
-                .score(dto.getScore())
-                .attempt(dto.getAttempt())
-                .submittedAt(dto.getSubmittedAt())
-                .comprank(dto.getComprank())
+                .submission(submission)
+//                .submissionid(dto.getSubmissionid())
+//                .score(dto.getScore())
+                .attempt(1)
+                .submittedAt(LocalDateTime.now())
+                .comprank(0) //초반에 comprank업데이트 안되있음 => 0으로 초기화
                 .build();
         leaderboardRepository.save(leaderboard);
 
@@ -132,7 +129,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         return leaderboard.getLeaderBoardId();
     }
 
-    public Long leaderBoardUpdate(LeaderboardEntryDto dto) throws  Exception{
+    public Long leaderBoardUpdate(LeaderboardEntryDto dto) {
 
         //기존 리더보드 가져오기
         Leaderboard list = leaderboardRepository.findById(dto.getLeaderBoardId()).orElse(null);
@@ -141,16 +138,16 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             return null;
         }
 
-        Double oldScore = list.getScore(); //예전 점수
+        Double oldScore = list.getSubmission().getScore(); //예전 점수
         Double newScore = dto.getScore();
 
         if(oldScore >= newScore){
-            list.setAttempt(dto.getAttempt() + 1);
+            list.setAttempt(list.getAttempt() + 1);
             list.setSubmittedAt(LocalDateTime.now());
         }else{
             list.setSubmittedAt(LocalDateTime.now());
-            list.setAttempt(dto.getAttempt() + 1);
-            list.setScore(newScore);
+            list.setAttempt(list.getAttempt() + 1);
+            list.getSubmission().setScore(newScore);
         }
 
         leaderboardRepository.save(list);

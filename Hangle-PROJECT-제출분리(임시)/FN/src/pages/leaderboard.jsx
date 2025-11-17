@@ -35,7 +35,7 @@ const Leaderboard = () => {
                 const filteredCompList = [...new Set(list.map((item) => item.compname))];
                 setCompNameList(filteredCompList);
 
-                if(isEmpty != false){
+                if (isEmpty != false) {
                     list = []
                 }
 
@@ -109,20 +109,20 @@ const Leaderboard = () => {
 
 
 
-                 {/* 데이터 받아오는 거 확인 (기본)
-                        <div style={{ marginTop: "1rem", background: "#f9f9f9", padding: "1rem" }}>
-                                <h4>현재 상태 요약:</h4>
-                                <ul>
-                                    <li>leaderboard 길이: {leaderboard.length}</li>
-                                    <li>compNameList: {compNameList.join(", ") || "없음"}</li>
-                                    <li>keyword: {keyword || "없음"}</li>
-                                    <li>isEmpty: {String(isEmpty)}</li>
-                                </ul>
-                            </div>
+                {/* 데이터 받아오는 거 확인 (기본)*/}
+                <div style={{ marginTop: "1rem", background: "#f9f9f9", padding: "1rem" }}>
+                    <h4>현재 상태 요약:</h4>
+                    <ul>
+                        <li>leaderboard 길이: {leaderboard.length}</li>
+                        <li>compNameList: {compNameList.join(", ") || "없음"}</li>
+                        <li>keyword: {keyword || "없음"}</li>
+                        <li>isEmpty: {String(isEmpty)}</li>
+                    </ul>
+                </div>
 
-                            <pre style={{ background: "#eee", padding: "1rem", borderRadius: "8px" }}>
-                                {JSON.stringify(leaderboard, null, 2)}
-                            </pre> */}
+                <pre style={{ background: "#eee", padding: "1rem", borderRadius: "8px" }}>
+                    {JSON.stringify(leaderboard, null, 2)}
+                </pre>
 
             </section>
         </main>

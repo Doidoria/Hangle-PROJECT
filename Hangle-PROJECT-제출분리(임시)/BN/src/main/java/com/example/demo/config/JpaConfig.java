@@ -17,7 +17,8 @@ import java.util.Properties;
 @EntityScan(basePackages = {
         "com.example.demo.domain.user.entity",
         "com.example.demo.domain.competition.entity",
-        "com.example.demo.domain.leaderboard.entity"
+        "com.example.demo.domain.leaderboard.entity",
+        "com.example.demo.domain.submmitex.entity"
 })
 @EnableJpaRepositories
 (
@@ -26,7 +27,8 @@ import java.util.Properties;
                         "com.example.demo.domain.competition.repository",
                         "com.example.demo.domain.myProfile.repository",
                         "com.example.demo.domain.mySetting.repository",
-                        "com.example.demo.domain.leaderboard.repository"
+                        "com.example.demo.domain.leaderboard.repository",
+                        "com.example.demo.domain.submmitex.repository"
                 },
                 transactionManagerRef = "jpaTransactionManager"
 )

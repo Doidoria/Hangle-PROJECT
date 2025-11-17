@@ -19,6 +19,7 @@ public class LeaderboardEntryDto {
 
     private Long submissionid;
     private Double score; // 점수
+
     private Integer attempt; // N번째 제출
     private LocalDateTime submittedAt; //최근 제출 시간
     private Integer comprank;
