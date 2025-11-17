@@ -77,9 +77,18 @@ public class SecurityConfig {
             ).permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
             auth.requestMatchers("/", "/join", "/login", "/validate", "/oauth2/authorization/**").permitAll();
+            auth.requestMatchers("/api/user/me").authenticated();
             auth.requestMatchers(HttpMethod.POST, "/logout").permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll();
-            auth.requestMatchers("/admin/**").hasRole("ADMIN");
+
+            // =========================================================
+            // ↓ 관리자 문의 API 권한 설정 추가
+            // =========================================================
+            auth.requestMatchers(HttpMethod.GET, "/api/inquiry/admin").hasRole("ADMIN"); // 전체 문의 목록 조회
+            auth.requestMatchers(HttpMethod.POST, "/api/inquiry/{id}/answer").hasRole("ADMIN"); // 문의 답변 등록
+            auth.requestMatchers(HttpMethod.DELETE, "/api/inquiry/admin/{id}").hasRole("ADMIN"); // 관리자 문의 삭제
+
+            auth.requestMatchers("/user/mypage").hasAnyRole("USER", "ADMIN");
             auth.requestMatchers("/manager/**").hasAnyRole("MANAGER", "ADMIN");
 //            auth.anyRequest().hasRole("USER"); // USER 이상만 접근 가능
             auth.anyRequest().permitAll(); // !!임시로 전체 오픈!!

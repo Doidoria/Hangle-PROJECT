@@ -1,0 +1,74 @@
+.section-wrap {
+    grid-area: main;
+    padding: 25px 70px;
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 35px;
+    box-shadow: var(--shadow);
+}
+
+.leaderboard {
+    height: auto;
+
+    thead {
+        height: auto;
+        border-bottom:  1px solid var(--border);
+
+        tr{
+            height: 30px;
+        }
+    }
+
+    .leaderboardBody {
+        tr {
+
+            margin: 10px 0;
+            height: 30px;
+
+            td {
+                text-align: center;
+            }
+        }
+    }
+}
+
+.search {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+
+    input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+    }
+
+    input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--ring);
+    }
+
+    /* @extend 대신 직접 스타일 복사하거나, 위 .filters .btn을 공통 클래스로 빼도 OK */
+    button {
+        width: 30%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        transition: .15s;
+        box-shadow: var(--shadow);
+    }
+}

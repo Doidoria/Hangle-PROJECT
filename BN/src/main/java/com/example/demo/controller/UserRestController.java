@@ -88,10 +88,11 @@ public class UserRestController {
         Map<String, Object> response = new HashMap<>();
 
         User user = userRepository.findByUserid(userDto.getUserid());
+        boolean skipEmailCheck = (user != null && "ROLE_ADMIN".equals(user.getRole()));
         if (userDto.getUserid() == null || userDto.getUserid().isBlank()) {
             return ResponseEntity.badRequest().body(Map.of("error", "아이디(이메일)를 입력해주세요."));
         }
-        if (!userDto.getUserid().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+        if (!skipEmailCheck && !userDto.getUserid().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             return ResponseEntity.badRequest().body(Map.of("error", "아이디(이메일) 형식으로 입력해주세요."));
         }
         if (userDto.getPassword() == null || userDto.getPassword().isBlank()) {

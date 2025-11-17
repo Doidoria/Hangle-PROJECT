@@ -52,9 +52,9 @@ function ThemeToggle() {
   return (
     <button onClick={handleToggle} className="toggle" aria-label="테마 전환">
       {theme === "dark" ? (
-        <img src="./image/icon_moon(white).png" alt="다크 모드" className="theme-icon" />
+        <img src="/image/icon_moon(white).png" alt="다크 모드" className="theme-icon" />
       ) : (
-        <img src="./image/icon_sun(black).png" alt="라이트 모드" className="theme-icon" />
+        <img src="/image/icon_sun(black).png" alt="라이트 모드" className="theme-icon" />
       )}
     </button>
   );

@@ -57,10 +57,13 @@ public class CompetitionService {
     public CompetitionDto create(CompetitionCreateRequest req) {
         Competition c = new Competition();
         c.setTitle(req.title());
-        c.setDescription(req.description());
-        c.setStatus(req.status());              // req.status() 타입이 Status
+        c.setPurpose(req.description());
+        c.setDetail(req.detail());                               // ✅ 상세 설명
+        c.setStatus(req.status());
         c.setStartAt(req.startAt());
         c.setEndAt(req.endAt());
+        if (req.evaluationMetric() != null) c.setEvaluationMetric(req.evaluationMetric()); // ✅
+        if (req.prizeTotal() != null)       c.setPrizeTotal(req.prizeTotal());             // ✅
         Competition saved = repository.save(c);
         return CompetitionMapper.toDto(saved);
     }
@@ -72,12 +75,14 @@ public class CompetitionService {
                 .orElseThrow(() -> new IllegalArgumentException("Competition not found: " + id));
 
         c.setTitle(req.title());
-        c.setDescription(req.description());
-        c.setStatus(Status.valueOf(req.status()));  // create, update 둘 다
+        c.setPurpose(req.description());
+        c.setDetail(req.detail());                               // ✅ 상세 설명
+        if (req.status() != null) c.setStatus(Status.valueOf(req.status()));
         c.setStartAt(req.startAt());
         c.setEndAt(req.endAt());
+        if (req.evaluationMetric() != null) c.setEvaluationMetric(req.evaluationMetric()); // ✅
+        if (req.prizeTotal() != null)       c.setPrizeTotal(req.prizeTotal());             // ✅
 
-        // JPA 영속 상태라 save 호출 없이도 flush 시점에 반영되지만, 명시적으로 save 해도 OK
         Competition updated = repository.save(c);
         return CompetitionMapper.toDto(updated);
     }
