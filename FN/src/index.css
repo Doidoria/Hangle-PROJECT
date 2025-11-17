@@ -64,7 +64,7 @@ main {
     /* inquiry */
     --inquiry-details: #f5f5f5;
     --top-faqs-bg: #ececec;
-
+    --top-faqs-bg-hover : #e2dfdf;
 }
 
 /* ========= Design Tokens: Dark ========= */
@@ -104,6 +104,7 @@ main {
     /* inquiry */
     --inquiry-details: #1a2435;
     --top-faqs-bg: #1a2435;
+    --top-faqs-bg-hover : #171f2e;
 
     /* comp */
     --compshadow: rgba(255, 255, 255, 0.436);

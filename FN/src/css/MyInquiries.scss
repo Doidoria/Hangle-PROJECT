@@ -122,7 +122,7 @@
         }
 
         .title {
-            text-align: left;
+            text-align: center;
             font-weight: 600;
         }
 
@@ -242,7 +242,7 @@
         button {
             align-self: center;
             padding: 10px 25px;
-            background: #6b7280;
+            background: var(--top-faqs-bg);
             color: var(--text-on-primary);
             border: none;
             border-radius: 8px;
@@ -253,9 +253,12 @@
             align-items: center;
             gap: 5px;
 
-            /* 유저 모달의 닫기 버튼은 초록색 */
+            .faq-modal-icon {
+                font-size: 20px;
+            }
+
             &:hover {
-                background: #4b5563;
+                background: var(--top-faqs-bg-hover);
             }
         }
     }
@@ -293,13 +296,10 @@
 
     &:hover {
         background: var(--delete-color-hover);
-        box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+        box-shadow: 0 2px 6px rgba(240, 59, 59, 0.3);
     }
 }
 
-/* FAQ 스타일 (사용하지 않으므로 주석 처리하거나 제거 가능) */
-/* .faq-answer { ... }
-.faq-icon { ... } */
 
 
 /* 고객센터 이동 버튼 */

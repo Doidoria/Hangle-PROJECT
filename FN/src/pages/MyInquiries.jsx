@@ -232,7 +232,7 @@ function MyInquiries() {
                         </div>
 
                         <button onClick={() => setModalData(null)}>
-                            <span className="material-symbols-outlined">close</span>
+                            <span className="material-symbols-outlined faq-modal-icon">close</span>
                             닫기
                         </button>
                     </div>

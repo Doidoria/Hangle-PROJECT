@@ -154,7 +154,7 @@ function InquiryManagement() {
                 <span className="material-symbols-outlined">arrow_left</span>
                 <span className="material-symbols-outlined">home</span>
             </button>
-            <h2>1:1 문의 관리 페이지</h2>
+            <h2>문의 관리 페이지</h2>
 
             {/* 통계 카드 */}
             <div className="inquiry-stats">
@@ -282,11 +282,11 @@ function InquiryManagement() {
                                 className="answer-submit-btn" // 주 컬러 버튼
                                 onClick={() => handleAnswerSubmit(modalData.id)}
                             >
-                                <span className="material-symbols-outlined">send</span>
+                                <span className="material-symbols-outlined answer-icon">play_arrow</span>
                                 {modalData.answerContent ? '답변 수정' : '답변 등록'}
                             </button>
                             <button onClick={() => setModalData(null)}>
-                                <span className="material-symbols-outlined">close</span>
+                                <span className="material-symbols-outlined faq-modal-icon">close</span>
                                 닫기
                             </button>
                         </div>

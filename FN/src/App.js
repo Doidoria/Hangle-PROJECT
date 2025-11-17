@@ -35,7 +35,6 @@ function App() {
             <Route path="/FaqPage" element={<FaqPage />} />
             <Route path="/inquiry/write" element={<ProtectedRoute><InquiryWrite /></ProtectedRoute>} />
             <Route path="/myprofile/inquiries" element={<ProtectedRoute><MyInquiries /></ProtectedRoute>} />
-            {/* ↓ 2. 관리자 문의 관리 페이지 라우팅 추가 (ROLE_ADMIN 필요) ↓ */}
             <Route path="/admin/inquiries" element={<ProtectedRoute requiredRole="ROLE_ADMIN"><InquiryManagement /></ProtectedRoute>} />
 
         </Route>
