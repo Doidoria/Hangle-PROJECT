@@ -1,0 +1,63 @@
+.inquiry-write-container {
+    padding: 30px;
+    max-width: 700px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+
+    h2 {
+        font-size: 26px;
+        margin-bottom: 24px;
+        text-align: center;
+        color: var(--primary);
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    label {
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    input,
+    textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface);
+        color: var(--text);
+        font-size: 15px;
+
+        &:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px var(--ring);
+        }
+    }
+
+    button {
+        margin-top: 10px;
+        padding: 12px;
+        background: var(--primary);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        font-size: 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+
+        &:hover {
+            background: var(--primary-hover);
+        }
+    }
+}

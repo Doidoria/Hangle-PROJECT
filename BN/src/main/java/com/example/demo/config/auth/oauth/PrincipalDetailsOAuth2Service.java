@@ -71,7 +71,7 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService {
 
         //최초 로그인시 로컬계정 DB 저장 처리
         String username = oAuth2UserInfo.getName();
-//        String userid = oAuth2UserInfo.getProvider()+"_"+oAuth2UserInfo.getProviderId();
+        String phone = oAuth2UserInfo.getPhone();
         String providerId = oAuth2UserInfo.getProviderId();
 
         String userid = null;
@@ -103,6 +103,7 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService {
                     .password(password)
                     .role("ROLE_USER")
                     .username(username != null ? username : provider + "_user")
+                    .phone(phone)
                     .provider(provider)
                     .providerId(providerId)
                     .build();

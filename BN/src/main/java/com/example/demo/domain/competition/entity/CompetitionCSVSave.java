@@ -2,10 +2,10 @@ package com.example.demo.domain.competition.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -15,13 +15,18 @@ public class CompetitionCSVSave {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long competitionId;
-
-    private String userid;  // 제출자
-
-    private String fileName;
-
+    // 제출 파일 저장 경로
     private String filePath;
 
-    private LocalDateTime submittedAt;
+    // 제출한 사용자 ID (선택)
+    private Long userId;
+
+    // 제출 점수
+    private Double score;
+
+    // 어떤 대회에 대한 제출인지
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "competition_id")
+    private Competition competition;
+
 }

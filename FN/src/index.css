@@ -43,6 +43,7 @@ main{max-width: 1920px;}
     --bg-hover-light:#ebebeb;
     --bg-textarea:#ffffff;
     --textarea-text:#000000;
+    --divider:#dfdfdf;
     
 }
 /* ========= Design Tokens: Dark ========= */
@@ -77,6 +78,7 @@ main{max-width: 1920px;}
     --bg-hover-light:#333;
     --bg-textarea:#1e2530;
     --textarea-text:#fff;
+    --divider:#25344b;
 
     /* comp */
     --compshadow :  rgba(255, 255, 255, 0.436);

@@ -1,4 +1,3 @@
-// com.example.demo.domain.competition.dtos.CompetitionMapper
 package com.example.demo.domain.competition.dtos;
 
 import com.example.demo.domain.competition.entity.Competition;
@@ -10,15 +9,10 @@ public final class CompetitionMapper {
         return new CompetitionDto(
                 c.getId(),
                 c.getTitle(),
-                c.getPurpose(),
-                c.getDetail(),                 // ✅ 추가
+                c.getDescription(),
                 c.getStatus(),
                 c.getStartAt(),
-                c.getEndAt(),
-                c.getEvaluationMetric(),
-                c.getPrizeTotal(),
-                c.getParticipantCount(),
-                c.getCreatedAt()
+                c.getEndAt()
         );
     }
 }
