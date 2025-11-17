@@ -1,0 +1,119 @@
+*{box-sizing: border-box}
+html,body {height: 100%}
+body{
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+a {text-decoration: none;color: #000}
+main{max-width: 1920px;}
+/* ========= Design Tokens: Light (default) ========= */
+:root {
+    --bg: #F9FAF7;
+    --text: #1C1C1C;
+    --muted: #6B7280;
+    --primary: #10B981;
+    --primary-hover: #059669;
+    --logoutbtn: #b12d2f;
+    --logoutbtn-hover: #dd4043;
+    --surface: #FFFFFF;
+    --border: #E6E9E6;
+    --badge: #EAF7F1;
+    --nav: #FFFFFF;
+    --ring: rgba(16, 185, 129, .15);
+    --logout-ring: rgba(185, 16, 16, 0.15);
+    --shadow: 0 10px 24px rgba(0, 0, 0, .06);
+    --chart-grad: linear-gradient(90deg, #d1fae5 0%, #a7f3d0 50%, #6ee7b7 100%);
+    --icon-muted: #64748B;
+    --logo: #0f766e;
+    --inquiry-details : #f5f5f5;
+
+    /* Setting */
+    --text-color: #1c1c1c;
+    --text-secondary: #363636;
+    --text-secondary-lighter: #444444;
+    --border-color:#7e7e7e;
+    --border-color-light: #dfdfdf;
+    --border-color-dark:#555;
+    --main-color:#10B981;
+    --main-color-hover:#34D399;
+    --delete-color:#9e2d2e;
+    --delete-color-hover:#58090c;
+    --bg-primary:#ffffff;
+    --bg-hover-light:#ebebeb;
+    --bg-textarea:#ffffff;
+    --textarea-text:#000000;
+    --divider:#dfdfdf;
+    
+}
+/* ========= Design Tokens: Dark ========= */
+.theme-dark {
+    --bg: #1E293B;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --primary: #10B981;
+    --primary-hover: #34D399;
+    --surface: #273549;
+    --border: #334155;
+    --badge: #0b3b32;
+    --nav: #1E293B;
+    --ring: rgba(20, 184, 166, .25);
+    --shadow: 0 8px 20px rgba(0, 0, 0, .35);
+    --chart-grad: linear-gradient(90deg, #065f46 0%, #10b981 50%, #34d399 100%);
+    --icon-muted: #94A3B8;
+    --logo: #34D399;
+    --inquiry-details : #1a2435;
+
+    /* Setting */
+    --text-color: #fff;
+    --text-secondary: #aaa;
+    --text-secondary-lighter: #888;
+    --border-color:#333;
+    --border-color-light: #616161;
+    --border-color-dark:#555;
+    --main-color:#10B981;
+    --main-color-hover:#34D399;
+    --delete-color:#ff4d4f;
+    --delete-color-hover:#7c2829;
+    --bg-primary:#1c1c1c;
+    --bg-hover-light:#333;
+    --bg-textarea:#1e2530;
+    --textarea-text:#fff;
+    --divider:#25344b;
+
+    /* comp */
+    --compshadow :  rgba(255, 255, 255, 0.436);
+}
+
+/* ========= Layout ========= */
+.layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: 64px 1fr auto;
+    grid-template-areas:
+        "sidebar topbar"
+        "sidebar main"
+        "sidebar footer";
+    min-height: 100vh;
+}
+
+/* ========= Logo ========= */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: .2px;
+    padding: 12px 10px 16px;
+    margin-bottom: 6px;
+    color: var(--logo);
+}
+
+.logo .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--primary)
+}
