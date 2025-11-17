@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
 
-import '../css/competitionStyle/pages/CompetitionDetail.scss';
+// CompetitionDetail.jsx
+import "../css/Competition.scss";
+import "../css/CompetitionDetail.scss";
 
 export default function CompetitionDetail() {
   const { id } = useParams();

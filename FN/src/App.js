@@ -7,7 +7,7 @@ import Main from './pages/main';
 import Login from './pages/login';
 import OAuthSuccess from './components/OAuthsuccess';
 import Join from './pages/join';
-import Competition from './pages/competition';
+import Competition from './pages/Competition';
 import Setting from './pages/setting';
 import MyProfile from './pages/myProfile';
 import CompetitionList from './pages/CompetitionList';

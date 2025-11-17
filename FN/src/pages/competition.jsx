@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../css/competition.scss";
 import api from "../api/axiosConfig";
+import "../css/Competition.scss";
 
 const Competition = () => {
   const navigate = useNavigate();

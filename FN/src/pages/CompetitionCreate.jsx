@@ -2,7 +2,10 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
-import '../css/competitionStyle/pages/CompetitionCreate.scss';
+
+// CompetitionCreate.jsx
+import "../css/Competition.scss";
+import "../css/CompetitionCreate.scss";
 
 function CompetitionCreate() {
   const navigate = useNavigate();
@@ -76,7 +79,7 @@ function CompetitionCreate() {
 
   return (
     <div className="container comp-create">
-      <Link className="back" to="/competitions">← 목록으로</Link>
+      <Link className="back" to="/competitions/List">← 목록으로</Link>
       <h1>대회 생성</h1>
 
       <form onSubmit={onSubmit} noValidate>
