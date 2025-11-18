@@ -34,6 +34,9 @@ public class UserDto {
     private LocalDateTime lastLoginAt;
     private String introduction;
     private String profileImageUrl;
+    private String theme;
+    private String phone;
+    private Boolean isCertified;
 
 	//OAUTH2 CLIENT INFO
 	private String provider;
@@ -52,6 +55,8 @@ public class UserDto {
                 .profileImageUrl(this.profileImageUrl)
                 .provider(this.provider)
                 .providerId(this.providerId)
+                .phone(this.phone)
+                .isCertified(this.isCertified != null ? this.isCertified : false)
                 .build();
 	}
 	//ENTITY->DTO
@@ -68,6 +73,8 @@ public class UserDto {
                 .profileImageUrl(user.getProfileImageUrl())
                 .provider(user.getProvider())
                 .providerId(user.getProviderId())
+                .phone(user.getPhone())
+                .isCertified(user.getIsCertified())
                 .build();
 	}
 }

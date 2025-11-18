@@ -1,3 +1,4 @@
+// File: InquiryService.java
 package com.example.demo.config.auth.service;
 
 import com.example.demo.domain.inquiry.dto.InquiryRequestDto;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,55 +23,62 @@ public class InquiryService {
     private final UserRepository userRepository;
 
     /**
-     * 사용자 ID로 User 엔티티를 조회하고 "사용자 이름(username)"을 반환합니다.
+     * PK(userId)로 User를 찾아서 username / userid 리턴
      */
-    private String getUserName(Long userId) {
-        // User 엔티티에 getUsername() 메서드가 있다고 가정합니다.
-        User user = userRepository.findById(userId).orElse(null);
-        return user != null ? user.getUsername() : "(탈퇴한 사용자)";
+    private User findUserOrNull(Long userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 
     /**
      * 1:1 문의 작성
      */
     @Transactional
-    public InquiryResponseDto createInquiry(InquiryRequestDto requestDto, Long userId) {
+    public InquiryResponseDto createInquiry(Long userId, InquiryRequestDto requestDto) {
+        // PK로 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
         Inquiry inquiry = Inquiry.builder()
+                .userId(user.getId()) // PK 저장
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
-                .userId(userId)
                 .build();
-        Inquiry savedInquiry = inquiryRepository.save(inquiry);
 
-        // DTO 생성 시 작성자 이름을 함께 전달
-        String userName = getUserName(userId);
-        return InquiryResponseDto.of(savedInquiry, userName);
+        Inquiry saved = inquiryRepository.save(inquiry);
+
+        return InquiryResponseDto.of(
+                saved,
+                user.getUsername(),
+                user.getUserid()
+        );
     }
 
     /**
-     * 내 문의 목록 조회
+     * [USER] 내 문의 목록 조회
      */
     @Transactional(readOnly = true)
     public List<InquiryResponseDto> getMyInquiries(Long userId) {
-        // 자신의 문의만 조회하므로, 사용자 이름은 하나로 고정
-        String userName = getUserName(userId);
+        List<Inquiry> list = inquiryRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        User user = findUserOrNull(userId);
 
-        List<Inquiry> inquiries = inquiryRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
+        String username = user != null ? user.getUsername() : "(탈퇴한 사용자)";
+        String userid = user != null ? user.getUserid() : "-";
 
-        // DTO 생성 시 작성자 이름을 함께 전달
-        return inquiries.stream()
-                .map(inquiry -> InquiryResponseDto.of(inquiry, userName))
+        return list.stream()
+                .map(inq -> InquiryResponseDto.of(inq, username, userid))
                 .collect(Collectors.toList());
     }
 
     /**
-     * 문의 삭제 (본인 문의만 가능)
+     * [USER] 본인 문의 삭제
      */
     @Transactional
     public boolean deleteInquiry(Long inquiryId, Long userId) {
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
-                .orElseThrow(() -> new RuntimeException("해당 문의를 찾을 수 없습니다."));
+                .orElse(null);
+        if (inquiry == null) return false;
 
+        // 작성자 본인인지 확인
         if (!inquiry.getUserId().equals(userId)) {
             return false;
         }
@@ -79,24 +88,25 @@ public class InquiryService {
     }
 
     // =========================================================
-    // ↓ 관리자 전용 기능
+    // ↓ 관리자 전용 기능 (Admin)
     // =========================================================
 
     /**
      * [ADMIN] 전체 문의 목록 조회 (최신 순)
+     *  - 여기서 매 건마다 User PK로 조회해서
+     *    최신 username / userid 를 반영해 줌
      */
     @Transactional(readOnly = true)
     public List<InquiryResponseDto> getAllInquiries() {
         List<Inquiry> allInquiries = inquiryRepository.findAllByOrderByCreatedAtDesc();
 
-        // 문의 리스트를 스트림 처리하면서 사용자 이름을 조회 및 매핑
         return allInquiries.stream()
                 .map(inquiry -> {
-                    // 각 문의에 대해 userId를 통해 사용자 이름 조회
-                    String userName = getUserName(inquiry.getUserId());
+                    User user = findUserOrNull(inquiry.getUserId());
+                    String username = user != null ? user.getUsername() : "(탈퇴한 사용자)";
+                    String userid = user != null ? user.getUserid() : "-";
 
-                    // 수정된 of() 메서드를 사용해 DTO 생성
-                    return InquiryResponseDto.of(inquiry, userName);
+                    return InquiryResponseDto.of(inquiry, username, userid);
                 })
                 .collect(Collectors.toList());
     }
@@ -109,12 +119,16 @@ public class InquiryService {
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new RuntimeException("해당 문의를 찾을 수 없습니다."));
 
-        inquiry.addAnswer(answerContent);
+        inquiry.setAnswerContent(answerContent);
+        inquiry.setAnswerDate(LocalDateTime.now());
 
-        // DTO 생성 시 작성자 이름을 함께 전달
-        String userName = getUserName(inquiry.getUserId());
+        Inquiry saved = inquiryRepository.save(inquiry);
 
-        return InquiryResponseDto.of(inquiry, userName);
+        User user = findUserOrNull(saved.getUserId());
+        String username = user != null ? user.getUsername() : "(탈퇴한 사용자)";
+        String userid = user != null ? user.getUserid() : "-";
+
+        return InquiryResponseDto.of(saved, username, userid);
     }
 
     /**

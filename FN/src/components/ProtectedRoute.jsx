@@ -1,67 +1,53 @@
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../api/AuthContext";
 
 function ProtectedRoute({ children, requiredRole }) {
-  const { isLogin, role, isLoading } = useAuth(); // 👈 isLoading 가져오기
+  const { isLogin, role, isLoading } = useAuth();
 
-  // ---------------------------------------
-  // 1. 로딩 중일 때 (role 상태가 결정되지 않았을 때)는 대기
+  // 아직 AuthContext가 서버에서 로그인 상태 확인 중일 때
   if (isLoading) {
-    // 로딩 스피너나 null을 반환하여 대기
-    return <div>Loading...</div>; // 또는 <LoadingSpinner />
+    return <div>Loading...</div>;
   }
-  // ---------------------------------------
 
-
-  // 역할 불일치 문제를 해결하기 위해, role 값을 표준화합니다. (기존 로직 유지)
+  // 역할 문자열 통일 (ROLE_ADMIN / ADMIN 등)
   const userRole = role ? role.toUpperCase() : null;
   const required = requiredRole ? requiredRole.toUpperCase() : null;
 
-  // 역할 포맷이 'ROLE_ADMIN' vs 'ADMIN'처럼 달라도 허용하도록 유연하게 검증합니다.
   let hasRequiredRole = false;
   if (required) {
-    // 1. 사용자 역할이 필수 역할과 정확히 일치하는 경우 (예: 'ROLE_ADMIN' === 'ROLE_ADMIN')
     if (userRole === required) {
       hasRequiredRole = true;
-    }
-    // 2. 'ROLE_' 접두사를 제거한 후 일치하는 경우 (예: 'ADMIN' === 'ADMIN' 또는 'ROLE_ADMIN' === 'ADMIN')
-    else if (userRole && userRole.includes('_')) {
-      // 사용자 역할이 'ROLE_ADMIN'인데, 필수 역할이 'ADMIN'인 경우
-      if (userRole.replace('ROLE_', '') === required) {
-        hasRequiredRole = true;
-      }
-    } else if (required.includes('_')) {
-      // 사용자 역할이 'ADMIN'인데, 필수 역할이 'ROLE_ADMIN'인 경우
-      if (required.replace('ROLE_', '') === userRole) {
-        hasRequiredRole = true;
-      }
+    } else if (userRole && userRole.startsWith("ROLE_")) {
+      // 사용자: ROLE_ADMIN, 필요: ADMIN
+      if (userRole.replace("ROLE_", "") === required) hasRequiredRole = true;
+    } else if (required.startsWith("ROLE_")) {
+      // 사용자: ADMIN, 필요: ROLE_ADMIN
+      if (required.replace("ROLE_", "") === userRole) hasRequiredRole = true;
     }
   } else {
-    // requiredRole이 설정되지 않았으면, 로그인만 되어 있으면 접근 허용
+    // requiredRole 안 넘기면 "로그인만 되어 있으면 통과"
     hasRequiredRole = true;
   }
 
-
   if (!isLogin) {
     Swal.fire({
-      icon: 'warning',
-      title: '로그인이 필요합니다',
-      text: '서비스를 이용하려면 로그인해주세요.',
-      confirmButtonText: '로그인으로 이동',
-      confirmButtonColor: '#10B981'
+      icon: "warning",
+      title: "로그인이 필요합니다",
+      text: "서비스를 이용하려면 로그인해주세요.",
+      confirmButtonText: "로그인으로 이동",
+      confirmButtonColor: "#10B981",
     });
     return <Navigate to="/login" replace />;
   }
 
-  // requiredRole이 설정되었는데, 접근 권한이 없는 경우
   if (requiredRole && !hasRequiredRole) {
     Swal.fire({
-      icon: 'error',
-      title: '접근 권한이 없습니다',
-      text: '이 페이지에 접근할 수 있는 권한이 없습니다.',
-      confirmButtonText: '홈으로 돌아가기',
-      confirmButtonColor: '#d33'
+      icon: "error",
+      title: "접근 권한이 없습니다",
+      text: "이 페이지에 접근할 수 있는 권한이 없습니다.",
+      confirmButtonText: "홈으로 돌아가기",
+      confirmButtonColor: "#d33",
     });
     return <Navigate to="/" replace />;
   }
