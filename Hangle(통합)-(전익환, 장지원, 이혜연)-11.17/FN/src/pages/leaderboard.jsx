@@ -7,8 +7,8 @@ const Leaderboard = () => {
 
     const [leaderboard, setLeaderboard] = useState([]);
     const [compNameList, setCompNameList] = useState([]);
-    const [keyword, setKeyword] = useState("");
-    const [isEmpty, setIsEmpty] = useState(false);
+    const [keyword, setKeyword] = useState("");  
+    // isempty삭제 처리
     const [errorMsg, setErrorMsg] = useState('');
     const onSearch = (e) => {
         e.preventDefault();
@@ -23,8 +23,7 @@ const Leaderboard = () => {
             .then((data) => {
                 let list = data.leaderboard || [];
                 
-                //서버의 엠티값 읽기
-                setIsEmpty(data.isEmpty || false);
+                //서버의 엠티값 읽기 -> 삭제처리
 
                 //키워드 비어있음 -> 전체 조회
                 if (keyword.trim() !== "") {
@@ -41,9 +40,11 @@ const Leaderboard = () => {
 
                 
 
-                if (data.isEmpty === true) {
-                    setLeaderboard([]);
-                    setErrorMsg('목록을 불러오지 못했습니다.');
+                // 검색 결과 없음 → 에러 메시지 출력 => 수정 
+                if (filteredCompList.length === 0) {
+                    setErrorMsg("검색 결과가 없습니다.");
+                } else {
+                    setErrorMsg("");
                 }
 
             })
@@ -74,6 +75,8 @@ const Leaderboard = () => {
                 </form>
 
                 <div>
+                    {/* 에러메세지 추가 */}
+                    {errorMsg && <div style={{color:'#c00', marginBottom:8}}>{errorMsg}</div>}
 
                 
                     {groupedByComp.map(({ compName, entries }) => (
@@ -124,8 +127,8 @@ const Leaderboard = () => {
                     <ul>
                         <li>leaderboard 길이: {leaderboard.length}</li>
                         <li>compNameList: {compNameList.join(", ") || "없음"}</li>
-                        <li>keyword: {keyword || "없음"}</li>
-                        <li>isEmpty: {String(isEmpty)}</li>
+                        <li>keyword: {keyword || "없음"}</li>  
+                        {/* isempty 삭제 처리 */}
                     </ul>
                 </div>
 

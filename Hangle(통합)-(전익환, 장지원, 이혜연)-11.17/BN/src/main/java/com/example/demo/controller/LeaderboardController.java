@@ -43,8 +43,7 @@ public class LeaderboardController {
         List<LeaderboardEntryDto> allList = leaderboardService.getAllLeaderboard();
         List<LeaderboardEntryDto> resultList;
 
-        //빈 검색 탐색 변수
-        boolean isempty = false;
+        //빈 검색 탐색 변수 -> 삭제 처리
 
         if( keyword == null || keyword.trim().isEmpty()){
             resultList = allList;
@@ -55,15 +54,15 @@ public class LeaderboardController {
             resultList = leaderboardService.searchLeaderboard(keyword);
 //
             System.out.println("print : 1");
-//
-            if (resultList.isEmpty()) {
-                isempty = true ;
-                System.out.println("print : 2");
-                System.out.println(isempty);
-            }
+
+            // 밑의 조건문 주석 처리
+//            if (resultList.isEmpty()) {
+//                isempty = true ;
+//                System.out.println("print : 2");
+//                System.out.println(isempty);
+//            }
         }
-        System.out.println("print : 3");
-//
+
         //대회명 리스트
         List<String> compNameList = resultList.stream()
                 .map(LeaderboardEntryDto::getCompetitionTitle)
@@ -85,7 +84,7 @@ public class LeaderboardController {
         response.put("leaderboard", resultList);
         response.put("compNameList", compNameList);
         response.put("keyword", keyword == "" ? "" : keyword);
-        response.put("isEmpty",isempty);
+//        response.put("isEmpty",isempty); //isempty 주석처리
 
         return ResponseEntity.ok(response);
     }

@@ -120,6 +120,9 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
         computeRanksPerComp(competition.getId()); //rank 업데이트
 
+        leaderboardRepository.flush(); //flush 함수 추가
+
+
         return leaderboard.getLeaderBoardId();
     }
 
@@ -147,6 +150,8 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         leaderboardRepository.save(list);
 
         computeRanksPerComp(list.getCompetition().getId());
+
+        leaderboardRepository.flush(); //flush 함수 추가
 
         return list.getLeaderBoardId();
     }
