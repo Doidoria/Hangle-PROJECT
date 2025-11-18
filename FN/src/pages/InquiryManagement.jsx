@@ -198,7 +198,7 @@ function InquiryManagement() {
                         <tr>
                             <th>번호</th>
                             <th>제목</th>
-                            <th>작성자 ID</th>
+                            <th>작성자</th>
                             <th>작성일</th>
                             <th>상태</th>
                             <th>답변일</th>

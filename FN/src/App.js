@@ -36,7 +36,7 @@ function App() {
             <Route path="/FaqPage" element={<FaqPage />} />
             <Route path="/inquiry/write" element={<ProtectedRoute><InquiryWrite /></ProtectedRoute>} />
             <Route path="/myprofile/inquiries" element={<ProtectedRoute><MyInquiries /></ProtectedRoute>} />
-            <Route path="/admin/inquiries" element={<ProtectedRoute requiredRole="ROLE_ADMIN"><InquiryManagement /></ProtectedRoute>} />
+            <Route path="/admin/inquiries" element={<ProtectedRoute requiredRole="ROLE_MANAGER"><InquiryManagement /></ProtectedRoute>} />
             <Route path="/leaderboard" element={<Leaderboard/>}></Route>
           </Route>
 
