@@ -18,29 +18,42 @@ public class AdminAccountInitializer {
     private PasswordEncoder passwordEncoder;
 
     @EventListener(ApplicationReadyEvent.class)
-    public void createAdminAccount() {
+    public void createDefaultAccounts() {
 
-        String adminid = "admin";
+        createAccountIfNotExists(
+                "admin",
+                "관리자",
+                "ROLE_ADMIN",
+                "admin1234"
+        );
 
-        // 이미 admin 계정 있으면 패스
-        if (userRepository.findByUserid(adminid) != null) {
-            System.out.println("[ADMIN INIT] Admin 계정 이미 존재함");
+        createAccountIfNotExists(
+                "manager",
+                "매니저",
+                "ROLE_MANAGER",
+                "manager1234"
+        );
+    }
+
+    private void createAccountIfNotExists(String userid, String username, String role, String password) {
+
+        if (userRepository.findByUserid(userid) != null) {
+            System.out.println("[INIT] 이미 존재 → " + userid);
             return;
         }
 
-        // 관리자 생성
-        User admin = User.builder()
-                .userid(adminid)
-                .username("관리자")
-                .password(passwordEncoder.encode("admin"))
-                .role("ROLE_ADMIN")
+        User user = User.builder()
+                .userid(userid)
+                .username(username)
+                .password(passwordEncoder.encode(password))
+                .role(role)
                 .isCertified(true)
                 .build();
 
-        userRepository.save(admin);
+        userRepository.save(user);
 
-        System.out.println("[ADMIN INIT] 기본 관리자 계정 생성 완료!");
-        System.out.println("   ▶ ID : " + adminid);
-        System.out.println("   ▶ PW : admin");
+        System.out.println("[INIT] 기본 계정 생성 완료");
+        System.out.println(" ▶ userid : " + userid);
+        System.out.println(" ▶ role   : " + role);
     }
 }

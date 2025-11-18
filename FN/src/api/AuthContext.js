@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import api from "../api/axiosConfig";
+import api from "./axiosConfig";
 
 const AuthContext = createContext();
-
 const DEFAULT_AVATAR = "/image/default-avatar.png";
+
 const normalizeProfile = (v) => {
   if (!v) return DEFAULT_AVATAR;
   if (v === "null" || v === "undefined") return DEFAULT_AVATAR;
@@ -18,119 +18,84 @@ export function AuthProvider({ children }) {
   const [profileImage, setProfileImage] = useState(DEFAULT_AVATAR);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    const storedUserid = localStorage.getItem("userid");
-    const storedRole = localStorage.getItem("role");
-    const storedProfile = localStorage.getItem("profileImage");
+  // 공통으로 쓸 "유저 정보 세팅" 함수
+  const applyUser = ({ username, userid, role, profileImageUrl, theme }) => {
+    const validProfile = normalizeProfile(
+      profileImageUrl ? "http://localhost:8090" + profileImageUrl : null
+    );
+    setUsername(username || "");
+    setUserid(userid || null);
+    setRole(role || "");
+    setProfileImage(validProfile);
+    setIsLogin(true);
 
-    if (storedUsername && storedUserid) {
-      setUsername(storedUsername);
-      setUserid(storedUserid);
-      setRole(storedRole);
-      setProfileImage(normalizeProfile(storedProfile));
-      setIsLogin(true);
-    } else {
-      setProfileImage(DEFAULT_AVATAR);
+    localStorage.setItem("username", username || "");
+    localStorage.setItem("userid", userid || "");
+    localStorage.setItem("role", role || "");
+    localStorage.setItem("profileImage", validProfile);
+    if (theme) {
+      localStorage.setItem("theme", theme);
     }
-  }, []);
+  };
 
-  const logout = () => {
+  // 공통으로 쓸 "로그아웃/초기화" 함수
+  const clearUser = () => {
+    setIsLogin(false);
+    setUsername("");
+    setUserid(null);
+    setRole("");
+    setProfileImage(DEFAULT_AVATAR);
+
     localStorage.removeItem("username");
     localStorage.removeItem("userid");
     localStorage.removeItem("role");
     localStorage.removeItem("profileImage");
-    setUsername("");
-    setUserid(null);
-    setRole("");
-    setIsLogin(false);
-    setProfileImage(DEFAULT_AVATAR);
   };
 
-  // JWT 토큰 유효성 + 사용자 정보 확인
+  const logout = () => {
+    clearUser();
+    setIsLoading(false); // 로그아웃 후에도 로딩 상태는 해제
+  };
+
+  // 앱 최초 진입 시 서버에서 로그인 상태 확인
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await api.get("/validate", { withCredentials: true });
-        if (res.status === 200) {
-          const userResp = await api.get("/api/user/me", { withCredentials: true });
-          const { username, userid, role, profileImageUrl, theme } = userResp.data;
-
-          if (theme) { localStorage.setItem("theme", theme); }
-          const validProfile = profileImageUrl && profileImageUrl !== "null"
-            ? "http://localhost:8090" + profileImageUrl : DEFAULT_AVATAR;
-
-          setUsername(username);
-          setUserid(userid);
-          setRole(role);
-          setProfileImage(validProfile);
-          setIsLogin(true);
-          setIsLoading(false);
-          localStorage.setItem("username", username);
-          localStorage.setItem("userid", userid);
-          localStorage.setItem("role", role);
-          localStorage.setItem("profileImage", validProfile);
-        }
+        const res = await api.get("/api/user/me", { withCredentials: true });
+        applyUser(res.data);
       } catch (err) {
-        const status = err?.response?.status;
-        console.warn("JWT 인증 실패 또는 만료:", status);
-
-        // 401일 경우 자동 재시도 (AccessToken 재발급 후)
-        if (status === 401) {
-          try {
-            const retry = await api.get("/validate", { withCredentials: true });
-            if (retry.status === 200) {
-              console.log("🔁 AccessToken 자동 재발급 완료");
-              const userResp = await api.get("/api/user/me", { withCredentials: true });
-              const { username, userid, role, profileImageUrl } = userResp.data;
-
-              if (theme) { localStorage.setItem("theme", theme); }
-              const validProfile = profileImageUrl && profileImageUrl !== "null"
-                ? "http://localhost:8090" + profileImageUrl : DEFAULT_AVATAR;
-
-              setUsername(username);
-              setUserid(userid);
-              setRole(role);
-              setProfileImage(validProfile);
-              setIsLogin(true);
-              setIsLoading(false);
-              localStorage.setItem("username", username);
-              localStorage.setItem("userid", userid);
-              localStorage.setItem("role", role);
-              localStorage.setItem("profileImage", validProfile);
-              return;
-            }
-          } catch (reErr) {
-            console.warn("RefreshToken도 만료됨 → 로그아웃");
-            logout();
-          }
-        } else {
-          logout();
-        }
+        // 401/403 등으로 실패하면 "로그인 안 된 상태"로 처리
+        console.warn("초기 인증 체크 실패:", err?.response?.status);
+        clearUser();
+      } finally {
+        setIsLoading(false);
       }
     };
 
     checkAuth();
   }, []);
 
-  // 다른 탭 동기화
+  // 다른 탭에서 로그인/로그아웃 했을 때 동기화
   useEffect(() => {
     const handleStorageChange = () => {
-      const storedUsername = localStorage.getItem("username");
       const storedUserid = localStorage.getItem("userid");
+      if (!storedUserid) {
+        clearUser();
+        setIsLoading(false);
+        return;
+      }
+
+      // 다른 탭에서 로그인한 경우
+      const storedUsername = localStorage.getItem("username");
       const storedRole = localStorage.getItem("role");
       const storedProfile = localStorage.getItem("profileImage");
 
-      if (storedUsername && storedUserid) {
-        setUsername(storedUsername);
-        setUserid(storedUserid);
-        setRole(storedRole);
-        setProfileImage(normalizeProfile(storedProfile));
-        setIsLogin(true);
-        setIsLoading(false);
-      } else {
-        logout();
-      }
+      setUsername(storedUsername || "");
+      setUserid(storedUserid || null);
+      setRole(storedRole || "");
+      setProfileImage(normalizeProfile(storedProfile));
+      setIsLogin(true);
+      setIsLoading(false);
     };
 
     window.addEventListener("storage", handleStorageChange);

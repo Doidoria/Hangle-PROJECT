@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -76,7 +77,8 @@ public class UserRestController {
         Map<String, Object> response = new HashMap<>();
 
         User user = userRepository.findByUserid(userDto.getUserid());
-        boolean skipEmailCheck = (user != null && "ROLE_ADMIN".equals(user.getRole()));
+        boolean skipEmailCheck = (user != null && (
+                        "ROLE_ADMIN".equals(user.getRole()) || "ROLE_MANAGER".equals(user.getRole())));
         if (userDto.getUserid() == null || userDto.getUserid().isBlank()) {
             return ResponseEntity.badRequest().body(Map.of("error", "아이디(이메일)를 입력해주세요."));
         }
@@ -260,12 +262,24 @@ public class UserRestController {
 
         // 로그아웃 처리 (토큰, RT 삭제)
         redisUtil.delete("RT:" + userid);
-        response.addCookie(new Cookie("access-token", null));
-        response.addCookie(new Cookie("userid", null));
+        deleteCookie(response, JwtProperties.ACCESS_TOKEN_COOKIE_NAME);
+        deleteCookie(response, "userid");
 
         return ResponseEntity.ok(Map.of(
                 "message", "비밀번호가 변경되었습니다. 다시 로그인해주세요."
         ));
+    }
+
+    private void deleteCookie(HttpServletResponse response, String name) {
+        ResponseCookie cookie = ResponseCookie.from(name, "")
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .maxAge(0)
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
     @PostMapping("/api/user/profile-image")
