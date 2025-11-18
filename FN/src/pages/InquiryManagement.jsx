@@ -40,7 +40,7 @@ function InquiryManagement() {
         }
     };
 
-    // 필터 적용 (userName 포함 검색 로직으로 수정)
+    // 필터 적용 (username 포함 검색 로직으로 수정)
     useEffect(() => {
         let data = [...inquiries];
 
@@ -49,8 +49,8 @@ function InquiryManagement() {
             const lowerSearch = search.toLowerCase();
             data = data.filter(i =>
                 i.title.toLowerCase().includes(lowerSearch) ||
-                // userLoginId 대신 userName 필드를 사용하여 검색
-                (i.userName && i.userName.toLowerCase().includes(lowerSearch))
+                // userLoginId 대신 username 필드를 사용하여 검색
+                (i.username && i.username.toLowerCase().includes(lowerSearch))
             );
         }
 
@@ -125,7 +125,7 @@ function InquiryManagement() {
         }
 
         try {
-            await api.post(`/api/inquiry/${inquiryId}/answer`, {
+            await api.post(`/api/inquiry/admin/${inquiryId}/answer`, {
                 answerContent: answerInput
             });
 
@@ -212,8 +212,8 @@ function InquiryManagement() {
                                 <td className="title">
                                     {inq.title}
                                 </td>
-                                {/* inq.userName 사용 */}
-                                <td>{inq.userName || '(탈퇴한 사용자)'}</td>
+                                {/* inq.username 사용 */}
+                                <td>{inq.username || '(탈퇴한 사용자)'}</td>
                                 <td>{new Date(inq.createdAt).toLocaleDateString()}</td>
                                 <td className={inq.status === 'ANSWERED' ? 'status done' : 'status pending'}>
                                     {getStatusText(inq.status)}
@@ -239,8 +239,8 @@ function InquiryManagement() {
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
                         <p className="modal-date">
                             문의 ID: {modalData.id} |
-                            {/* modalData.userName 사용 */}
-                            작성자 ID: {modalData.userName || '(탈퇴한 사용자)'} |
+                            {/* modalData.username 사용 */}
+                            작성자 ID: {modalData.username || '(탈퇴한 사용자)'} |
                             작성일: {new Date(modalData.createdAt).toLocaleDateString()}
                         </p>
                         <h3>{modalData.title}</h3>

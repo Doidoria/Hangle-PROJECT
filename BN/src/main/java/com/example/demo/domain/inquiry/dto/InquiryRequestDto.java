@@ -1,10 +1,8 @@
 package com.example.demo.domain.inquiry.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
-@Getter
-@NoArgsConstructor
+@Data
 public class InquiryRequestDto {
 
     private String title;

@@ -84,9 +84,10 @@ public class SecurityConfig {
             // =========================================================
             // ↓ 관리자 문의 API 권한 설정 추가
             // =========================================================
-            auth.requestMatchers(HttpMethod.GET, "/api/inquiry/admin").hasRole("ADMIN"); // 전체 문의 목록 조회
-            auth.requestMatchers(HttpMethod.POST, "/api/inquiry/{id}/answer").hasRole("ADMIN"); // 문의 답변 등록
-            auth.requestMatchers(HttpMethod.DELETE, "/api/inquiry/admin/{id}").hasRole("ADMIN"); // 관리자 문의 삭제
+            auth.requestMatchers(HttpMethod.GET, "/api/inquiry/admin").hasRole("ADMIN");
+            auth.requestMatchers(HttpMethod.POST, "/api/inquiry/admin/*/answer").hasRole("ADMIN");
+            auth.requestMatchers(HttpMethod.PUT,  "/api/inquiry/admin/*/answer").hasRole("ADMIN");
+            auth.requestMatchers(HttpMethod.DELETE, "/api/inquiry/admin/*").hasRole("ADMIN");
 
             auth.requestMatchers("/user/mypage").hasAnyRole("USER", "ADMIN");
             auth.requestMatchers("/manager/**").hasAnyRole("MANAGER", "ADMIN");

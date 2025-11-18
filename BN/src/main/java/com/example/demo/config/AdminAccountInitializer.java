@@ -24,14 +24,14 @@ public class AdminAccountInitializer {
                 "admin",
                 "관리자",
                 "ROLE_ADMIN",
-                "admin1234"
+                "admin"
         );
 
         createAccountIfNotExists(
                 "manager",
                 "매니저",
                 "ROLE_MANAGER",
-                "manager1234"
+                "manager"
         );
     }
 

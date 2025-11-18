@@ -13,7 +13,7 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
     /**
      * [USER] 특정 사용자의 문의 목록을 최신 순으로 조회
      */
-    List<Inquiry> findAllByUserIdOrderByCreatedAtDesc(Long userId);
+    List<Inquiry> findByUserIdOrderByCreatedAtDesc(Long userId);
 
 
     // =========================================================
