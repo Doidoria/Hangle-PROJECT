@@ -102,8 +102,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     }
 
-    //submit => submissionid, score
-    //submitservice에 추가 : 예시 버전 submitex에 있음
+    //csvsave서비스 추가 : 예시 버전 leaderboardcontroller 하단 부분에 있음
     public Long leaderBoardAdd(User user, Competition competition, CompetitionCSVSave competitionCSVSave){
 
         //dto -> entity
