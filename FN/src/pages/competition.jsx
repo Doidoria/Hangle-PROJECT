@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axiosConfig";
 import "../css/Competition.scss";
 
+const API_BASE_URL = api.defaults.baseURL || "";
+
 const Competition = () => {
   const navigate = useNavigate();
 
@@ -51,7 +53,7 @@ const Competition = () => {
     }));
   };
 
-  const submitFile = (competitionId) => {
+  const submitFile = async (competitionId) => {
     const file = files[competitionId];
     if (!file) {
       alert("CSV 파일을 선택하세요.");
@@ -69,11 +71,35 @@ const Competition = () => {
       return;
     }
 
-    alert(
-      `"${file.name}" 제출 완료! (대회 ID: ${competitionId})\n점수 계산 중이라고 가정합니다.`
-    );
-    // 실제 구현 시: FormData 업로드 후 응답 보고 이동
-    // setTimeout(() => navigate("/leaderboard"), 800);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // TODO: 실제 로그인 유저 id로 교체
+      const userid = localStorage.getItem("userid") || "test_user";
+      formData.append("userid", userid);
+
+      await api.post(
+        `/api/competitions/${competitionId}/submissions`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      alert(`"${file.name}" 제출 완료! 점수 계산 중입니다.`);
+
+      // 제출 후 해당 대회 파일 선택 상태 초기화 (선택사항)
+      setFiles((prev) => ({
+        ...prev,
+        [competitionId]: undefined,
+      }));
+    } catch (e) {
+      console.error("[제출 실패]", e);
+      alert("제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
   };
 
   const Section = () => {
@@ -117,6 +143,8 @@ const Competition = () => {
               participantCount,
             } = competition;
 
+            const selectedFile = files[id];
+
             return (
               <article key={id} className="card competition-card">
                 {/* 상단: 왼쪽 제목, 오른쪽 자세히 보기 */}
@@ -126,6 +154,7 @@ const Competition = () => {
                     <h3>{title || "대회 제목 미정"}</h3>
                   </div>
                   <button
+                    type="button"
                     className="btn btn-ghost"
                     onClick={() => navigate(`/competitions/${id}`)}
                   >
@@ -164,13 +193,15 @@ const Competition = () => {
                       Train / Test 파일을 내려받아 모델을 학습하세요.
                     </p>
                     <div className="download-links">
-                      <a href="/data/train.csv" className="link" download>
+                      <a
+                        href={`${API_BASE_URL}/api/competitions/${id}/dataset/train`}
+                        className="link"
+                      >
                         train.csv 다운로드
                       </a>
                       <a
-                        href="/data/test.csv"
+                        href={`${API_BASE_URL}/api/competitions/${id}/dataset/test`}
                         className="link"
-                        download
                       >
                         test.csv 다운로드
                       </a>
@@ -187,17 +218,40 @@ const Competition = () => {
                   </div>
                 </div>
 
-                {/* 하단: 파일 선택 + 제출하기 → 오른쪽 하단 정렬 */}
+                {/* 하단: 파일 선택 + 제출하기 */}
                 <div className="card-bottom">
+                  {/* 실제 파일 인풋은 숨김 */}
                   <input
+                    id={`csv-input-${id}`}
                     type="file"
                     accept=".csv,text/csv"
+                    style={{ display: "none" }}
                     aria-label={`대회 ${id} 예측 결과 CSV 업로드`}
                     onChange={(e) => handleFileChange(id, e)}
                   />
+
+                  {/* 파일 선택 버튼 (label이 input을 대신 클릭) */}
+                  <label
+                    htmlFor={`csv-input-${id}`}
+                    className="btn btn-outline"
+                    style={{ marginRight: "8px", cursor: "pointer" }}
+                  >
+                    파일 선택
+                  </label>
+
+                  {/* 선택된 파일명 표시 */}
+                  <span className="file-name muted" style={{ marginRight: "auto" }}>
+                    {selectedFile
+                      ? `선택된 파일: ${selectedFile.name}`
+                      : "선택된 파일 없음"}
+                  </span>
+
+                  {/* 제출 버튼 */}
                   <button
+                    type="button"
                     className="btn"
                     onClick={() => submitFile(id)}
+                    disabled={!selectedFile}
                   >
                     제출하기
                   </button>

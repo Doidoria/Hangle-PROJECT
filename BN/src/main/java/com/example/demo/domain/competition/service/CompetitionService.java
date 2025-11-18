@@ -95,4 +95,17 @@ public class CompetitionService {
             throw new ConflictException("참조 중인 데이터가 있어 삭제할 수 없습니다: " + id);
         }
     }
+
+    // ==========================================
+    // CSV 제출용 Competition 엔티티 조회
+    // ==========================================
+    @Transactional(readOnly = true)
+    public Competition findEntity(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Competition not found: " + id));
+    }
+
+
+
+
 }

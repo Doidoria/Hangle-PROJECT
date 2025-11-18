@@ -1,89 +1,157 @@
 .main {
   grid-area: main;
-  padding: 24px 28px 60px;
+  padding: 14px 18px 28px;
   animation: fadeIn 0.2s ease-out;
 
   @keyframes fadeIn {
     from { opacity: 0; }
-    to { opacity: 1; }
+    to   { opacity: 1; }
   }
 
-  .welcome {
+  /* 메인 페이지 전체 래퍼 */
+  .main-page {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 18px;
+    flex-direction: column;
+    gap: 20px; /* 섹션 사이 간격 */
+  }
+
+  /* 각 섹션 공통 스타일 */
+  .section-block {
+    display: block;
+  }
+
+  .section-overview {
+    /* 필요하면 배경을 아주 옅게 줄 수도 있음 */
+    /* background: linear-gradient(135deg, rgba(16,185,129,0.04), transparent); */
+  }
+
+  .section-competitions,
+  .section-datasets {
+    /* 위쪽만 살짝 띄워 보이게 */
+    /* padding-top: 4px; */
+  }
+
+  /* 웰컴 영역 */
+  .welcome {
+    margin-bottom: 12px;
 
     h1 {
       margin: 0;
-      font-size: 30px;
-      letter-spacing: 0.2px;
+      font-size: 20px;
+      font-weight: 700;
     }
 
     p {
-      margin: 4px 0 0;
+      margin: 2px 0 0;
       color: var(--muted);
+      font-size: 12px;
     }
   }
 
+  .welcome-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .primary-btn {
+    background: var(--primary);
+    color: #fff;
+    border: 1px solid var(--primary);
+
+    &:hover {
+      background: var(--primary-hover);
+    }
+  }
+
+  .secondary-btn {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+
+    &:hover {
+      background: var(--badge);
+    }
+  }
+
+  /* 요약 지표 */
   .stats {
     display: grid;
-    gap: 12px;
-    grid-template-columns: repeat(6, minmax(120px, 1fr));
-    margin: 14px 0 30px;
+    gap: 8px;
+    grid-template-columns: repeat(6, minmax(90px, 1fr));
+    margin: 8px 0 16px;
   }
 
   .tile {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
+    border-radius: 10px;
+    padding: 10px;
     box-shadow: var(--shadow);
 
     h4 {
-      margin: 0 0 8px;
-      font-size: 13px;
-      color: #0b3f35;
+      margin: 0 0 4px;
+      font-size: 11px;
     }
 
     .num {
-      font-size: 22px;
-      font-weight: 900;
+      font-size: 16px;
+      font-weight: 800;
     }
 
     .sub {
-      font-size: 12px;
+      font-size: 10px;
       color: var(--muted);
     }
 
-    // 다크 테마
     .theme-dark & {
-      h4 {color: #9ae6b4;}
+      h4 { color: #9ae6b4; }
     }
   }
 
+  /* 섹션 타이틀 (대회, 데이터셋) */
+  .section-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin: 12px 0 8px;
+  }
+
+  /* 공통 카드 그리드 */
   .grid {
     display: grid;
-    gap: 18px;
-    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     justify-items: stretch;
   }
 
+  /* 카드 */
   .card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 24px;
+    border-radius: 10px;
+    padding: 14px;
     box-shadow: var(--shadow);
     text-align: left;
     opacity: 0;
-    transform: translate(50px, 10px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transform: translate(30px, 8px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
 
     &.animate {
       opacity: 1;
@@ -91,22 +159,26 @@
     }
 
     h3 {
-      font-size: 16px;
-      margin-bottom: 5px;
-      line-height: 1.4;
+      font-size: 13px;
+      margin-bottom: 4px;
+      line-height: 1.35;
     }
   }
 
   .muted {
     color: var(--muted);
   }
+
   p.muted {
     flex-grow: 1;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    font-size: 12px;
   }
-  a.link {
-    align-self: flex-start;
-    font-size: 14px;
+
+  .meta {
+    margin: 0 0 6px;
+    font-size: 10.5px;
+    color: var(--muted);
   }
 
   .badge {
@@ -116,11 +188,10 @@
     background: var(--badge);
     color: #065f46;
     border-radius: 999px;
-    padding: 4px 10px;
+    padding: 2px 8px;
     font-weight: 800;
-    font-size: 12px;
+    font-size: 10px;
     align-self: flex-start;
-    width: auto;
 
     .theme-dark & {
       color: #34d399;
@@ -128,6 +199,8 @@
   }
 
   a.link {
+    align-self: flex-start;
+    font-size: 12px;
     color: var(--primary);
     text-decoration: none;
     font-weight: 700;
@@ -138,17 +211,18 @@
   }
 
   .field {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   input[type='email'],
   input[type='password'] {
     width: 100%;
-    padding: 10px 12px;
+    padding: 6px 8px;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 6px;
     background: var(--surface);
     color: var(--text);
+    font-size: 12px;
 
     &:focus {
       border-color: var(--primary);
@@ -158,17 +232,17 @@
   }
 
   .chart {
-    height: 120px;
-    border-radius: 12px;
+    height: 90px;
+    border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--chart-grad);
   }
 }
 
-// 애니메이션 (카드)
+/* 카드 등장 애니메이션 (전역) */
 @keyframes slideInRight {
   from {
-    transform: translateX(50px);
+    transform: translateX(30px);
     opacity: 0;
   }
   to {
@@ -179,18 +253,15 @@
 
 .card {
   opacity: 0;
-  transform: translateX(50px);
-  animation: slideInRight 0.5s ease-out forwards;
+  transform: translateX(30px);
+  animation: slideInRight 0.35s ease-out forwards;
 
-  // 카드가 순서대로 등장하게 (nth-child로 딜레이 적용)
-  &:nth-child(1) { animation-delay: 0.1s; }
-  &:nth-child(2) { animation-delay: 0.2s; }
-  &:nth-child(3) { animation-delay: 0.3s; }
-  &:nth-child(4) { animation-delay: 0.4s; }
-  &:nth-child(5) { animation-delay: 0.5s; }
-  &:nth-child(6) { animation-delay: 0.6s; }
-  &:nth-child(7) { animation-delay: 0.7s; }
-  &:nth-child(8) { animation-delay: 0.8s; }
-  &:nth-child(9) { animation-delay: 0.9s; }
-  &:nth-child(10) { animation-delay: 1s; }
+  &:nth-child(1) { animation-delay: 0.05s; }
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.15s; }
+  &:nth-child(4) { animation-delay: 0.2s; }
+  &:nth-child(5) { animation-delay: 0.25s; }
+  &:nth-child(6) { animation-delay: 0.3s; }
+  &:nth-child(7) { animation-delay: 0.35s; }
+  &:nth-child(8) { animation-delay: 0.4s; }
 }
