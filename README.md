@@ -4,9 +4,9 @@
 
 | 구분 | 설명 | 예시 |
 |------|------|------|
-| **1. 프로젝트 제목(Project Title)** | 프로젝트 이름과 간단한 한줄 설명 | `# MyWebApp - 사용자 맞춤 일정관리 웹앱` |
-| **2. 프로젝트 소개(Overview)** | 어떤 프로젝트인지 간단히 요약 (목적/기능/사용자 대상) | “일정을 등록하고 달력 형태로 시각화하는 React + Spring 웹앱입니다.” |
-| **3. 기술 스택(Tech Stack)** | 사용한 언어, 프레임워크, DB, 배포환경 등을 리스트로 표시 | `React`, `Spring Boot`, `MySQL`, `Docker`, `Nginx`, `AWS EC2` |
+| **1. 프로젝트 제목(Project Title)** | Hangle ProJect | `# 사용자의 머신러닝 실력 순위를 참고할 수 있는 웹사이트` |
+| **2. 프로젝트 소개(Overview)** | (대회별 리더보드/사용자 대상) | “머신러닝 대회를 제공하고, 사용자가 예측 결과 CSV를 제출하면 서버에서 점수를 계산해 리더보드에 등록하는 플랫폼.” |
+| **3. 기술 스택(Tech Stack)** | JAVA, 프레임워크, DB, 배포환경 등을 리스트로 표시 | `React`, `Spring Boot`, `MySQL`, `Docker`, `Nginx`, `AWS EC2` |
 | **4. 주요 기능(Features)** | 핵심 기능 나열 (예: 회원가입, 로그인, 일정관리 등) | - 회원가입 및 JWT 로그인<br> - 일정 등록/수정/삭제<br> - 관리자 페이지 |
 | **5. 프로젝트 구조(Project Structure)** | 폴더 트리나 주요 파일 설명 | `backend/`, `frontend/`, `docker-compose.yml` |
 | **6. 설치 및 실행 방법(Installation & Run)** | 클론부터 실행까지 단계별 명령어 | ```bash<br>git clone https://github.com/username/project.git<br>cd project<br>npm install && npm start<br>``` |
@@ -14,7 +14,7 @@
 | **8. API 문서(API Docs)** | 주요 REST API 엔드포인트 및 설명 | \```bash<br>GET /api/users — 사용자 조회<br>POST /api/login — 로그인<br>\``` |
 | **9. 팀 구성(Contributors)** | 팀 프로젝트라면 역할 명시 | - FE: 홍길동 (UI/UX, React)<br> - BE: 김철수 (API, DB 설계) |
 | **10. 개발 일정 및 관리(Timeline/Management)** | 진행 일정, 사용한 협업툴 등 | - Notion으로 일정 관리<br> - GitHub Projects로 이슈 트래킹 |
-| **11. 배포 주소 및 시연 링크(Demo / Deployment)** | 실제 서비스 링크 또는 영상 | [https://myapp.vercel.app](https://myapp.vercel.app) |
+| **11. 배포 주소 및 시연 링크(Demo / Deployment)** | 실제 서비스 링크 또는 영상 | [https://www.hangle.store(https://www.hangle.store) |
 | **12. 라이선스(License)** | 오픈소스 라이선스 표시 | `MIT License` |
 | **13. 회고(Feedback / Retrospective)** | 프로젝트를 통해 배운 점, 개선할 점 | “Git Flow 전략을 적용하면서 협업의 중요성을 배움.” |
 
@@ -88,19 +88,19 @@ JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서
 ## 6. 설치 및 실행 (Installation & Run)
 ### 1) GitHub 저장소 클론
 ```bash
-git clone https://github.com/username/MyPlanner.git
+git clone [https://github.com/username/MyPlanner.git](https://github.com/Doidoria/Hangle-PROJECT.git)
 cd MyPlanner
 ```
 
 ### 2) 백엔드 실행
 ```bash
-cd backend
+cd BN
 ./mvnw spring-boot:run
 ```
 
 ### 3) 프론트엔드 실행
 ```bash
-cd frontend
+cd FN
 npm install
 npm start
 ```
@@ -134,24 +134,34 @@ docker-compose up -d
 ## 9. 개발 일정 (Timeline)
 | 기간 | 주요 내용 |
 |------|------------|
-| 2025.01 ~ 2025.02 | 프로젝트 기획 및 화면 설계 |
-| 2025.03 | Spring Boot + MySQL 백엔드 구축 |
-| 2025.04 | React 프론트엔드 개발 |
-| 2025.05 | Docker 기반 통합 테스트 및 배포 |
+| 2025.10 ~ 2025.12 | 프로젝트 기획 및 화면 설계 |
+| 2025.11 | Spring Boot + MySQL 백엔드 구축 |
+| 2025.11 | React 프론트엔드 개발 |
+| 2025.11 | Docker 기반 통합 테스트 및 배포 |
 
 ---
 
 ## 10. 팀 구성 (Contributors)
 | 역할 | 이름 | 담당 |
 |------|------|------|
-| Backend | 김개발 | API, DB 설계, JWT 인증 |
-| Frontend | 이프론트 | React UI, Axios 연동, 캘린더 구현 |
-| Infra | 박운영 | Docker Compose, 배포 자동화 |
+| FN | 윤태현 | React UI(Layout(Aside, header, myprofile, setting, login, join, main), Axios, OAuth 연동, ThemeContext, ProtectedRoute, ProtOneCert, ChatBot |
+| FN | 전익환 | 역할 |
+| FN | 서동성 | 역할 |
+| FN | 장지원 | 역할 |
+| FN | 이혜연 | 역할 |
+| FN | 최승호 | 역할 |
+| BN | 윤태현 | JWT 인증, Redis, User 관리, 시큐리티 설정, 휴대폰 인증 API, 챗봇(스웨거 문서화) |
+| BN | 전익환 | 역할 |
+| BN | 서동성 | 역할 |
+| BN | 장지원 | 역할 |
+| BN | 이혜연 | 역할 |
+| BN | 최승호 | 역할 |
+| Infra | 윤태현 | Docker Compose, 배포 자동화 |
 
 ---
 
 ## 11. 배포 주소 (Deployment)
-- Web: [https://myplanner.vercel.app](https://myplanner.vercel.app)  
+- Web: [https://www.hangle.store](https://www.hangle.store)  
 - API: [https://api.myplanner.com](https://api.myplanner.com)
 
 ---
