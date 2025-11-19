@@ -8,7 +8,7 @@
 | **2. 프로젝트 소개(Overview)** | (대회별 리더보드/사용자 대상) | “머신러닝 대회를 제공하고, 사용자가 예측 결과 CSV를 제출하면 서버에서 점수를 계산해 리더보드에 등록하는 플랫폼.” |
 | **3. 기술 스택(Tech Stack)** | JAVA, 프레임워크, DB, 배포환경 등을 리스트로 표시 | `React`, `Spring Boot`, `MySQL`, `Docker`, `Nginx`, `AWS EC2` |
 | **4. 주요 기능(Features)** | 핵심 기능 나열 (예: 회원가입, 로그인, 일정관리 등) | - 회원가입 및 JWT 로그인<br> - 일정 등록/수정/삭제<br> - 관리자 페이지 |
-| **5. 프로젝트 구조(Project Structure)** | 폴더 트리나 주요 파일 설명 | `backend/`, `frontend/`, `docker-compose.yml` |
+| **5. 프로젝트 구조(Project Structure)** | 폴더 트리나 주요 파일 설명 | `BN/`, `FN/`, `docker-compose.yml` |
 | **6. 설치 및 실행 방법(Installation & Run)** | 클론부터 실행까지 단계별 명령어 | ```bash<br>git clone https://github.com/username/project.git<br>cd project<br>npm install && npm start<br>``` |
 | **7. 화면 구성(UI Preview)** | 주요 화면 캡처 이미지 또는 GIF | `![메인화면](./images/main.png)` |
 | **8. API 문서(API Docs)** | 주요 REST API 엔드포인트 및 설명 | \```bash<br>GET /api/users — 사용자 조회<br>POST /api/login — 로그인<br>\``` |
