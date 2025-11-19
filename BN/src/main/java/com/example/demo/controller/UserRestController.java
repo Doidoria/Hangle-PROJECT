@@ -119,6 +119,7 @@ public class UserRestController {
             response.put("message","로그인에 성공했습니다.");
             response.put("username", user.getUsername());
             response.put("userid", user.getUserid());
+            response.put("role", user.getRole());
             response.put("token", tokenInfo.getAccessToken());
 
             String accessToken = tokenInfo.getAccessToken();

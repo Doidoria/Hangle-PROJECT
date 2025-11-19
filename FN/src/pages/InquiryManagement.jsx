@@ -198,7 +198,7 @@ function InquiryManagement() {
                         <tr>
                             <th>번호</th>
                             <th>제목</th>
-                            <th>작성자 ID</th>
+                            <th>작성자</th>
                             <th>작성일</th>
                             <th>상태</th>
                             <th>답변일</th>
@@ -282,7 +282,7 @@ function InquiryManagement() {
                                 className="answer-submit-btn" // 주 컬러 버튼
                                 onClick={() => handleAnswerSubmit(modalData.id)}
                             >
-                                <span className="material-symbols-outlined answer-icon">play_arrow</span>
+                                <span className="material-symbols-outlined faq-modal-icon">play_arrow</span>
                                 {modalData.answerContent ? '답변 수정' : '답변 등록'}
                             </button>
                             <button onClick={() => setModalData(null)}>

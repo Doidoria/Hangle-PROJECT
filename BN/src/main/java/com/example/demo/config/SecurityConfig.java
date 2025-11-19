@@ -84,15 +84,18 @@ public class SecurityConfig {
             // =========================================================
             // ↓ 관리자 문의 API 권한 설정 추가
             // =========================================================
-            auth.requestMatchers(HttpMethod.GET, "/api/inquiry/admin").hasRole("ADMIN");
-            auth.requestMatchers(HttpMethod.POST, "/api/inquiry/admin/*/answer").hasRole("ADMIN");
-            auth.requestMatchers(HttpMethod.PUT,  "/api/inquiry/admin/*/answer").hasRole("ADMIN");
+            auth.requestMatchers(HttpMethod.GET, "/api/inquiry/admin").hasAnyRole("ADMIN","MANAGER");
+            auth.requestMatchers(HttpMethod.POST, "/api/inquiry/admin/*/answer").hasAnyRole("ADMIN","MANAGER");
+            auth.requestMatchers(HttpMethod.PUT,  "/api/inquiry/admin/*/answer").hasAnyRole("ADMIN","MANAGER");
             auth.requestMatchers(HttpMethod.DELETE, "/api/inquiry/admin/*").hasRole("ADMIN");
-
-            auth.requestMatchers("/user/mypage").hasAnyRole("USER", "ADMIN");
-            auth.requestMatchers("/manager/**").hasAnyRole("MANAGER", "ADMIN");
-//            auth.anyRequest().hasRole("USER"); // USER 이상만 접근 가능
-            auth.anyRequest().permitAll(); // !!임시로 전체 오픈!!
+            auth.requestMatchers(HttpMethod.POST, "/api/competitions/**")
+                    .hasAnyRole("ADMIN", "MANAGER");
+            auth.requestMatchers(HttpMethod.PUT, "/api/competitions/**")
+                    .hasAnyRole("ADMIN", "MANAGER");
+            auth.requestMatchers(HttpMethod.DELETE, "/api/competitions/**")
+                    .hasRole("ADMIN");
+            auth.anyRequest().hasRole("USER"); // USER 이상만 접근 가능
+//            auth.anyRequest().permitAll(); // !!임시로 전체 오픈!!
         });
 
 		//-----------------------------------------------------
