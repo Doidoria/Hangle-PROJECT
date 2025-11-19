@@ -72,24 +72,17 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
         if (leaderboardList.isEmpty()) return;
 
-        // 점수 내림차순 → 최근 제출 오름차순
-        leaderboardList.sort(Comparator
-                .comparing((Leaderboard lb) -> getCompScore(lb), Comparator.nullsLast(Comparator.reverseOrder()))
-                .thenComparing(Leaderboard::getSubmittedAt, Comparator.nullsLast(Comparator.naturalOrder()))
+        //변경됨
+        leaderboardList.sort(
+                Comparator
+                        .comparingDouble((Leaderboard lb) -> getCompScore(lb)) // 점수
+                        .reversed()                                            // 점수 내림차순
+                        .thenComparing(Leaderboard::getSubmittedAt)            // 오래된 제출 먼저(오름차순)
         );
-        //순위 계산 (동점자 처리)
         int pos = 0;
-        int currentRank = 0;
-        Double prevScore = null;
-
         for (Leaderboard lb : leaderboardList) {
             pos++;
-            Double score = getCompScore(lb);
-            if (prevScore == null || !Objects.equals(prevScore, score)) {
-                currentRank = pos;
-                prevScore = score;
-            }
-            lb.setComprank(currentRank);
+            lb.setComprank(pos);
         }
 
 
