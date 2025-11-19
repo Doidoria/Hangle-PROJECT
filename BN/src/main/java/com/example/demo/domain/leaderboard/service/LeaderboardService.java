@@ -3,7 +3,6 @@ package com.example.demo.domain.leaderboard.service;
 import com.example.demo.domain.competition.entity.Competition;
 import com.example.demo.domain.competition.entity.CompetitionCSVSave;
 import com.example.demo.domain.leaderboard.dto.LeaderboardEntryDto;
-//import com.example.demo.domain.submmitex.entity.Submission;
 import com.example.demo.domain.user.entity.User;
 
 import java.util.List;

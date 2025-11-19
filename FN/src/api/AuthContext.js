@@ -84,7 +84,7 @@ export function AuthProvider({ children }) {
               const userResp = await api.get("/api/user/me", { withCredentials: true });
               const { username, userid, role, profileImageUrl } = userResp.data;
 
-              if (theme) { localStorage.setItem("theme", theme); }
+              // if (theme) { localStorage.setItem("theme", theme); }
               const validProfile = profileImageUrl && profileImageUrl !== "null"
                 ? "http://localhost:8090" + profileImageUrl : DEFAULT_AVATAR;
 

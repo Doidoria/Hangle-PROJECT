@@ -20,7 +20,7 @@ function SearchBox() {
   }, []);
 
   return (
-    <div className="search" role="search">
+    <div className="header-search" role="search">
       <span className="icon" aria-hidden="true">
         <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
           <circle cx={11} cy={11} r={7} />
@@ -52,9 +52,9 @@ function ThemeToggle() {
   return (
     <button onClick={handleToggle} className="toggle" aria-label="테마 전환">
       {theme === "dark" ? (
-        <img src="./image/icon_moon(white).png" alt="다크 모드" className="theme-icon" />
+        <img src="/image/icon_moon(white).png" alt="다크 모드" className="theme-icon" />
       ) : (
-        <img src="./image/icon_sun(black).png" alt="라이트 모드" className="theme-icon" />
+        <img src="/image/icon_sun(black).png" alt="라이트 모드" className="theme-icon" />
       )}
     </button>
   );

@@ -8,7 +8,7 @@ const Aside = () => {
                 <span className="dot" aria-hidden="true" />
                 <span className="name">Hangle</span>
             </Link>
-            <Link to="/competiton" className="nav-create active">
+            <Link to="/competitions" className="nav-create active">
                 <img src="/image/+.png" alt="만들기" style={{ width: 14 }} />
                 대회 참여
             </Link>
@@ -19,7 +19,7 @@ const Aside = () => {
                 </Link>
             </nav>
             <nav className="nav-group">
-                <Link to="/mydata" className="nav-item" >
+                <Link to="/leaderboard" className="nav-item" >
                     <span class="material-symbols-outlined">trophy</span>
                     <span>리더보드</span>
                 </Link>

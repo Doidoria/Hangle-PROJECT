@@ -22,7 +22,6 @@ import java.util.Map;
 @RequestMapping("/api/v1/leaderboard")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Leaderboard", description = "리더보드 조회 API")
 @CrossOrigin(origins = {"http://127.0.0.1:3000","http://localhost:3000"})
 public class LeaderboardController {
 

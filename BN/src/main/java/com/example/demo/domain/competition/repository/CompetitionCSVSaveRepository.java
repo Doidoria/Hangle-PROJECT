@@ -4,5 +4,5 @@ import com.example.demo.domain.competition.entity.CompetitionCSVSave;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface CSVSave extends JpaRepository<CompetitionCSVSave, Long> {
+public interface CompetitionCSVSaveRepository extends JpaRepository<CompetitionCSVSave, Long> {
 }

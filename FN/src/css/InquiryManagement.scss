@@ -1,0 +1,94 @@
+/* InquiryManagement.scss */
+
+.modal {
+    .admin-answer-section {
+        /* 유저 모달의 .modal-card 디자인을 따라가도록 배경/테두리 제거 */
+        margin-top: 0;
+        padding: 15px 20px;
+        background: var(--inquiry-details);
+        /* 유저 모달과 동일한 배경색 */
+        border: none;
+        border-radius: 8px;
+
+        strong {
+            margin-bottom: 0;
+            /* 답변 영역에서는 텍스트와 textarea 사이에 간격을 두지 않음 */
+        }
+
+        .answer-input-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+
+            .faq-icon {
+                font-size: 20px;
+                color: var(--primary);
+                margin-top: 8px;
+                /* textarea의 첫 줄에 맞추기 위해 조정 */
+            }
+        }
+
+        .admin-answer-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            resize: vertical;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            flex-grow: 1;
+
+            &:focus {
+                border-color: var(--primary);
+                outline: none;
+            }
+        }
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+
+        .answer-submit-btn,
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+            border: none;
+            color: white;
+        }
+
+        .answer-submit-btn {
+            background-color: var(--primary);
+
+            /* 주 컬러 */
+            &:hover {
+                background-color: var(--primary-hover);
+            }
+        }
+
+        button {
+            /* 닫기 버튼 */
+            background: #6b7280;
+
+            /* 회색 */
+            &:hover {
+                background: #4b5563;
+            }
+        }
+    }
+
+    .answer-info {
+        margin-top: 10px;
+        font-size: 0.85em;
+        color: #666;
+        text-align: right;
+    }
+}
