@@ -16,11 +16,13 @@ function InquiryManagement() {
     const [answerInput, setAnswerInput] = useState('');
     const navigate = useNavigate();
 
-    // 🔥 이름 마스킹 함수 (전익환 → 전**)
+    // 이름 마스킹 (전익환 → 전**)
     const maskName = (name) => {
         if (!name) return "(탈퇴한 사용자)";
-        return name.charAt(0) + "**";
+        const first = name.charAt(0);
+        return first + "**";
     };
+
 
     useEffect(() => {
         fetchAllInquiries();
@@ -36,8 +38,8 @@ function InquiryManagement() {
             setFiltered(res.data);
 
             if (modalData) {
-                const updated = res.data.find(i => i.id === modalData.id);
-                setModalData(updated);
+                const updatedItem = res.data.find(i => i.id === modalData.id);
+                setModalData(updatedItem);
             }
         } catch (err) {
             Swal.fire({ icon: 'error', title: '조회 실패', text: '전체 문의 목록을 불러올 수 없습니다.' });
@@ -46,11 +48,11 @@ function InquiryManagement() {
         }
     };
 
-    // 필터링
+    // 필터 적용
     useEffect(() => {
         let data = [...inquiries];
 
-        // 검색 (제목 + 작성자 이름 검색)
+        // 검색
         if (search.trim()) {
             const lower = search.toLowerCase();
             data = data.filter(i =>
@@ -60,21 +62,20 @@ function InquiryManagement() {
         }
 
         // 상태 필터
-        if (statusFilter === '답변완료') {
-            data = data.filter(i => i.status === 'ANSWERED');
-        } else if (statusFilter === '답변대기') {
-            data = data.filter(i => i.status === 'PENDING');
+        if (statusFilter !== '전체') {
+            const filterStatus = statusFilter === '답변완료' ? 'ANSWERED' : 'PENDING';
+            data = data.filter(i => i.status === filterStatus);
         }
 
         // 기간 필터
         if (dateFilter !== '전체') {
             const now = new Date();
-            const compareDate = new Date(
+            const compare = new Date(
                 dateFilter === '1개월'
                     ? now.setMonth(now.getMonth() - 1)
                     : now.setMonth(now.getMonth() - 3)
             );
-            data = data.filter(i => new Date(i.createdAt) >= compareDate);
+            data = data.filter(i => new Date(i.createdAt) >= compare);
         }
 
         // 정렬
@@ -87,22 +88,19 @@ function InquiryManagement() {
         setFiltered(data);
     }, [search, statusFilter, sortOrder, dateFilter, inquiries]);
 
-
-    // 통계
+    // 통계 계산
     const totalCount = inquiries.length;
     const answeredCount = inquiries.filter(i => i.status === 'ANSWERED').length;
     const pendingCount = totalCount - answeredCount;
 
     const getStatusText = (status) =>
-        status === "ANSWERED" ? "답변 완료" : "답변 대기";
+        status === 'ANSWERED' ? '답변 완료' : '답변 대기';
 
-
-    // 삭제
     const handleDeleteByAdmin = async (id, e) => {
         e.stopPropagation();
 
         const result = await Swal.fire({
-            title: '문의 삭제',
+            title: '문의 삭제 (관리자)',
             text: '정말로 이 문의를 삭제하시겠습니까?',
             icon: 'warning',
             showCancelButton: true,
@@ -122,36 +120,33 @@ function InquiryManagement() {
         }
     };
 
-    // 답변 등록
-    const handleAnswerSubmit = async (id) => {
+    const handleAnswerSubmit = async (inquiryId) => {
         if (!answerInput.trim()) {
-            Swal.fire("오류", "답변 내용을 입력해주세요.", "warning");
+            Swal.fire('경고', '답변 내용을 입력해주세요.', 'warning');
             return;
         }
 
         try {
-            await api.post(`/api/inquiry/admin/${id}/answer`, {
+            await api.post(`/api/inquiry/admin/${inquiryId}/answer`, {
                 answerContent: answerInput
             });
 
-            Swal.fire("등록 완료", "답변이 등록되었습니다.", "success");
+            Swal.fire('답변 등록 완료', '답변이 성공적으로 등록되었습니다.', 'success');
+
+            setAnswerInput('');
             fetchAllInquiries();
-            setModalData(null);
         } catch (err) {
-            Swal.fire("실패", "답변 등록 중 오류 발생", "error");
+            Swal.fire('등록 실패', '답변 등록 중 서버 오류가 발생했습니다.', 'error');
         }
     };
 
     const openModal = (inq) => {
         setModalData(inq);
-        setAnswerInput(inq.answerContent || "");
+        setAnswerInput(inq.answerContent || '');
     };
-
 
     return (
         <div className="my-inquiries-container">
-
-            {/* 홈으로 이동 */}
             <button className="go-faq-btn" onClick={() => navigate("/")}>
                 <span className="material-symbols-outlined">arrow_left</span>
                 <span className="material-symbols-outlined">home</span>
@@ -159,41 +154,44 @@ function InquiryManagement() {
 
             <h2>1:1 문의 관리 페이지</h2>
 
-            {/* 상태 카드 (필터 버튼) */}
+            {/* 카드 필터 버튼 */}
             <div className="inquiry-stats">
                 <button
                     className={`stat-card total ${statusFilter === '전체' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('전체')}>
+                    onClick={() => setStatusFilter('전체')}
+                >
                     전체 <span>{totalCount}</span>
                 </button>
 
                 <button
                     className={`stat-card pending ${statusFilter === '답변대기' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('답변대기')}>
-                    답변 대기 <span>{pendingCount}</span>
+                    onClick={() => setStatusFilter('답변대기')}
+                >
+                    대기 <span>{pendingCount}</span>
                 </button>
 
                 <button
                     className={`stat-card done ${statusFilter === '답변완료' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('답변완료')}>
-                    답변 완료 <span>{answeredCount}</span>
+                    onClick={() => setStatusFilter('답변완료')}
+                >
+                    완료 <span>{answeredCount}</span>
                 </button>
             </div>
 
-            {/* 필터 */}
+            {/* 필터 영역 */}
             <div className="inquiry-filters">
                 <input
                     type="text"
                     placeholder="제목/작성자 검색"
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={e => setSearch(e.target.value)}
                 />
-                <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)}>
+                <select value={dateFilter} onChange={e => setDateFilter(e.target.value)}>
                     <option>전체</option>
                     <option>1개월</option>
                     <option>3개월</option>
                 </select>
-                <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+                <select value={sortOrder} onChange={e => setSortOrder(e.target.value)}>
                     <option value="desc">최신순</option>
                     <option value="asc">오래된순</option>
                 </select>
@@ -201,7 +199,7 @@ function InquiryManagement() {
 
             {/* 목록 */}
             {loading ? (
-                <div className="loading">불러오는 중...</div>
+                <div className="loading">목록을 불러오는 중...</div>
             ) : filtered.length === 0 ? (
                 <p className="no-data">문의 내역이 없습니다.</p>
             ) : (
@@ -214,30 +212,25 @@ function InquiryManagement() {
                             <th>작성일</th>
                             <th>상태</th>
                             <th>답변일</th>
-                            <th>-</th>
+                            <th> - </th>
                         </tr>
                     </thead>
-
                     <tbody>
                         {filtered.map((inq, index) => (
                             <tr key={inq.id} onClick={() => openModal(inq)}>
                                 <td>{index + 1}</td>
-                                <td>{inq.title}</td>
-
-                                {/* 마스킹된 이름 */}
+                                <td className="title">{inq.title}</td>
                                 <td>{maskName(inq.username)}</td>
-
                                 <td>{new Date(inq.createdAt).toLocaleDateString()}</td>
-
-                                <td className={inq.status === "ANSWERED" ? "status done" : "status pending"}>
+                                <td className={inq.status === 'ANSWERED' ? 'status done' : 'status pending'}>
                                     {getStatusText(inq.status)}
                                 </td>
-
-                                <td>{inq.answerDate ? new Date(inq.answerDate).toLocaleDateString() : "-"}</td>
-
+                                <td>{inq.answerDate ? new Date(inq.answerDate).toLocaleDateString() : '-'}</td>
                                 <td>
-                                    <button className="delete-btn"
-                                        onClick={(e) => handleDeleteByAdmin(inq.id, e)}>
+                                    <button
+                                        className="delete-btn"
+                                        onClick={(e) => handleDeleteByAdmin(inq.id, e)}
+                                    >
                                         삭제
                                     </button>
                                 </td>
@@ -247,20 +240,19 @@ function InquiryManagement() {
                 </table>
             )}
 
-            {/* 모달 */}
             {modalData && (
                 <div className="modal-overlay" onClick={() => setModalData(null)}>
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
 
+                        {/* 작성일 */}
                         <p className="modal-date">
-                            문의 ID: {modalData.id} |
-                            작성자: {maskName(modalData.username)} |
                             작성일: {new Date(modalData.createdAt).toLocaleDateString()}
                         </p>
 
+                        {/* 제목 */}
                         <h3>{modalData.title}</h3>
 
-                        {/* 문의 내용 */}
+                        {/* 문의 내용 카드 */}
                         <div className="modal-card">
                             <strong>문의 내용</strong>
                             <p>
@@ -269,40 +261,41 @@ function InquiryManagement() {
                             </p>
                         </div>
 
-                        {/* 답변 작성 */}
-                        <div className="modal-card admin-answer-section">
+                        {/* 답변 내용 카드 */}
+                        <div className="modal-card">
                             <strong>답변 입력/수정</strong>
-
-                            <div className="answer-input-container">
+                            <div className="admin-answer-box">
                                 <span className="material-symbols-outlined faq-icon">campaign</span>
 
                                 <textarea
                                     className="admin-answer-textarea"
                                     value={answerInput}
-                                    onChange={(e) => setAnswerInput(e.target.value)}
                                     placeholder="관리자 답변을 입력하세요."
-                                />
+                                    onChange={(e) => setAnswerInput(e.target.value)}
+                                    rows="5"
+                                ></textarea>
                             </div>
 
+                            {/* 답변일 표시 */}
                             {modalData.answerDate && (
-                                <p className="answer-info">
-                                    최종 답변일: {new Date(modalData.answerDate).toLocaleString()}
+                                <p className="answer-date">
+                                    답변일: {new Date(modalData.answerDate).toLocaleDateString()}
                                 </p>
                             )}
                         </div>
 
-                        {/* 하단 버튼 */}
-                        <div className="modal-actions">
+                        {/* 버튼 영역 */}
+                        <div className="modal-buttons">
                             <button
-                                className="answer-submit-btn"
+                                className="edit-btn"
                                 onClick={() => handleAnswerSubmit(modalData.id)}
                             >
-                                <span className="material-symbols-outlined">done</span>
+                                <span className="material-symbols-outlined faq-modal-icon">edit</span>
                                 {modalData.answerContent ? "답변 수정" : "답변 등록"}
                             </button>
 
-                            <button onClick={() => setModalData(null)}>
-                                <span className="material-symbols-outlined">close</span>
+                            <button className="close-btn" onClick={() => setModalData(null)}>
+                                <span className="material-symbols-outlined faq-modal-icon">close</span>
                                 닫기
                             </button>
                         </div>
