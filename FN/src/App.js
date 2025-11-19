@@ -14,6 +14,7 @@ import CompetitionList from './pages/CompetitionList';
 import CompetitionDetail from './pages/CompetitionDetail';
 import CompetitionCreate from './pages/CompetitionCreate';
 import ProtectedRoute from './components/ProtectedRoute';
+import Leaderboard from './pages/leaderboard';
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
             <Route path="/competitions/list" element={<ProtectedRoute><CompetitionList /></ProtectedRoute>} />
             {/* <Route path="/competitions/new" element={<ProtectedRoute requiredRole="MANAGER"><CompetitionCreate /></ProtectedRoute>} /> */}
             <Route path="/competitions/new" element={<ProtectedRoute><CompetitionCreate /></ProtectedRoute>} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+
 
 
 

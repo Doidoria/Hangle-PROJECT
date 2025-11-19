@@ -80,7 +80,7 @@ const Competition = () => {
       formData.append("userid", userid);
 
       await api.post(
-        `/api/competitions/${competitionId}/submissions`,
+        `/api/competitions/${competitionId}/submit`,
         formData,
         {
           headers: {
@@ -88,6 +88,7 @@ const Competition = () => {
           },
         }
       );
+
 
       alert(`"${file.name}" 제출 완료! 점수 계산 중입니다.`);
 
