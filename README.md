@@ -1,268 +1,170 @@
-## 프로젝트명: **Mini Kaggle (Spring Boot + React)**
+# READMD
 
-> 한 개의 머신러닝 대회를 제공하고, 사용자가 예측 결과 CSV를 제출하면
-> 
-> 
-> 서버에서 점수를 계산해 리더보드에 등록하는 플랫폼.
-> 
+## 시트 1
+
+| 구분 | 설명 | 예시 |
+|------|------|------|
+| **1. 프로젝트 제목(Project Title)** | 프로젝트 이름과 간단한 한줄 설명 | `# MyWebApp - 사용자 맞춤 일정관리 웹앱` |
+| **2. 프로젝트 소개(Overview)** | 어떤 프로젝트인지 간단히 요약 (목적/기능/사용자 대상) | “일정을 등록하고 달력 형태로 시각화하는 React + Spring 웹앱입니다.” |
+| **3. 기술 스택(Tech Stack)** | 사용한 언어, 프레임워크, DB, 배포환경 등을 리스트로 표시 | `React`, `Spring Boot`, `MySQL`, `Docker`, `Nginx`, `AWS EC2` |
+| **4. 주요 기능(Features)** | 핵심 기능 나열 (예: 회원가입, 로그인, 일정관리 등) | - 회원가입 및 JWT 로그인<br> - 일정 등록/수정/삭제<br> - 관리자 페이지 |
+| **5. 프로젝트 구조(Project Structure)** | 폴더 트리나 주요 파일 설명 | `backend/`, `frontend/`, `docker-compose.yml` |
+| **6. 설치 및 실행 방법(Installation & Run)** | 클론부터 실행까지 단계별 명령어 | ```bash<br>git clone https://github.com/username/project.git<br>cd project<br>npm install && npm start<br>``` |
+| **7. 화면 구성(UI Preview)** | 주요 화면 캡처 이미지 또는 GIF | `![메인화면](./images/main.png)` |
+| **8. API 문서(API Docs)** | 주요 REST API 엔드포인트 및 설명 | \```bash<br>GET /api/users — 사용자 조회<br>POST /api/login — 로그인<br>\``` |
+| **9. 팀 구성(Contributors)** | 팀 프로젝트라면 역할 명시 | - FE: 홍길동 (UI/UX, React)<br> - BE: 김철수 (API, DB 설계) |
+| **10. 개발 일정 및 관리(Timeline/Management)** | 진행 일정, 사용한 협업툴 등 | - Notion으로 일정 관리<br> - GitHub Projects로 이슈 트래킹 |
+| **11. 배포 주소 및 시연 링크(Demo / Deployment)** | 실제 서비스 링크 또는 영상 | [https://myapp.vercel.app](https://myapp.vercel.app) |
+| **12. 라이선스(License)** | 오픈소스 라이선스 표시 | `MIT License` |
+| **13. 회고(Feedback / Retrospective)** | 프로젝트를 통해 배운 점, 개선할 점 | “Git Flow 전략을 적용하면서 협업의 중요성을 배움.” |
+
+## 시트 2
+
+# MyPlanner - 일정 관리 웹 애플리케이션
+
+## 1. 프로젝트 소개 (Overview)
+MyPlanner는 **Spring Boot 백엔드**와 **React 프론트엔드**를 기반으로 한 일정 관리 웹 애플리케이션입니다.  
+사용자는 일정을 등록, 수정, 삭제할 수 있으며, 달력 형태로 한눈에 일정 현황을 확인할 수 있습니다.  
+JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서버 간 데이터를 주고받습니다.
 
 ---
 
-## 주요 기능 구조
-
-### 🧑‍💻 유저 관련
-
-- 회원가입 / 로그인 / JWT 인증
-- 프로필 페이지 (회원정보 수정)
-- MY데이터 (대회 참여 기록)
-
-### 📊 대회 페이지
-
-- 대회 정보 조회 (설명, 규칙, 평가 방식)
-- 데이터셋 다운로드 (train.csv / test.csv)
-- 제출 CSV 업로드
-- 점수 계산 (백엔드에서 Pandas-like 로직 구현)
-
-### 🏆 리더보드
-
-- 사용자별 최고 점수 정렬
-- 점수, 닉네임, 제출 횟수 표시
+## 2. 개발 목적
+- 풀스택(Spring Boot + React) 구조 이해 및 실습
+- JWT 인증/인가 및 RESTful API 구현
+- 실시간 일정 관리 시스템 설계 및 배포 경험
 
 ---
 
-## * 점수 계산 로직 (Spring Boot 예시) *
+## 3. 기술 스택 (Tech Stack)
+| 구분 | 사용 기술 |
+|------|------------|
+| Frontend | React 18, Axios, React Router, MUI |
+| Backend | Spring Boot 3.x, JPA, Lombok, Spring Security, JWT |
+| Database | MySQL 8.x |
+| DevOps | Docker, Docker Compose, Nginx, AWS EC2 |
+| Tools | IntelliJ, VSCode, GitHub, Postman |
 
-Spring Boot에서는 Python처럼 Pandas를 직접 쓰긴 어렵지만,
+---
 
-**Java CSV Parser(OpenCSV)** 로 데이터를 읽어
+## 4. 주요 기능 (Features)
+| 기능 구분 | 설명 |
+|------------|------|
+| 회원 관리 | 회원가입, 로그인, 비밀번호 재설정 (JWT 기반 인증) |
+| 일정 관리 | 일정 등록, 수정, 삭제, 조회 |
+| 캘린더 보기 | React-Calendar를 통한 월별 일정 시각화 |
+| 관리자 기능 | 전체 사용자 일정 관리 및 통계 조회 |
+| 배포 환경 | Docker Compose로 Frontend, Backend, DB 통합 실행 |
 
-**정답 CSV와 비교하여 정확도(accuracy)** 계산할 수 있습니다.
+---
 
-```java
-public double evaluateSubmission(File submissionFile, File answerFile) throws IOException {
-    List<String[]> sub = new CSVReader(new FileReader(submissionFile)).readAll();
-    List<String[]> ans = new CSVReader(new FileReader(answerFile)).readAll();
+## 5. 프로젝트 구조 (Project Structure)
 
-    int correct = 0;
-    int total = Math.min(sub.size(), ans.size());
-    for (int i = 1; i < total; i++) { // header 제외
-        if (sub.get(i)[1].equals(ans.get(i)[1])) correct++;
-    }
-    return (double) correct / (total - 1);
-}
+```
+ MyPlanner
+├──  backend
+│ ├──  src/main/java/com/example/myplanner
+│ │ ├── controller/
+│ │ ├── service/
+│ │ ├── repository/
+│ │ ├── entity/
+│ │ └── MyPlannerApplication.java
+│ └──  src/main/resources
+│ ├── application.yml
+│ └── static/
+│
+├──  frontend
+│ ├── src/
+│ │ ├── components/
+│ │ ├── pages/
+│ │ ├── api/
+│ │ ├── App.js
+│ │ └── index.js
+│ └── package.json
+│
+└── docker-compose.yml
 ```
 
-- 이 로직을 **Service Layer**에 넣고, 제출 시 호출되도록 하면 됩니다.
+## 6. 설치 및 실행 (Installation & Run)
+### 1) GitHub 저장소 클론
+```bash
+git clone https://github.com/username/MyPlanner.git
+cd MyPlanner
+```
 
----
+### 2) 백엔드 실행
+```bash
+cd backend
+./mvnw spring-boot:run
+```
 
-## DB 설계 예시 (PostgreSQL 기준)
+### 3) 프론트엔드 실행
+```bash
+cd frontend
+npm install
+npm start
+```
 
-| 테이블 | 주요 컬럼 | 설명 |
-| --- | --- | --- |
-| **user** | id, email, password, nickname | 사용자 정보 |
-| **competition** | id, title, description, metric | 대회 정보 |
-| **submission** | id, user_id, score, created_at, file_path | 제출 내역 |
-| **leaderboard_view** | (View) user_id, nickname, max(score) | 리더보드용 뷰 |
-
----
-
-##  React 페이지 구성 예시
-
-| 경로 | 설명 |
-| --- | --- |
-| `/` | 메인: 대회 소개 + 리더보드 바로가기 |
-| `/competition` | 대회 상세 + 데이터 다운로드 버튼 |
-| `/submit` | CSV 업로드 폼 |
-| `/leaderboard` | 리더보드 테이블 |
-| `/login` / `/join` | 회원 기능 |
-| `/profile` | 내 제출 기록 |
-
----
-
-## Docker 구성 예시
-
-`docker-compose.yml` 예시:
-
-```yaml
-version: "3"
-services:
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-
-  backend:
-    build: ./backend
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/minikaggle
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=1234
-    depends_on:
-      - db
-
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: minikaggle
-    ports:
-      - "5432:5432"
-    volumes:
-      - db-data:/var/lib/postgresql/data
-
-volumes:
-  db-data:
+### 4) Docker Compose로 전체 실행
+```bash
+docker-compose up -d
 ```
 
 ---
 
-## ⏳ 개발 일정 (예시: 3주)
-
-| 주차 | 목표 |
-| --- | --- |
-| **1주차** | 프로젝트 세팅 (Spring Boot, React, Docker Compose) + 로그인 기능 |
-| **2주차** | 대회 페이지 + CSV 업로드 + 점수 계산 API |
-| **3주차** | 리더보드 완성 + UI 다듬기 + 배포 |
+## 7. 화면 구성 (UI Preview)
+| 메인 페이지 | 일정 등록 페이지 |
+|--------------|----------------|
+| ![메인](./images/main.png) | ![등록](./images/add_schedule.png) |
 
 ---
 
-## 추가로 확장 가능 아이디어
-
-- 이메일 인증 or OAuth (Google 로그인)
-- 여러 대회 지원 (Admin Dashboard 추가)
-- 제출 결과 시각화 (그래프)
-- “Public / Private 리더보드” 구분
-- FastAPI + Spring 통신 (Python으로 점수 계산 전담)
-- 대회별 1, 2, 3등 뱃지 부여
-
----
-<aside>
-
-https://www.kaggle.com/ ← 참고(링크)
-
-</aside>
-
-<aside>
-
-## 프론트엔드 (파트 분배)
-
-</aside>
+## 8. API 문서 (API Docs)
+| 메서드 | 엔드포인트 | 설명 |
+|--------|-------------|------|
+| `POST` | `/api/auth/login` | 로그인 |
+| `POST` | `/api/auth/signup` | 회원가입 |
+| `GET` | `/api/schedule` | 일정 목록 조회 |
+| `POST` | `/api/schedule` | 일정 등록 |
+| `PUT` | `/api/schedule/{id}` | 일정 수정 |
+| `DELETE` | `/api/schedule/{id}` | 일정 삭제 |
 
 ---
 
-| 담당 | HTML | CSS | JavaScript |
-| --- | --- | --- | --- |
-| **윤태현** | 로그인, 회원가입, 셋팅
-대회 목록(전체) | - | Setting - Tab |
-| **서동성** | 메인, 대회관리 | - | 다크, 라이트 모드 |
-| **전익환** | 사용자 프로필 | - | - |
-| **최승호** | 마이데이터 | - | - |
-| **장지원** | 대회페이지 | - | - |
-| **이혜연** | 리더보드 | - | - |
-- **완료 기한 : 10.27 까지 HTML+CSS (Javascript 페이지별 - 추가사항)**
+## 9. 개발 일정 (Timeline)
+| 기간 | 주요 내용 |
+|------|------------|
+| 2025.01 ~ 2025.02 | 프로젝트 기획 및 화면 설계 |
+| 2025.03 | Spring Boot + MySQL 백엔드 구축 |
+| 2025.04 | React 프론트엔드 개발 |
+| 2025.05 | Docker 기반 통합 테스트 및 배포 |
 
 ---
 
-https://github.com/Doidoria/Hangle-PROJECT/tree/html
-
-- 위 링크 → html branches → Hangle(샘플) 다운로드 → 작업 시작
-    1. 본인 제작 페이지.html
-    2. css 폴더 → 본인 제작 페이지.css
-    3. `common.css` (통합 css 속성) 참고
-
----
-
-![image.png](attachment:2fdedadd-ba8c-466e-8937-d62f4501dae2:image.png)
-↑ var(--색상 이름) → 색상 사용 방법
+## 10. 팀 구성 (Contributors)
+| 역할 | 이름 | 담당 |
+|------|------|------|
+| Backend | 김개발 | API, DB 설계, JWT 인증 |
+| Frontend | 이프론트 | React UI, Axios 연동, 캘린더 구현 |
+| Infra | 박운영 | Docker Compose, 배포 자동화 |
 
 ---
 
-- **var 속성 지정 사용 이유**
-    - **Dark, light** 모두 사용을 위해 기본 `common.css` 파일의 `root`, `theme-dark` 라이브러리에서 색상을 통해 색상 자동 변환 → `main.js`에서 작동
+## 11. 배포 주소 (Deployment)
+- Web: [https://myplanner.vercel.app](https://myplanner.vercel.app)  
+- API: [https://api.myplanner.com](https://api.myplanner.com)
 
 ---
 
-<aside>
-
-## 프론트엔드 (피드백)
-
-</aside>
+## 12. 라이선스 (License)
+이 프로젝트는 MIT License 하에 배포됩니다.
 
 ---
 
-| 담당 | HTML | CSS | JavaScript |
-| --- | --- | --- | --- |
-| **윤태현** | 로그인, 회원가입, 셋팅
-대회 목록(전체) | 중앙 위치(뷰로 지정) | - |
-| **서동성** | 메인, 대회관리 | - |  |
-| **전익환** | 사용자 프로필 | 버튼 {border-radis : 10px} | -  |
-| **최승호** | 마이데이터 | - | -  |
-| **장지원** | 대회페이지 | - |  Setting - Tab |
-| **이혜연** | 리더보드 | - | -  |
+## 13. 회고 (Retrospective)
+- Spring Boot와 React 연동을 직접 경험하면서 **CORS, JWT, 비동기 통신** 구조를 명확히 이해하게 됨.  
+- Docker Compose 기반의 **로컬-운영 환경 일원화**의 중요성을 체감.  
+- 차후 개선점: 알림 기능 추가, AWS S3 이미지 업로드 기능 구현 예정.
+- 
+-
 
-<aside>
-
-## 백엔드 (파트 분배) - REST, SECURITY, REDIS 사용
-
-- 프론트엔드 파트 연결하여 → 백엔드 처리
-</aside>
-
----
-
-| 담당 | 대표 클래스(예시) | 스키마 | 테이블(예시) | 결과 |
-| --- | --- | --- | --- | --- |
-| **윤태현** | UserController, 
-CompetitonController | registerdb,
-competitondb | user ,leaderboard, competiton | 로그인, 회원가입(인증)처리, 대회 목록 생성 |
-| **서동성** | MainController 
-CompetitonCreateController | - | - | 메인 |
-| **전익환** | ProfileController, SettingController | profiledb, settingdb | profile | 사용자별 프로필 작성,
-유저별 셋팅 설정 |
-| **최승호** | MyDataController | mydatadb | mydata | 사용자별 데이터 기록 & 저장 |
-| **장지원** | CompetitonController | mydatadb | mydata | 대회 생성 |
-| **이혜연** | LeaderboardController | leaderboarddb | leaderboard | 리더보드(순위) 생성 |
-
-※ 역할은 고정하되 표의 내용은 임의로 작성한 것 (클래스, 테이블명은 수정 가능)
-
-- 로그인, 회원가입(인증) 백엔드 처리는 개인별 해보시는거 추천! - 기본
-- **완료 기한 : 예상 11.17 까지 백엔드 처리 (클래스 + DB(REDIS)+REACT)**
-
----
-
-- **데이터 보관**
-    - **DB** : 영구적인 데이터 보관
-    - **Redis** : 캐시, 민감한 정보, 기능에서 잠시 사용하고 제거할 데이터
-
----
-
-- NoteBook 생성 작업 진행중
-    - docker Juypter Server 생성하여 외부에서 받아오는 방식
-    - 연관 작업 ↓
-        - 서동성 : notebook의 생성된 데이터를 받아서 데이터 시각화 처리 ↓
-            - 최승호 : 사용자별 notebook 데이터를 받아서 데이터셋에 (전체뷰 생성)
-            - 장지원 : notebook의 생성된 데이터를 받아서 사용자별 데이터셋 페이지 생성
-
----
-
-<aside>
-
-## 백엔드 (피드백)
-
-</aside>
-
----
-
-| 담당 | 클래스(종류) | 피드백 |
-| --- | --- | --- |
-| **윤태현** |  |  |
-| **서동성** |  |  |
-| **전익환** |  |  |
-| **최승호** |  |  |
-| **장지원** |  |  |
-| **이혜연** |  |  |
