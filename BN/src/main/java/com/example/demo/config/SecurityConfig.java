@@ -12,9 +12,7 @@ import com.example.demo.config.auth.redis.RedisUtil;
 import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.global.exceptionHandler.CustomAccessDeniedHandler;
 import com.example.demo.global.exceptionHandler.CustomAuthenticationEntryPoint;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -25,9 +23,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -50,6 +47,8 @@ public class SecurityConfig {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final RedisUtil redisUtil;
     private final PrincipalDetailsOAuth2Service principalDetailsOAuth2Service;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
@@ -64,38 +63,42 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		// CSRF비활성화
 		http.csrf((config)->{config.disable();});
+        http.exceptionHandling(ex -> ex
+                .authenticationEntryPoint(customAuthenticationEntryPoint) // 401 JSON
+                .accessDeniedHandler(customAccessDeniedHandler)           // 403 JSON
+        )
+                .formLogin(AbstractHttpConfigurer::disable)  // ★ 로그인 폼 리다이렉트 금지
+                .logout(AbstractHttpConfigurer::disable);    // API 체인에는 불필요
 
 		//권한체크
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers(
-                    "/uploads/**",
-                    "/v3/api-docs/**",
-                    "/swagger-ui/**",
-                    "/swagger-ui.html",
-                    "/swagger-resources/**",
-                    "/swagger-resources"
+                    "/", "/index.html",
+                    "/css/**", "/js/**", "/images/**",
+                    "/favicon.ico",
+                    "/login", "/join", "/validate/**",
+                    "/swagger-ui/**", "/v3/api-docs/**",
+                    "/oauth2/**",
+                    "/error"
             ).permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-            auth.requestMatchers("/", "/join", "/login", "/validate", "/oauth2/authorization/**").permitAll();
-            auth.requestMatchers("/api/user/me").authenticated();
             auth.requestMatchers(HttpMethod.POST, "/logout").permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll();
+            auth.requestMatchers("/api/v1/chat/user").permitAll();
+            auth.requestMatchers("/api/v1/chat/dev").hasAnyRole("ADMIN", "MANAGER");
 
-            // =========================================================
-            // ↓ 관리자 문의 API 권한 설정 추가
-            // =========================================================
+            // 관리자 문의 API 권한 설정
             auth.requestMatchers(HttpMethod.GET, "/api/inquiry/admin").hasAnyRole("ADMIN","MANAGER");
             auth.requestMatchers(HttpMethod.POST, "/api/inquiry/admin/*/answer").hasAnyRole("ADMIN","MANAGER");
             auth.requestMatchers(HttpMethod.PUT,  "/api/inquiry/admin/*/answer").hasAnyRole("ADMIN","MANAGER");
             auth.requestMatchers(HttpMethod.DELETE, "/api/inquiry/admin/*").hasRole("ADMIN");
-            auth.requestMatchers(HttpMethod.POST, "/api/competitions/**")
-                    .hasAnyRole("ADMIN", "MANAGER");
-            auth.requestMatchers(HttpMethod.PUT, "/api/competitions/**")
-                    .hasAnyRole("ADMIN", "MANAGER");
-            auth.requestMatchers(HttpMethod.DELETE, "/api/competitions/**")
-                    .hasRole("ADMIN");
-//            auth.anyRequest().hasRole("USER"); // USER 이상만 접근 가능
-            auth.anyRequest().permitAll(); // !!임시로 전체 오픈!!
+
+            // 관리자 대회 권한 설정
+            auth.requestMatchers(HttpMethod.POST, "/api/competitions/**").hasAnyRole("ADMIN", "MANAGER");
+            auth.requestMatchers(HttpMethod.PUT, "/api/competitions/**").hasAnyRole("ADMIN", "MANAGER");
+            auth.requestMatchers(HttpMethod.DELETE, "/api/competitions/**").hasRole("ADMIN");
+            auth.requestMatchers("/api/**").authenticated();
+            auth.anyRequest().permitAll();
         });
 
 		//-----------------------------------------------------

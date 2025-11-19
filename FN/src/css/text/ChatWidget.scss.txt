@@ -1,0 +1,397 @@
+/* ---------------------------------------
+   ChatWidget 전체 컨테이너
+--------------------------------------- */
+.chat-widget-root {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ---------------------------------------
+   플로팅 버튼
+--------------------------------------- */
+.chat-widget-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--surface, #ffffff);
+  box-shadow: var(--shadow, 0 6px 18px rgba(0, 0, 0, 0.12));
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text, #111827);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.chat-widget-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  background: var(--bg-textarea)
+}
+
+.chat-widget-icon {
+  img{
+    width: 20px;
+  }
+}
+
+.chat-widget-label {
+  white-space: nowrap;
+}
+
+/* ---------------------------------------
+   챗봇 패널
+--------------------------------------- */
+.chat-widget-panel {
+  position: absolute;
+  right: 0;
+  bottom: 54px;
+  width: 360px;
+  max-height: 600px;
+
+  background: var(--surface, #ffffff);
+  border-radius: 18px;
+  overflow: hidden;
+
+  border: 1px solid var(--border, #e5e7eb);
+  box-shadow: var(--shadow, 0 18px 40px rgba(15, 23, 42, 0.45));
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------------------------------
+   헤더
+--------------------------------------- */
+.chat-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.12),
+    rgba(37, 99, 235, 0.05)
+  );
+}
+
+.chat-widget-header .title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.chat-widget-header .subtitle {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.close-btn {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 4px 6px;
+  border-radius: 8px;
+}
+
+.close-btn:hover {
+  background: rgba(148, 163, 184, 0.15);
+}
+
+/* ---------------------------------------
+   모드 전환 버튼 영역
+--------------------------------------- */
+.chat-mode-switch {
+  display: flex;
+  gap: 6px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.chat-mode-switch button {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.chat-mode-switch button.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+/* ---------------------------------------
+   추천 질문 영역
+--------------------------------------- */
+.chat-recommendations {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.recommend-chip {
+  padding: 6px 10px;
+  font-size: 11px;
+  border-radius: 999px;
+  background: var(--bg-textarea);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: 0.15s ease;
+  color: var(--textarea-text);
+}
+
+.recommend-chip:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* ---------------------------------------
+   메시지 영역
+--------------------------------------- */
+.chat-widget-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 10px 4px;
+  background: var(--bg);
+}
+
+/* 스크롤바 스타일 */
+.chat-widget-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-widget-messages::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.chat-widget-messages::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.chat-widget-messages::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
+}
+
+/* Firefox */
+.chat-widget-messages {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) rgba(0, 0, 0, 0.1);
+}
+
+/* ---------------------------------------
+   메시지 버블
+--------------------------------------- */
+.chat-message {
+  margin-bottom: 8px;
+  display: flex;
+}
+
+.chat-message.user {
+  justify-content: flex-end;
+}
+
+.chat-message.assistant {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: 80%;
+  border-radius: 14px;
+  padding: 2px 12px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* 사용자 메시지 */
+.chat-message.user .bubble {
+  background: var(--primary);
+  color: #fff;
+  border-bottom-right-radius: 2px;
+}
+
+/* 봇 메시지 */
+.chat-message.assistant .bubble {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-bottom-left-radius: 2px;
+}
+
+/* ---------------------------------------
+   API 링크칩 (개발자 모드)
+--------------------------------------- */
+.api-links {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.api-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: var(--bg-textarea);
+
+  text-decoration: none;
+  color: var(--text);
+}
+
+.api-link-chip .method {
+  font-weight: bold;
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.api-link-chip .path {
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------------------------------------
+   typing animation (로딩)
+--------------------------------------- */
+.bubble.typing {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.bubble.typing .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.9);
+  animation: typingBounce 1s infinite;
+}
+
+.bubble.typing .dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.bubble.typing .dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typingBounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  40% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------
+   입력창
+--------------------------------------- */
+.chat-widget-input {
+  border-top: 1px solid var(--border);
+  padding: 8px;
+  background: var(--surface);
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chat-widget-input textarea {
+  flex: 1;
+  resize: none;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  font-size: 12px;
+
+  background: var(--bg);
+  color: var(--text);
+}
+
+.chat-widget-input textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--ring, rgba(16, 185, 129, 0.3));
+}
+
+/* textarea 스크롤 */
+.chat-widget-input textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-widget-input textarea::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 6px;
+}
+
+.send-btn {
+  padding: 10px 10px;
+  font-size: 12px;
+  font-weight: 600;
+
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  transition: 0.15s ease;
+}
+
+.send-btn:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---------------------------------------
+   모바일 대응
+--------------------------------------- */
+@media (max-width: 768px) {
+  .chat-widget-panel {
+    width: 300px;
+    max-height: 450px;
+  }
+
+  .chat-widget-label {
+    display: none;
+  }
+}

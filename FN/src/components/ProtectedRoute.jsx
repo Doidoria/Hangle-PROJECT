@@ -1,4 +1,3 @@
-// src/components/ProtectedRoute.jsx
 import { Navigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAuth } from "../api/AuthContext";

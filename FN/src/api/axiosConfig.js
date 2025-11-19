@@ -51,4 +51,20 @@ api.interceptors.response.use(
   }
 );
 
+// ------------------------
+// 302 차단 인터셉터
+// ------------------------
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.status === 302) {
+      return Promise.reject({
+        status: 403,
+        message: "권한이 없습니다.",
+      });
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;
