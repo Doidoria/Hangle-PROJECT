@@ -26,16 +26,16 @@ const Leaderboard = () => {
     //페이지에 해당하는 pagedComp 추가 
     const pagedComp = compItem.slice(compStart, compEnd);
     
-    //실제 화면 출력 데이터 추가 
+    //실제 화면 출력 데이터 추가 //변경
     const pagedData = pagedComp.map(comp => ({
         comp,
-        entries: leaderboard.filter(entry => entry.competitionTitle === compName)
+        entries: leaderboard.filter(entry => entry.competitionId === comp.id)
     }));
     
     // data 객체 재구성 추가
     const data = {
         content: pagedData,
-        totalPages: Math.ceil(compNames.length / size),
+        totalPages: Math.ceil(compItem.length / size),
         page: page
     };
 
