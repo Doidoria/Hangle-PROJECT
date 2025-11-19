@@ -2,6 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../api/axiosConfig';
 
+// CompetitionList.jsx
+import "../css/Competition.scss";
+import "../css/CompetitionList.scss";
+
 function fmtDT(v) {
   if (!v) return '-';
   // "2025-12-01T18:00:00" → "2025-12-01 18:00"

@@ -1,15 +1,283 @@
+/* src/css/Competition.scss */
+/* 대회 공통 테마 + 레이아웃 + 공통 컴포넌트 스타일 */
+
+/* =========================
+   1) 디자인 토큰 → CSS 변수
+   ========================= */
+:root {
+  /* 기본 색상 팔레트 */
+  --bg: #f9fafb;          /* 페이지 배경 */
+  --surface: #ffffff;     /* 카드/폼 배경 */
+  --panel: #f3f4f6;       /* 구분 영역 배경 */
+  --border: #d1d5db;      /* 테두리 */
+  --text: #1f2937;        /* 본문 텍스트 */
+  --muted: #6b7280;       /* 보조 텍스트 */
+
+  /* 포인트 색상 */
+  --accent: #10b981;
+  --accent-600: #059669;
+  --accent-700: #047857;
+
+  /* 상태 색상 */
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --info: #0ea5e9;
+
+  /* 크기/간격 */
+  --radius: 10px;
+  --radius-lg: 14px;
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+
+  /* 반응형 기준 */
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+
+  /* 그림자 */a/* ======================================
+   Competition.scss (공통 스타일)
+   프로젝트 전체 테마 기반으로 재정비됨
+   ====================================== */
+
+/* 섹션 기본 패딩, 다크모드 호환 */
+.section-wrap {
+  grid-area: main;
+  padding: 32px 38px;
+  animation: fadeIn 0.22s ease-out;
+  color: var(--text);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 타이틀 영역 - 레이아웃과 일관되게 */
+.competition-title {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 22px;
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--muted);
+  }
+}
+
+/* 공통 카드 스타일 */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+  transition: 0.18s ease-in-out;
+  color: var(--text);
+
+  &:hover {
+    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+}
+
+/* 공통 버튼 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s ease-out;
+  box-shadow: var(--shadow);
+
+  &:hover {
+    background: var(--bg-hover-light, #ebebeb);
+  }
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--primary);
+  color: var(--primary);
+
+  &:hover {
+    background: rgba(16, 185, 129, 0.1);
+  }
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
+/* input / select / textarea */
+input, select, textarea {
+  border: 1px solid var(--border);
+  background: var(--bg-textarea);
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--text);
+  transition: 0.15s ease-out;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--ring);
+  }
+}
+
+/* 애니메이션 */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.card.animate {
+  animation: slideInRight 0.45s ease forwards;
+}
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 10px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+
+  /* 기존 var(...) 과 매핑 */
+  --primary: var(--accent);
+  --primary-hover: var(--accent-600);
+  --ring: rgba(16, 185, 129, 0.35);
+  --badge: rgba(16, 185, 129, 0.12);
+  --surface-elevated: var(--surface);
+}
+
+/* ===================
+   2) 글로벌 베이스
+   =================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    'Noto Sans KR',
+    '맑은 고딕',
+    Arial,
+    sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 800px at 10% 0%, rgba(16,185,129,.10), transparent 60%),
+    radial-gradient(1000px 600px at 100% 100%, rgba(56,189,248,.10), transparent 60%),
+    var(--bg);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--accent-600);
+}
+
+.container {
+  width: min(1080px, 92%);
+  margin: 0 auto;
+  padding: var(--space-4) 0;
+}
+
+/* =========================
+   3) 공통 버튼 / 인풋 컴포넌트
+   ========================= */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #ffffff, #f3f4f6);
+  color: var(--text);
+  cursor: pointer;
+  transition: .15s ease-in-out;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-accent {
+  background: linear-gradient(180deg, var(--accent), var(--accent-600));
+  border-color: transparent;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--text);
+}
+
+.textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+/* =========================
+   4) 대회 메인 섹션 레이아웃
+   ========================= */
+
 .section-wrap {
   grid-area: main;
   padding: 30px 35px;
   animation: fadeIn 0.2s ease-out;
+}
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 
-  /* 타이틀 영역 */
-  .competiton-title {
+/* 타이틀 영역 */
+.section-wrap {
+  .competition-title {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -29,6 +297,7 @@
     }
   }
 
+  /* 공통 그리드 기본값 */
   .grid {
     display: grid;
     gap: 18px;
@@ -36,15 +305,26 @@
     justify-items: stretch;
   }
 
+  .competition-section {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* 한 줄에 카드 1개 */
+  .competition-list {
+    grid-template-columns: 1fr;
+  }
+
   .card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 24px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-md);
     text-align: left;
     opacity: 0;
     transform: translate(50px, 10px);
@@ -62,9 +342,12 @@
     }
 
     p.muted {
-      flex-grow: 1;
       margin-bottom: 5px;
       color: var(--muted);
+
+      &.small {
+        font-size: 13px;
+      }
     }
 
     a.link {
@@ -94,7 +377,7 @@
       cursor: pointer;
 
       &:hover {
-        background: #0c7662;
+        background: var(--primary-hover);
       }
     }
   }
@@ -111,12 +394,115 @@
     font-size: 12px;
     align-self: flex-start;
     width: auto;
+  }
 
-    .theme-dark & {
-      color: #34d399;
+  .competition-card {
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .card-top-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      h3 {
+        margin: 0;
+      }
+    }
+
+    .btn.btn-ghost {
+      align-self: auto;
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 6px 12px;
+      border-radius: 999px;
+
+      &:hover {
+        background: rgba(16, 185, 129, 0.06);
+      }
+    }
+
+    .card-main {
+      display: flex;
+      gap: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+      flex-wrap: nowrap;
+    }
+
+    .card-col {
+      flex: 1;
+      min-width: 0;
+
+      h4 {
+        margin: 0 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+    }
+
+    .card-info {
+      .meta-list {
+        margin: 8px 0 12px;
+        padding-left: 16px;
+
+        li {
+          font-size: 14px;
+          margin-bottom: 2px;
+        }
+      }
+    }
+
+    .card-download {
+      .download-links {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 6px;
+      }
+    }
+
+    .card-submit {
+      /* 필요하면 나중에 추가 */
+    }
+
+    .card-bottom {
+      margin-top: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+
+      input[type='file'] {
+        margin: 0;
+      }
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .competition-card {
+      .card-main {
+        flex-direction: column;
+      }
+
+      .card-bottom {
+        justify-content: flex-start;
+      }
     }
   }
 }
+
+/* =========================
+   5) 카드 애니메이션 공통
+   ========================= */
 
 @keyframes slideInRight {
   from {

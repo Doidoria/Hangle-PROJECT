@@ -10,7 +10,7 @@ const api = axios.create({
 // 요청 인터셉터 설정
 //------------------------
 api.interceptors.request.use(
-  async (config) => { 
+  async (config) => {
     // 로그인 페이지나 회원가입 페이지 등 인증이 필요없는 경로는 제외
     const publicPaths = ['/login', '/join','/validate'];
     if (publicPaths.some(path => config.url.includes(path))) {

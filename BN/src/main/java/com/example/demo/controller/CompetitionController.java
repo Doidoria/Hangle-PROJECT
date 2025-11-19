@@ -4,17 +4,18 @@ import com.example.demo.domain.competition.dtos.CompetitionCreateRequest;
 import com.example.demo.domain.competition.dtos.CompetitionDto;
 import com.example.demo.domain.competition.dtos.CompetitionUpdateRequest;
 import com.example.demo.domain.competition.entity.Status;
-import com.example.demo.domain.competition.entity.Competition;
-import com.example.demo.domain.competition.entity.CompetitionCSVSave;
 import com.example.demo.domain.competition.repository.CompetitionCSVSaveRepository;
 import com.example.demo.domain.competition.service.CompetitionService;
+import com.example.demo.domain.competition.entity.Competition;
+import com.example.demo.domain.competition.entity.CompetitionCSVSave;
 import com.example.demo.domain.competition.service.CSVSaveService;
-import com.example.demo.domain.leaderboard.service.LeaderboardService;
 import com.example.demo.domain.user.entity.User;
-import com.example.demo.domain.user.service.UserService;
+import com.example.demo.domain.user.repository.UserRepository;
+import com.example.demo.config.auth.service.UserService;
+import com.example.demo.domain.user.service.AppUserService;
+import com.example.demo.domain.leaderboard.service.LeaderboardService;
 
 import jakarta.validation.Valid;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -23,11 +24,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URI;
-import java.nio.file.Files;
 import java.io.File;
 import java.io.IOException;
-
+import java.net.URI;
+import java.nio.file.Files;
 
 @RestController
 @RequestMapping("/api/competitions")
@@ -35,14 +35,15 @@ import java.io.IOException;
 public class CompetitionController {
 
     private final CompetitionService competitionService;
-    private final CompetitionCSVSaveRepository csvSaveRepository;
+    private final CompetitionService service;
     private final CSVSaveService csvSaveService;
-    private final UserService userService;
+    private final UserRepository userRepository;
+    private final AppUserService appUserService;
     private final LeaderboardService leaderboardService;
+    private final CompetitionCSVSaveRepository csvSaveRepository;
 
-    /** ===========================
-     * 대회 전체 조회
-     * =========================== */
+
+
     @GetMapping
     public Page<CompetitionDto> getAll(
             @RequestParam(required = false) Status status,
@@ -51,47 +52,34 @@ public class CompetitionController {
             @RequestParam(defaultValue = "12") int size
     ) {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        return competitionService.search(status, keyword, page, size, sort);
+        return service.search(status, keyword, page, size, sort);
     }
 
-    /** ===========================
-     * 단건 조회
-     * =========================== */
     @GetMapping("/{id}")
     public CompetitionDto getById(@PathVariable Long id) {
-        return competitionService.get(id);
+        return service.get(id);
     }
 
-    /** ===========================
-     * 생성
-     * =========================== */
     @PostMapping
     public ResponseEntity<CompetitionDto> create(@Valid @RequestBody CompetitionCreateRequest req) {
-        CompetitionDto created = competitionService.create(req);
+        CompetitionDto created = service.create(req);
         URI location = URI.create("/api/competitions/" + created.id());
         return ResponseEntity.created(location).body(created);
     }
 
-    /** ===========================
-     * 수정
-     * =========================== */
     @PutMapping("/{id}")
     public CompetitionDto update(@PathVariable Long id, @Valid @RequestBody CompetitionUpdateRequest req) {
-        return competitionService.update(id, req);
+        return service.update(id, req);
     }
 
-    /** ===========================
-     * 삭제
-     * =========================== */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
-        competitionService.delete(id);
+        service.delete(id);
     }
 
-
     /** ======================================================
-     *  🔥🔥 CSV 제출 API — 병합본 기준 완성버전
+     *  🔥🔥 CSV 제출 API
      * ====================================================== */
     @PostMapping("/{competitionId}/submit")
     public ResponseEntity<?> submit(
@@ -100,7 +88,7 @@ public class CompetitionController {
             @RequestParam("userid") String userid
     ) {
         // 1) 유저 조회
-        User user = userService.findByUserid(userid);
+        User user = appUserService.findByUserid(userid);
         if (user == null) {
             return ResponseEntity.badRequest().body("INVALID_USER");
         }

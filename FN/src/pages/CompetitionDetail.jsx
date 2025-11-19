@@ -1,15 +1,13 @@
-// pages/CompetitionDetail.jsx
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
-import Layout from './Layout.jsx';
+import api from '../api/axiosConfig';
 
-import '../css/competitionStyle/pages/CompetitionDetail.scss';
-
-const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8090';
+// CompetitionDetail.jsx
+import "../css/Competition.scss";
+import "../css/CompetitionDetail.scss";
 
 export default function CompetitionDetail() {
-  const { id } = useParams();         // ← 여기서 competitionId 받음
+  const { id } = useParams();
   const [comp, setComp] = useState(null);
   const [state, setState] = useState({ loading: false, error: null });
 
@@ -17,10 +15,11 @@ export default function CompetitionDetail() {
     (async () => {
       setState({ loading: true, error: null });
       try {
-        const res = await axios.get(`${API_BASE}/api/competitions/${id}`);
+        const res = await api.get(`/api/competitions/${id}`);
         setComp(res.data);
         setState({ loading: false, error: null });
       } catch (e) {
+        // 실패 시 예시 데이터로 채워서 화면은 유지
         setComp({
           id,
           title: '예시 대회',
@@ -45,6 +44,7 @@ export default function CompetitionDetail() {
   }, [id]);
 
   const fmtDate = (d) => (typeof d === 'string' ? d.slice(0, 10) : d);
+
   const daysLeft = useMemo(() => {
     if (!comp?.endAt) return null;
     const end = new Date(comp.endAt);
@@ -57,7 +57,7 @@ export default function CompetitionDetail() {
 
   return (
     <div className="container comp-detail">
-      <Link className="back" to="/competitions">
+      <Link className="back" to="/competitions/user">
         ← 목록으로
       </Link>
       {state.error && (
@@ -100,33 +100,43 @@ export default function CompetitionDetail() {
               규칙
             </a>
           )}
-
-          {/*  ✅ 여기 추가: 제출 페이지 이동 버튼  */}
-          <Link
-            to={`/competitions/${id}/submit`}
-            className="btn submit-btn"
-            style={{ marginLeft: 12 }}
-          >
-            결과 제출하기
-          </Link>
-          {/*  ↑↑↑ 이 버튼이 없어서 URL을 직접 입력해야 했던 것 */}
         </div>
       </section>
 
-      {/* 아래는 기존과 동일 */}
+      {/* 세부 카드들 */}
       <div className="detail-cards">
         <article className="wide-card">
           <h3>📅 진행 정보</h3>
           <div className="card-content">
-            <p><strong>상태:</strong> {comp.status}</p>
-            <p><strong>기간:</strong> {fmtDate(comp.startAt)} ~ {fmtDate(comp.endAt)}</p>
+            <p>
+              <strong>상태:</strong> {comp.status}
+            </p>
+            <p>
+              <strong>기간:</strong> {fmtDate(comp.startAt)} ~{' '}
+              {fmtDate(comp.endAt)}
+            </p>
             <p>
               <strong>남은 기간:</strong>{' '}
               {daysLeft === null
                 ? '-'
                 : daysLeft >= 0
-                ? `${daysLeft}일 남음`
-                : `마감 (${Math.abs(daysLeft)}일 경과)`}
+                  ? `${daysLeft}일 남음`
+                  : `마감 (${Math.abs(daysLeft)}일 경과)`}
+            </p>
+          </div>
+        </article>
+
+        <article className="wide-card">
+          <h3>🧾 기본 정보</h3>
+          <div className="card-content">
+            <p>
+              <strong>제목:</strong> {comp.title}
+            </p>
+            <p>
+              <strong>요약:</strong> {comp.summary || '—'}
+            </p>
+            <p>
+              <strong>ID:</strong> {comp.id}
             </p>
           </div>
         </article>
@@ -134,7 +144,9 @@ export default function CompetitionDetail() {
         <article className="wide-card">
           <h3>💰 보상 정보</h3>
           <div className="card-content">
-            <p><strong>상금:</strong> {comp.prize || '표기된 상금 없음'}</p>
+            <p>
+              <strong>상금:</strong> {comp.prize || '표기된 상금 없음'}
+            </p>
             <p className="muted">
               우승자 및 상위권 참가자에게 제공되는 보상 정보를 표시하세요.
             </p>
@@ -167,16 +179,10 @@ export default function CompetitionDetail() {
           </div>
         </article>
 
-        <article className="wide-card">
-          <h3>🧾 기본 정보</h3>
-          <div className="card-content">
-            <p><strong>제목:</strong> {comp.title}</p>
-            <p><strong>요약:</strong> {comp.summary || '—'}</p>
-            <p><strong>ID:</strong> {comp.id}</p>
-          </div>
-        </article>
+
       </div>
 
+      {/* 상세 설명 */}
       <section className="desc">
         <h3>📝 대회 설명</h3>
         <p>{comp.description || '설명이 없습니다.'}</p>

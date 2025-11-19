@@ -103,13 +103,13 @@ const Login = () => {
         )}
         <div className="login-divider">OR</div>
         <Link onClick={() => handleSocialLogin('kakao')} className="social-login-button kakao-login">
-          <img src="/image/icon_Kakao.png" alt="카카오" /> 카카오 로그인
+          <img src="./image/icon_Kakao.png" alt="카카오" /> 카카오 로그인
         </Link>
         <Link onClick={() => handleSocialLogin('naver')} className="social-login-button naver-login">
-          <img src="/image/icon_Naver.png" alt="네이버" /> 네이버 로그인
+          <img src="./image/icon_Naver.png" alt="네이버" /> 네이버 로그인
         </Link>
         <Link onClick={() => handleSocialLogin('google')} className="social-login-button google-login">
-          <img src="/image/icon_Google.png" alt="구글" /> 구글 로그인
+          <img src="./image/icon_Google.png" alt="구글" /> 구글 로그인
         </Link>
         <div className="login-divider">OR</div>
         <Link to="/join" className="social-login-button join-btn">회원가입</Link>

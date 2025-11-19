@@ -22,11 +22,6 @@ public class KakaoUserInfo implements OAuth2UserInfo {
     }
 
     @Override
-    public String getPhone() {
-        return (String)properties.get("phone");
-    }
-
-    @Override
     public String getEmail() {
         return (String)kakao_account.get("email");
     }

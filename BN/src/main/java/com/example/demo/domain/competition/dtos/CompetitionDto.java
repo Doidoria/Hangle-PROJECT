@@ -2,7 +2,6 @@
 package com.example.demo.domain.competition.dtos;
 
 import com.example.demo.domain.competition.entity.Status;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

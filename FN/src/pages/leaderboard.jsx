@@ -22,7 +22,7 @@ const Leaderboard = () => {
             .then((res) => res.json())
             .then((data) => {
                 let list = data.leaderboard || [];
-                
+
                 //서버의 엠티값 읽기
                 setIsEmpty(data.isEmpty || false);
 
@@ -39,7 +39,7 @@ const Leaderboard = () => {
                 const filteredCompList = [...new Set(list.map((item) => item.competitionTitle))];
                 setCompNameList(filteredCompList);
 
-                
+
 
                 if (data.isEmpty === true) {
                     setLeaderboard([]);
@@ -75,7 +75,7 @@ const Leaderboard = () => {
 
                 <div>
 
-                
+
                     {groupedByComp.map(({ compName, entries }) => (
                         <div key={compName}>
                             <h3>{compName}</h3>
@@ -105,6 +105,23 @@ const Leaderboard = () => {
                                                         hour: "2-digit",
                                                         minute: "2-digit",
                                                     })}
+                                                </td>
+                                                {/* ✅ 다운로드 버튼 추가 */}
+                                                <td>
+                                                    <a
+                                                        href={`http://localhost:8090/api/competitions/csv/${entry.csvSave_id}/download`}
+                                                        className="btn"
+                                                        style={{
+                                                            padding: "4px 8px",
+                                                            fontSize: "12px",
+                                                            background: "#10B981",
+                                                            color: "#fff",
+                                                            borderRadius: "4px",
+                                                        }}
+                                                        download
+                                                    >
+                                                        다운로드
+                                                    </a>
                                                 </td>
                                             </tr>
                                         ))}

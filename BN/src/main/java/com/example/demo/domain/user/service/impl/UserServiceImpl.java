@@ -2,13 +2,13 @@ package com.example.demo.domain.user.service.impl;
 
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
-import com.example.demo.domain.user.service.UserService;
+import com.example.demo.domain.user.service.AppUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements AppUserService {
 
     private final UserRepository userRepository;
 

@@ -68,7 +68,6 @@ public class SecurityConfig {
 		//권한체크
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers(
-                    "/uploads/**",
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html",
@@ -77,18 +76,9 @@ public class SecurityConfig {
             ).permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
             auth.requestMatchers("/", "/join", "/login", "/validate", "/oauth2/authorization/**").permitAll();
-            auth.requestMatchers("/api/user/me").authenticated();
             auth.requestMatchers(HttpMethod.POST, "/logout").permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll();
-
-            // =========================================================
-            // ↓ 관리자 문의 API 권한 설정 추가
-            // =========================================================
-            auth.requestMatchers(HttpMethod.GET, "/api/inquiry/admin").hasRole("ADMIN"); // 전체 문의 목록 조회
-            auth.requestMatchers(HttpMethod.POST, "/api/inquiry/{id}/answer").hasRole("ADMIN"); // 문의 답변 등록
-            auth.requestMatchers(HttpMethod.DELETE, "/api/inquiry/admin/{id}").hasRole("ADMIN"); // 관리자 문의 삭제
-
-            auth.requestMatchers("/user/mypage").hasAnyRole("USER", "ADMIN");
+            auth.requestMatchers("/admin/**").hasRole("ADMIN");
             auth.requestMatchers("/manager/**").hasAnyRole("MANAGER", "ADMIN");
 //            auth.anyRequest().hasRole("USER"); // USER 이상만 접근 가능
             auth.anyRequest().permitAll(); // !!임시로 전체 오픈!!
@@ -140,6 +130,7 @@ public class SecurityConfig {
 		});
 
 		return http.build();
+		
 	}
 
 	//-----------------------------------------------------
@@ -198,16 +189,16 @@ public class SecurityConfig {
             // 3. 쿠키 생성 (Access + User)
             ResponseCookie accessCookie = ResponseCookie.from(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken())
                     .httpOnly(true)
-                    .secure(true)
-                    .sameSite("None")
+                    .secure(false) // HTTPS에서만 사용, SameSite=None 대응
+                    .sameSite("Lax")
                     .path("/")
                     .maxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000)
                     .build();
 
             ResponseCookie userCookie = ResponseCookie.from("userid", authentication.getName())
                     .httpOnly(true)
-                    .secure(true)
-                    .sameSite("None")
+                    .secure(false)
+                    .sameSite("Lax")
                     .path("/")
                     .maxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000)
                     .build();

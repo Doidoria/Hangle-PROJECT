@@ -13,10 +13,7 @@ import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,6 +95,7 @@ public class CompetitionService {
             throw new ConflictException("참조 중인 데이터가 있어 삭제할 수 없습니다: " + id);
         }
     }
+
     // ==========================================
     // CSV 제출용 Competition 엔티티 조회
     // ==========================================
@@ -106,4 +104,8 @@ public class CompetitionService {
         return repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Competition not found: " + id));
     }
+
+
+
+
 }
