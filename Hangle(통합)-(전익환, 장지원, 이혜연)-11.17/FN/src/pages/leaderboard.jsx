@@ -7,7 +7,7 @@ import { useSearchParams } from "react-router-dom"; //useSearchParams 변수 추
 const Leaderboard = () => {
 
     const [leaderboard, setLeaderboard] = useState([]);
-    const [compNameList, setCompNameList] = useState([]);
+    const [compItem, setCompItem] = useState([]); //변경
     const [keyword, setKeyword] = useState("");
     // isempty삭제 처리
     const [errorMsg, setErrorMsg] = useState('');
@@ -17,18 +17,18 @@ const Leaderboard = () => {
     const page = Number(searchParams.get('page') || 0); //page변수 추가
     const size = Number(searchParams.get('size') || 2); //size 변수 추가
 
-    //전체 대회 목록 추가
-    const compNames = [...new Set(leaderboard.map(item => item.competitionTitle))];  
+    //전체 대회 목록 추가 //삭제
+    // const compNames = [...new Set(leaderboard.map(item => item.competitionTitle))];  
     
     const compStart = page * size;
     const compEnd = compStart + size;
 
-    //페이지에 해당하는 compname 추가
-    const pagedCompNames = compNames.slice(compStart, compEnd);
+    //페이지에 해당하는 pagedComp 추가 
+    const pagedComp = compItem.slice(compStart, compEnd);
     
-    //실제 화면 출력 데이터 추가
-    const pagedData = pagedCompNames.map(compName => ({
-        compName,
+    //실제 화면 출력 데이터 추가 
+    const pagedData = pagedComp.map(comp => ({
+        comp,
         entries: leaderboard.filter(entry => entry.competitionTitle === compName)
     }));
     
@@ -78,15 +78,12 @@ const Leaderboard = () => {
                 }
 
                 setLeaderboard(list);
-                const filteredCompList = [...new Set(list.map((item) => item.competitionTitle))];
-                setCompNameList(filteredCompList);
 
-                // 검색 결과 없음 → 에러 메시지 출력 => 수정 
-                if (filteredCompList.length === 0) {
-                    setErrorMsg("검색 결과가 없습니다.");
-                } else {
-                    setErrorMsg("");
-                }
+                // 추가 + 변경
+                const filteredCompItem = [...new Map(
+                    list.map(item => [item.competitionId, { id: item.competitionId, title: item.competitionTitle }])
+                ).values()];
+                setCompItem(filteredCompItem);
 
             })
             .then((data) => { console.log("data : ", data) })
@@ -94,12 +91,14 @@ const Leaderboard = () => {
     }, [keyword]);
 
 
-
-    // 대회별 그룹핑 // 주석처리
-    // const groupedByComp = compNameList.map((compName) => {
-    //     const entries =  leaderboard.filter((entry) => entry.competitionTitle === compName);
-    //     return { compName, entries };
-    // });
+    //추가
+       useEffect(() => {
+        if (compItem.length === 0) {
+            setErrorMsg("검색 결과가 없습니다.");
+        } else {
+            setErrorMsg("");
+        }
+    }, [compItem]);
 
 
     return (
@@ -120,10 +119,10 @@ const Leaderboard = () => {
                     {errorMsg && <div style={{ color: '#c00', marginBottom: 8 }}>{errorMsg}</div>}
 
 
-                    {/* {groupedByComp대신 data로 바꿈 */}
-                     {data.content.map(({ compName, entries }) => (
-                        <div key={compName}>
-                            <h3>{compName}</h3>
+                    {/* {groupedByComp대신 data로 바꿈 (밑의 세줄)*/}
+                     {data.content.map(({ comp, entries }) => (
+                        <div key={comp.id}>
+                            <h3>{comp.title}</h3>
                             <div className="card" style={{ overflowX: "auto" }}>
                                 <table className="leaderboard" style={{ width: "100%", borderCollapse: "collapse" }}>
                                     <thead>

@@ -8,6 +8,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -63,18 +66,17 @@ public class LeaderboardController {
 //            }
         }
 
-        //대회명 리스트
-        List<String> compNameList = resultList.stream()
-                .map(LeaderboardEntryDto::getCompetitionTitle)
+        // 변경
+        List<CompItem> compItem = resultList.stream()
+                .map(dto -> new CompItem(dto.getCompetitionId(),dto.getCompetitionTitle()))
                 .distinct()
                 .toList();
+        System.out.println("compItem"+ compItem);
 
-        System.out.println("compNameList"+ compNameList);
-
-        //출력용 정렬
+        //변경
         resultList = resultList.stream()
                 .sorted(Comparator
-                        .comparing(LeaderboardEntryDto::getCompetitionTitle, Comparator.nullsLast(String::compareTo))
+                        .comparing(LeaderboardEntryDto::getCompetitionId, Comparator.nullsLast(Long::compareTo))
                         .thenComparing(LeaderboardEntryDto::getComprank, Comparator.nullsLast(Integer::compareTo)))
                 .toList();
 
@@ -82,11 +84,21 @@ public class LeaderboardController {
         //react에서 여러 데이터 받기
         Map<String, Object> response = new HashMap<>();
         response.put("leaderboard", resultList);
-        response.put("compNameList", compNameList);
+        response.put("compItem", compItem);
         response.put("keyword", keyword == "" ? "" : keyword);
 //        response.put("isEmpty",isempty); //isempty 주석처리
 
         return ResponseEntity.ok(response);
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CompItem{
+
+        private Long id;
+        private String title;
+
     }
 
 }

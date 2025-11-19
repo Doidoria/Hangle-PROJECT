@@ -102,7 +102,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     }
 
-    //csvsave서비스 추가 : 예시 버전 leaderboardcontroller 하단 부분에 있음
+    //원본
     public Long leaderBoardAdd(User user, Competition competition, CompetitionCSVSave competitionCSVSave){
 
         //dto -> entity
@@ -125,33 +125,47 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         return leaderboard.getLeaderBoardId();
     }
 
-    public Long leaderBoardUpdate(LeaderboardEntryDto dto) {
+    //변경된 버전
+//    public Long leaderBoardAdd(User user, Competition competition, CompetitionCSVSave competitionCSVSave){
+//
+//        Long competitionId =competition.getId();
+//        Long userId = user.getId();
+//
+//        //기존 리더보드 가져오기
+//        Leaderboard lb = leaderboardRepository
+//                .findByCompetitionIdAndUserId(competitionId, userId)
+//                .orElse(null);
+//
+//        //기존 리더보드 없을 경우
+//        if(lb == null) {
+//
+//            //dto -> entity
+//            lb = Leaderboard.builder()
+//                    .leaderBoardId(null)
+//                    .competition(competition)
+//                    .user(user)
+//                    .competitionCSVSave(competitionCSVSave)
+//                    .attempt(1)
+//                    .submittedAt(LocalDateTime.now())
+//                    .comprank(0) //초반에 comprank업데이트 안되있음 => 0으로 초기화
+//                    .build();
+//            leaderboardRepository.save(lb);
+//        } //기존 리더보드 있을 경우
+//        else{
+//            Double oldScore = lb.getCompetitionCSVSave().getScore(); //예전 점수
+//            Double newScore = competitionCSVSave.getScore();
+//
+//            lb.setAttempt(lb.getAttempt() + 1);
+//            lb.setSubmittedAt(LocalDateTime.now());
+//
+//            if(oldScore < newScore) {
+//                lb.getCompetitionCSVSave().setScore(newScore);
+//            }
+//        }
+//
+//        computeRanksPerComp(competition.getId()); //rank 업데이트
+//        leaderboardRepository.flush(); //flush 함수 추가
+//        return lb.getLeaderBoardId();
+//    }
 
-        //기존 리더보드 가져오기
-        Leaderboard list = leaderboardRepository.findById(dto.getLeaderBoardId()).orElse(null);
-
-        if(list == null){
-            return null;
-        }
-
-        Double oldScore = list.getCompetitionCSVSave().getScore(); //예전 점수
-        Double newScore = dto.getScore();
-
-        if(oldScore >= newScore){
-            list.setAttempt(list.getAttempt() + 1);
-            list.setSubmittedAt(LocalDateTime.now());
-        }else{
-            list.setSubmittedAt(LocalDateTime.now());
-            list.setAttempt(list.getAttempt() + 1);
-            list.getCompetitionCSVSave().setScore(newScore);
-        }
-
-        leaderboardRepository.save(list);
-
-        computeRanksPerComp(list.getCompetition().getId());
-
-        leaderboardRepository.flush(); //flush 함수 추가
-
-        return list.getLeaderBoardId();
-    }
 }
