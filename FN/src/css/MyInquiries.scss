@@ -1,5 +1,3 @@
-/* MyInquiries.scss */
-
 .my-inquiries-container {
     position: relative;
     padding: 20px;
@@ -34,6 +32,7 @@
         gap: 50px;
         margin-bottom: 20px;
 
+        /* stat-card를 버튼으로 변경하고 스타일 추가 */
         .stat-card {
             width: 150px;
             text-align: center;
@@ -42,10 +41,20 @@
             color: white;
             font-weight: 600;
             transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            /* 버튼이므로 커서 변경 */
+            border: 3px solid transparent;
+            /* 활성화 시 테두리 추가를 위한 투명 테두리 */
 
             &:hover {
                 transform: scale(1.05);
                 box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            /* 활성화된 버튼 스타일 */
+            &.active {
+                transform: scale(1.05);
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
             }
 
             &.total {
@@ -75,8 +84,15 @@
         margin-bottom: 20px;
         flex-wrap: wrap;
 
+        /* 상태 필터 드롭다운을 제거했으므로, 남은 필터들의 크기를 조정 */
         input {
-            width: 40%;
+            width: 50%;
+            /* 검색창 크기 증가 */
+        }
+
+        select {
+            width: 20%;
+            /* 나머지 드롭다운 크기 조정 */
         }
 
         input,
@@ -117,7 +133,10 @@
             transition: background 0.2s, transform 0.2s;
 
             &:hover {
-                transform: translateX(2px);
+                background: var(--hover-surface);
+                /* 호버 시 배경색 추가 */
+                transform: none;
+                /* 트랜스폼 제거하여 목록이 흔들리는 현상 방지 */
             }
         }
 
@@ -238,29 +257,59 @@
             }
         }
 
-        /* ================= 닫기 버튼 ================= */
-        button {
-            align-self: center;
-            padding: 10px 25px;
-            background: var(--top-faqs-bg);
-            color: var(--text-on-primary);
-            border: none;
-            border-radius: 8px;
+        /* 모달 하단 버튼 영역 */
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* 버튼 공통 디자인 */
+        .modal-buttons button {
+            padding: 10px 22px;
+            font-size: 14px;
             font-weight: 600;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            transition: all 0.2s;
+            height: 42px;
+        }
 
-            .faq-modal-icon {
-                font-size: 20px;
+        /* 수정 버튼 */
+        .edit-btn {
+            background: var(--primary);
+            color: var(--text);
+            border: none;
+            border: 1px solid var(--border);
+
+            &:hover {
+                background: var(--primary-hover);
             }
+        }
+
+        .faq-modal-icon {
+            font-size: 20px;
+        }
+
+        /* 닫기 버튼 */
+        .close-btn {
+            background: var(--top-faqs-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
 
             &:hover {
                 background: var(--top-faqs-bg-hover);
             }
         }
+
+        .faq-modal-icon {
+            font-size: 20px;
+        }
+
     }
 
     @keyframes fadeIn {
@@ -301,7 +350,6 @@
 }
 
 
-
 /* 고객센터 이동 버튼 */
 .go-faq-btn {
     position: absolute;
@@ -329,4 +377,27 @@
         color: #fff;
         transform: translateX(-2px);
     }
+}
+
+.edit-title-input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 18px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 8px;
+}
+
+.edit-content-textarea {
+    width: 100%;
+    padding: 12px;
+    min-height: 120px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 8px;
+    resize: vertical;
+    font-size: 15px;
 }
