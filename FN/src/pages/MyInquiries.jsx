@@ -9,7 +9,6 @@ function MyInquiries() {
     const [filtered, setFiltered] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
-    // 초기 상태 필터를 '전체'로 설정하여 모든 문의를 보여줍니다.
     const [statusFilter, setStatusFilter] = useState('전체');
     const [sortOrder, setSortOrder] = useState('desc');
     const [dateFilter, setDateFilter] = useState('전체');
@@ -154,12 +153,6 @@ function MyInquiries() {
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                 />
-                {/* 상태 필터는 버튼으로 대체되었으므로 드롭다운은 제거 (주석 처리) */}
-                {/* <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-                    <option>전체</option>
-                    <option>답변대기</option>
-                    <option>답변완료</option>
-                </select> */}
                 <select value={dateFilter} onChange={e => setDateFilter(e.target.value)}>
                     <option>전체</option>
                     <option>1개월</option>

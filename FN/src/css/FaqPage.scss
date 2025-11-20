@@ -1,12 +1,12 @@
 .faq-container {
     max-width: 1000px;
-    margin: 60px auto;
+    margin: 20px auto;
     padding: 20px;
     background: var(--surface);
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     color: var(--text);
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .faq-title {

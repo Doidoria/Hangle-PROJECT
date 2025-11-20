@@ -16,13 +16,11 @@ function InquiryManagement() {
     const [answerInput, setAnswerInput] = useState('');
     const navigate = useNavigate();
 
-    // 이름 마스킹 (전익환 → 전**)
+    // 이름 마스킹
     const maskName = (name) => {
         if (!name) return "(탈퇴한 사용자)";
-        const first = name.charAt(0);
-        return first + "**";
+        return name.charAt(0) + "**";
     };
-
 
     useEffect(() => {
         fetchAllInquiries();
@@ -33,13 +31,12 @@ function InquiryManagement() {
         setLoading(true);
         try {
             const res = await api.get('/api/inquiry/admin');
-
             setInquiries(res.data);
             setFiltered(res.data);
 
             if (modalData) {
-                const updatedItem = res.data.find(i => i.id === modalData.id);
-                setModalData(updatedItem);
+                const updated = res.data.find(i => i.id === modalData.id);
+                setModalData(updated);
             }
         } catch (err) {
             Swal.fire({ icon: 'error', title: '조회 실패', text: '전체 문의 목록을 불러올 수 없습니다.' });
@@ -48,23 +45,23 @@ function InquiryManagement() {
         }
     };
 
-    // 필터 적용
+    // 필터 + 정렬 적용
     useEffect(() => {
         let data = [...inquiries];
 
         // 검색
         if (search.trim()) {
-            const lower = search.toLowerCase();
+            const q = search.toLowerCase();
             data = data.filter(i =>
-                i.title.toLowerCase().includes(lower) ||
-                (i.username && i.username.toLowerCase().includes(lower))
+                i.title.toLowerCase().includes(q) ||
+                (i.username && i.username.toLowerCase().includes(q))
             );
         }
 
         // 상태 필터
         if (statusFilter !== '전체') {
-            const filterStatus = statusFilter === '답변완료' ? 'ANSWERED' : 'PENDING';
-            data = data.filter(i => i.status === filterStatus);
+            const s = statusFilter === '답변완료' ? 'ANSWERED' : 'PENDING';
+            data = data.filter(i => i.status === s);
         }
 
         // 기간 필터
@@ -78,17 +75,23 @@ function InquiryManagement() {
             data = data.filter(i => new Date(i.createdAt) >= compare);
         }
 
-        // 정렬
-        data.sort((a, b) =>
-            sortOrder === 'desc'
+        // 상태 우선 정렬 (답변대기 → 답변완료) + 날짜 정렬
+        data.sort((a, b) => {
+            // 상태가 다르면 PENDING 먼저
+            if (a.status !== b.status) {
+                return a.status === 'PENDING' ? -1 : 1;
+            }
+
+            // 같은 상태이면 날짜 정렬
+            return sortOrder === 'desc'
                 ? new Date(b.createdAt) - new Date(a.createdAt)
-                : new Date(a.createdAt) - new Date(b.createdAt)
-        );
+                : new Date(a.createdAt) - new Date(b.createdAt);
+        });
 
         setFiltered(data);
     }, [search, statusFilter, sortOrder, dateFilter, inquiries]);
 
-    // 통계 계산
+    // 통계
     const totalCount = inquiries.length;
     const answeredCount = inquiries.filter(i => i.status === 'ANSWERED').length;
     const pendingCount = totalCount - answeredCount;
@@ -96,6 +99,7 @@ function InquiryManagement() {
     const getStatusText = (status) =>
         status === 'ANSWERED' ? '답변 완료' : '답변 대기';
 
+    // 삭제
     const handleDeleteByAdmin = async (id, e) => {
         e.stopPropagation();
 
@@ -114,29 +118,29 @@ function InquiryManagement() {
                 await api.delete(`/api/inquiry/admin/${id}`);
                 Swal.fire('삭제 완료', '문의가 삭제되었습니다.', 'success');
                 fetchAllInquiries();
-            } catch (err) {
-                Swal.fire('삭제 실패', '서버 오류로 삭제할 수 없습니다.', 'error');
+            } catch {
+                Swal.fire('삭제 실패', '서버 오류가 발생했습니다.', 'error');
             }
         }
     };
 
-    const handleAnswerSubmit = async (inquiryId) => {
+    // 답변 등록/수정
+    const handleAnswerSubmit = async (id) => {
         if (!answerInput.trim()) {
             Swal.fire('경고', '답변 내용을 입력해주세요.', 'warning');
             return;
         }
 
         try {
-            await api.post(`/api/inquiry/admin/${inquiryId}/answer`, {
+            await api.post(`/api/inquiry/admin/${id}/answer`, {
                 answerContent: answerInput
             });
 
-            Swal.fire('답변 등록 완료', '답변이 성공적으로 등록되었습니다.', 'success');
-
+            Swal.fire('완료', '답변이 등록/수정되었습니다.', 'success');
             setAnswerInput('');
             fetchAllInquiries();
-        } catch (err) {
-            Swal.fire('등록 실패', '답변 등록 중 서버 오류가 발생했습니다.', 'error');
+        } catch {
+            Swal.fire('실패', '답변 등록 중 오류가 발생했습니다.', 'error');
         }
     };
 
@@ -240,19 +244,17 @@ function InquiryManagement() {
                 </table>
             )}
 
+            {/* 모달 */}
             {modalData && (
                 <div className="modal-overlay" onClick={() => setModalData(null)}>
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
 
-                        {/* 작성일 */}
                         <p className="modal-date">
                             작성일: {new Date(modalData.createdAt).toLocaleDateString()}
                         </p>
 
-                        {/* 제목 */}
                         <h3>{modalData.title}</h3>
 
-                        {/* 문의 내용 카드 */}
                         <div className="modal-card">
                             <strong>문의 내용</strong>
                             <p>
@@ -261,12 +263,10 @@ function InquiryManagement() {
                             </p>
                         </div>
 
-                        {/* 답변 내용 카드 */}
                         <div className="modal-card">
                             <strong>답변 입력/수정</strong>
                             <div className="admin-answer-box">
                                 <span className="material-symbols-outlined faq-icon">campaign</span>
-
                                 <textarea
                                     className="admin-answer-textarea"
                                     value={answerInput}
@@ -276,7 +276,6 @@ function InquiryManagement() {
                                 ></textarea>
                             </div>
 
-                            {/* 답변일 표시 */}
                             {modalData.answerDate && (
                                 <p className="answer-date">
                                     답변일: {new Date(modalData.answerDate).toLocaleDateString()}
@@ -284,7 +283,6 @@ function InquiryManagement() {
                             )}
                         </div>
 
-                        {/* 버튼 영역 */}
                         <div className="modal-buttons">
                             <button
                                 className="edit-btn"
