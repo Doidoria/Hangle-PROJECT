@@ -11,7 +11,7 @@ const Login = () => {
   const [message, setMessage] = useState(null)
   const [isError, setIsError] = useState(false)
   const navigate = useNavigate()
-  const { setIsLogin, setUsername, setRole } = useAuth();
+  const { setIsLogin, setUsername, setRole, login } = useAuth();
 
   // useEffect에서 API 검증 호출 (최초 처음 실행될때 실행 useEffect)
   useEffect(() => {
@@ -46,9 +46,10 @@ const Login = () => {
 
       setUsername(resp.data.username);
       setIsLogin(true);
-      setIsError(false)
-      setMessage(resp.data.message || '로그인에 성공했습니다.')
+      setIsError(false);
+      login(resp.data);
       setRole(resp.data.role);
+      setMessage(resp.data.message || '로그인에 성공했습니다.');
       
       localStorage.setItem('username', resp.data.username)
       localStorage.setItem('userid', resp.data.userid)

@@ -11,7 +11,7 @@ function createSessionId() {
 }
 
 const ChatWidget = () => {
-  const { role } = useAuth();
+  const { role, userid, isLoading } = useAuth();
   const isDev = role === "ROLE_ADMIN" || role === "ROLE_MANAGER";
 
   const [isOpen, setIsOpen] = useState(false);
@@ -29,32 +29,33 @@ const ChatWidget = () => {
 
   const messageEndRef = useRef(null);
 
-  // 링크 추출 기능
-  const extractLink = (text) => {
-    try {
-      const match = text.match(/\{.*"link"\s*:\s*"(.*?)".*\}/);
-      return match ? match[1] : null;
-    } catch {
-      return null;
-    }
-  };
+  const appendMessage = useCallback((msg) => {
+    setMessages((prev) => [...prev, msg]);
+  }, []);
 
   // 모드별 세션ID 분리 저장
   useEffect(() => {
-    const key = mode === "user" ? "chat_session_user" : "chat_session_dev";
+    if (isLoading) return;
+    const keyPrefix = userid ? `${userid}_` : "guest_";
+    const key = mode === "user"
+      ? `${keyPrefix}chat_session_user`
+      : `${keyPrefix}chat_session_dev`;
     let sid = localStorage.getItem(key);
 
     if (!sid) {
       sid = createSessionId();
       localStorage.setItem(key, sid);
     }
-
     setSessionId(sid);
-  }, [mode]);
+  }, [mode, userid, isLoading]);
 
   // 모드별 메시지 로드
   useEffect(() => {
-    const msgKey = mode === "user" ? "chat_messages_user" : "chat_messages_dev";
+    if (isLoading) return;
+    const keyPrefix = userid ? `${userid}_` : "guest_";
+    const msgKey = mode === "user"
+      ? `${keyPrefix}chat_messages_user`
+      : `${keyPrefix}chat_messages_dev`;
     const savedMessages = localStorage.getItem(msgKey);
 
     if (savedMessages) {
@@ -69,13 +70,20 @@ const ChatWidget = () => {
         },
       ]);
     }
-  }, [mode]);
+  }, [mode, userid, isLoading]);
 
   // 모드별 메시지 저장
   useEffect(() => {
-    const msgKey = mode === "user" ? "chat_messages_user" : "chat_messages_dev";
+    if (isLoading) return;
+
+    const keyPrefix = userid ? `${userid}_` : "guest_";
+    const msgKey =
+      mode === "user"
+        ? `${keyPrefix}chat_messages_user`
+        : `${keyPrefix}chat_messages_dev`;
+
     localStorage.setItem(msgKey, JSON.stringify(messages));
-  }, [messages, mode]);
+  }, [messages, mode, userid, isLoading]);
 
   // 자동 스크롤
   const scrollToBottom = () => {
@@ -86,9 +94,18 @@ const ChatWidget = () => {
     scrollToBottom();
   }, [messages, loading]);
 
+  // 스크롤 항상 아래로
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 0);
+    }
+  }, [isOpen]);
+
   // 추천 질문
   const userRecommendedQuestions = [
-    "지금 진행 중인 대회는 뭐가 있어?",
+    "진행 중인 대회는 어디서 확인해?",
     "대회는 어떻게 참여해?",
     "문의는 어디서 보낼 수 있어?",
     "비밀번호는 어디서 변경해?",
@@ -124,7 +141,7 @@ const ChatWidget = () => {
       setInput("");
     }
     setLoading(true);
-    
+
     const url = mode === "user" ? "/api/v1/chat/user" : "/api/v1/chat/dev";
 
     try {
@@ -141,8 +158,8 @@ const ChatWidget = () => {
       appendMessage({
         role: "assistant",
         text: resp.data.reply || "응답을 처리하는 중 문제가 발생했습니다.",
-        // 사용자용 컨트롤러에는 links가 없고, 개발자용에만 있음
-        links: resp.data.links || [],
+        link: resp.data.link || null,
+        links: resp.data.links || null,
       });
     } catch (error) {
       console.error("챗봇 오류:", error);
@@ -160,7 +177,8 @@ const ChatWidget = () => {
       appendMessage({
         role: "assistant",
         text: msg,
-        links: [],
+        link: null,
+        links: null,
       });
     } finally {
       setLoading(false);
@@ -177,6 +195,42 @@ const ChatWidget = () => {
   const handleQuestionClick = (q) => {
     handleSend(q);
   };
+
+  const handleExitChat = () => {
+    const keyPrefix = userid ? `${userid}_` : "guest_";
+
+    const sessionKey = mode === "user"
+      ? `${keyPrefix}chat_session_user`
+      : `${keyPrefix}chat_session_dev`;
+
+    const msgKey = mode === "user"
+      ? `${keyPrefix}chat_messages_user`
+      : `${keyPrefix}chat_messages_dev`;
+
+    // 삭제
+    localStorage.removeItem(sessionKey);
+    localStorage.removeItem(msgKey);
+
+    // 신규 세션 생성
+    const newSid = createSessionId();
+    localStorage.setItem(sessionKey, newSid);
+    setSessionId(newSid);
+
+    setMessages([
+      {
+        role: "assistant",
+        text: "안녕하세요! 😊\n무엇을 도와드릴까요?",
+        links: [],
+      },
+    ]);
+
+    setInput("");
+    setLoading(false);
+  };
+
+  if (isLoading || !userid) {
+    return <div style={{ display: "none" }} />;
+  }
 
   return (
     <div className="chat-widget-root">
@@ -195,6 +249,7 @@ const ChatWidget = () => {
               <div className="title">Hangle 챗봇</div>
               <div className="subtitle">사용자용 / 개발자용 모드 지원</div>
             </div>
+            <button className="exit-btn" onClick={handleExitChat}>초기화</button>
             <button className="close-btn" onClick={handleToggle}>×</button>
           </div>
 
@@ -221,30 +276,47 @@ const ChatWidget = () => {
 
           {/* 메시지 */}
           <div className="chat-widget-messages">
-            {messages.map((m, idx) => (
-              <div key={idx}
-                className={`chat-message ${m.role === "user" ? "user" : "assistant"}`}>
-                <div className="bubble">
-                  {m.text.split("\n").map((line, i) => (
-                    <p key={i}>{line}</p>
-                  ))}
-
-                  {/* 개발자 모드에서만 API 링크 노출 */}
-                  {mode === "dev" && m.links?.length > 0 && (
-                    <div className="api-links">
-                      {m.links.map((link, i) => (
-                        <a key={i} className="api-link-chip" target="_blank"
-                          rel="noreferrer" href={link.url}>
-                          {link.method && <span className="method">{link.method}</span>}
-                          <span className="path">{link.title || link.path}</span>
+            {messages.map((m, idx) => {
+              {/* URL 제거(만약 URL 삽입됬을때 대비) */ }
+              const cleanText = m.text
+                .replace(/\{.*"link".*\}/, "")     // JSON 제거
+                .replace(/\[.*?\]\(.*?\)/g, "")    // 완전한 Markdown 제거
+                .replace(/\[[^\]]*?\]/g, (match) => match.replace(/\[|\]/g, ""))
+                .replace(/\[.*?\]/g, "")           // 대괄호 텍스트 제거
+                .trim();
+              return (
+                <div key={idx}
+                  className={`chat-message ${m.role === "user" ? "user" : "assistant"}`}>
+                  <div className="bubble">
+                    {/* 줄바꿈 처리 */}
+                    {cleanText.split("\n").map((line, i) => (
+                      <p key={i}>{line}</p>
+                    ))}
+                    {/* React 페이지 링크 안내 (사용자 모드만 표시됨) */}
+                    {mode === "user" && m.link && (
+                      <div className="chat-link-wrap">
+                        <a className="chat-link-btn" href={m.link}>
+                          바로가기
                         </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
+                      </div>
+                    )}
 
+                    {/* 개발자 모드에서만 API 링크 노출 */}
+                    {mode === "dev" && m.links?.length > 0 && (
+                      <div className="api-links">
+                        {m.links.map((link, i) => (
+                          <a key={i} className="api-link-chip" target="_blank"
+                            rel="noreferrer" href={link.url}>
+                            {link.method && <span className="method">{link.method}</span>}
+                            <span className="path">{link.title || link.path}</span>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
             {/* 로딩 */}
             {loading && (
               <div className="chat-message assistant">
@@ -266,7 +338,7 @@ const ChatWidget = () => {
               onKeyDown={handleKeyDown}
               placeholder={
                 mode === "user"
-                  ? "예) 비밀번호는 어디서 바꿔?\n예) 지금 진행 중 대회는?\n예) 문의는 어떻게 보내?"
+                  ? "예) 비밀번호는 어디서 바꿔?\n예) 진행중인 대회 어디서 확인해?\n예) 문의는 어떻게 보내?"
                   : "예) 로그인 API 알려줘\n예) 대회 생성 API 경로는?\n예) 사용자 정보 수정 API?"
               } rows={2} />
             <button type="button" className="send-btn"

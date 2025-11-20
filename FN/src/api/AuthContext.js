@@ -24,15 +24,19 @@ export function AuthProvider({ children }) {
       profileImageUrl ? "http://localhost:8090" + profileImageUrl : null
     );
     setUsername(username || "");
-    setUserid(userid || null);
+    setUserid(userid ?? null);
     setRole(role || "");
     setProfileImage(validProfile);
     setIsLogin(true);
 
     localStorage.setItem("username", username || "");
-    localStorage.setItem("userid", userid || "");
     localStorage.setItem("role", role || "");
     localStorage.setItem("profileImage", validProfile);
+    if (userid) {
+      localStorage.setItem("userid", userid);
+    } else {
+      localStorage.removeItem("userid");
+    }
     if (theme) {
       localStorage.setItem("theme", theme);
     }
@@ -50,6 +54,11 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("userid");
     localStorage.removeItem("role");
     localStorage.removeItem("profileImage");
+  };
+
+  const login = (data) => {
+    applyUser(data);
+    setIsLoading(false);
   };
 
   const logout = () => {
@@ -79,7 +88,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const handleStorageChange = () => {
       const storedUserid = localStorage.getItem("userid");
-      if (!storedUserid) {
+      if (storedUserid === null) {
         clearUser();
         setIsLoading(false);
         return;
@@ -114,6 +123,7 @@ export function AuthProvider({ children }) {
         userid,
         setUserid,
         logout,
+        login,
         profileImage,
         setProfileImage,
         isLoading,

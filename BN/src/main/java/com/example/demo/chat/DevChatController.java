@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -103,8 +104,12 @@ public class DevChatController {
     ============================================================
     */
     @PostMapping
-    public ResponseEntity<ChatResponse> chat(@Valid @RequestBody ChatRequest request) {
-        var sessionId = sessionService.ensureSessionId(request.sessionId()); // 세션 ID 확보
+    public ResponseEntity<ChatResponse> chat(@Valid @RequestBody ChatRequest request, Authentication authentication) {
+        String raw = request.sessionId();
+        String userid = authentication.getName();  // ← 현재 로그인 계정 구분
+
+        String sessionId = userid + "_" +
+                (raw == null || raw.isBlank() ? java.util.UUID.randomUUID() : raw); // 세션 ID 확보
         log.info("=== 세션 [{}] 질문 수신: {} ===", sessionId, request.message()); // 수신 로그
 
         sessionService.appendUserMessage(sessionId, request.message()); // 히스토리에 사용자 메시지 추가

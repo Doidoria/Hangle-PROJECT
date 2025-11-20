@@ -382,6 +382,18 @@
   cursor: default;
 }
 
+// 링크
+.chat-link-btn {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
 /* ---------------------------------------
    모바일 대응
 --------------------------------------- */

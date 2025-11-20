@@ -136,6 +136,48 @@
   border-color: var(--primary);
 }
 
+
+/* ---------------------------------------
+  초기화 버튼
+--------------------------------------- */
+.exit-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    background: var(--closebtn-bg);
+    color: #fff;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  .material-symbols-outlined {
+    font-size: 15px;
+  }
+}
+
+/* 채팅 상단에 나가기 버튼을 놓는 경우 위한 래퍼 */
+.chat-header-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+
 /* ---------------------------------------
    추천 질문 영역
 --------------------------------------- */
@@ -385,9 +427,10 @@
 // 링크
 .chat-link-btn {
   display: inline-block;
-  margin-top: 6px;
-  padding: 6px 10px;
+  margin: 0 0 5px 0;
+  padding: 5px 10px;
   font-size: 12px;
+  font-weight: 600;
   background: var(--primary);
   color: #fff;
   border-radius: 6px;
