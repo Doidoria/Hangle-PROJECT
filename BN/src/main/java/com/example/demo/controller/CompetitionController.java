@@ -15,8 +15,11 @@ import com.example.demo.config.auth.service.UserService;
 import com.example.demo.domain.user.service.AppUserService;
 import com.example.demo.domain.leaderboard.service.LeaderboardService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -35,14 +38,15 @@ import java.nio.file.Files;
 public class CompetitionController {
 
     private final CompetitionService competitionService;
-    private final CompetitionService service;
+//    private final CompetitionService service;
     private final CSVSaveService csvSaveService;
     private final UserRepository userRepository;
     private final AppUserService appUserService;
     private final LeaderboardService leaderboardService;
     private final CompetitionCSVSaveRepository csvSaveRepository;
 
-
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping
     public Page<CompetitionDto> getAll(
@@ -52,31 +56,49 @@ public class CompetitionController {
             @RequestParam(defaultValue = "12") int size
     ) {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        return service.search(status, keyword, page, size, sort);
+        return competitionService.search(status, keyword, page, size, sort);
     }
 
     @GetMapping("/{id}")
     public CompetitionDto getById(@PathVariable Long id) {
-        return service.get(id);
+        return competitionService.get(id);
     }
 
-    @PostMapping
-    public ResponseEntity<CompetitionDto> create(@Valid @RequestBody CompetitionCreateRequest req) {
-        CompetitionDto created = service.create(req);
-        URI location = URI.create("/api/competitions/" + created.id());
-        return ResponseEntity.created(location).body(created);
-    }
+    // JSON only 방식 -> multipart 통합으로 사용 x 주석 처리 해둠
+//    @PostMapping
+//    public ResponseEntity<CompetitionDto> create(@Valid @RequestBody CompetitionCreateRequest req) {
+//        CompetitionDto created = service.create(req);
+//        URI location = URI.create("/api/competitions/" + created.id());
+//        return ResponseEntity.created(location).body(created);
+//    }
 
     @PutMapping("/{id}")
     public CompetitionDto update(@PathVariable Long id, @Valid @RequestBody CompetitionUpdateRequest req) {
-        return service.update(id, req);
+        return competitionService.update(id, req);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
-        service.delete(id);
+        competitionService.delete(id);
     }
+
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<CompetitionDto> create(
+            @RequestPart("request") String requestJson,
+            @RequestPart("trainFile") MultipartFile trainFile,
+            @RequestPart("testFile") MultipartFile testFile
+    ) throws JsonProcessingException {
+        CompetitionCreateRequest request =
+                objectMapper.readValue(requestJson, CompetitionCreateRequest.class);
+
+        CompetitionDto created = competitionService.createWithFiles(request, trainFile, testFile);
+
+        URI location = URI.create("/api/competitions/" + created.id());
+        return ResponseEntity.created(location).body(created);
+//        return ResponseEntity.ok(created);
+    }
+
 
     /** ======================================================
      *  🔥🔥 CSV 제출 API

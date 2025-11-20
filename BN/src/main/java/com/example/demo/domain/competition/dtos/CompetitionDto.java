@@ -16,5 +16,9 @@ public record CompetitionDto(
         String evaluationMetric,
         BigDecimal prizeTotal,
         Integer participantCount,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        String trainFilePath,
+        String testFilePath,
+        Long trainDatasetSaveId,
+        Long testDatasetSaveId
 ) {}

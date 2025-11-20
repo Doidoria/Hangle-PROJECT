@@ -53,6 +53,33 @@ const Competition = () => {
     }));
   };
 
+  const downloadFile = async (saveId, fileName) => {
+    try {
+      const res = await api.get(`/api/competitions/csv/${saveId}/download`, {
+        responseType: "blob",
+      });
+
+      // Blob 생성
+      const blob = new Blob([res.data], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+
+      // 가짜 링크 생성
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      // URL 해제
+      window.URL.revokeObjectURL(url);
+
+    } catch (e) {
+      console.error("[파일 다운로드 오류]", e);
+      alert("파일 다운로드 중 문제가 발생했습니다.");
+    }
+  };
+
   const submitFile = async (competitionId) => {
     const file = files[competitionId];
     if (!file) {
@@ -144,6 +171,10 @@ const Competition = () => {
               participantCount,
             } = competition;
 
+            // 대회 상세 API 결과를 competition 변수에 넣었다고 가정
+            const trainId = competition.trainDatasetSaveId;
+            const testId = competition.testDatasetSaveId;
+
             const selectedFile = files[id];
 
             return (
@@ -194,7 +225,7 @@ const Competition = () => {
                       Train / Test 파일을 내려받아 모델을 학습하세요.
                     </p>
                     <div className="download-links">
-                      <a
+                      {/* <a
                         href={`${API_BASE_URL}/api/competitions/${id}/dataset/train`}
                         className="link"
                       >
@@ -205,7 +236,20 @@ const Competition = () => {
                         className="link"
                       >
                         test.csv 다운로드
-                      </a>
+                      </a> */}
+                      <button
+                        className="link"
+                        onClick={() => downloadFile(trainId, "train.csv")}
+                      >
+                        train.csv 다운로드
+                      </button>
+
+                      <button
+                        className="link"
+                        onClick={() => downloadFile(testId, "test.csv")}
+                      >
+                        test.csv 다운로드
+                      </button>
                     </div>
                   </div>
 
