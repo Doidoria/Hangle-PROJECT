@@ -1,7 +1,18 @@
 .section-wrap {
     grid-area: main;
     padding: 25px 70px;
+    
+    //추가
+    div{
+        h1{
+            span{
+                vertical-align: -5px;
+                font-size: 28px;
+            }
+        }
+    }
 }
+
 
 .card {
     background: var(--surface);
@@ -74,4 +85,13 @@
         transition: .15s;
         box-shadow: var(--shadow);
     }
+}
+
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
 }

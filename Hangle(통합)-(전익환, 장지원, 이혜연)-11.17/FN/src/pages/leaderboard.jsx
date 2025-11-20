@@ -105,7 +105,11 @@ const Leaderboard = () => {
         <main className="main">
             <section className="section-wrap">
                 <div>
-                    <h1>리더보드 🏆</h1>
+                    <h1>
+                        리더보드
+                        {/* 추가 */}
+                        <span class="material-symbols-outlined">crown</span> 
+                    </h1>
                     <p>상위권 참가자의 점수를 확인하세요.</p>
                 </div>
 
