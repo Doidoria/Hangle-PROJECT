@@ -9,6 +9,7 @@ import com.example.demo.domain.competition.entity.Status;
 import com.example.demo.domain.competition.repository.CompetitionCSVSaveRepository;
 import com.example.demo.domain.competition.service.CSVSaveService;
 import com.example.demo.domain.competition.service.CompetitionService;
+import com.example.demo.domain.competition.service.ScoreService;
 import com.example.demo.domain.leaderboard.service.LeaderboardService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
@@ -49,6 +50,7 @@ public class CompetitionController {
     private final AppUserService appUserService;
     private final LeaderboardService leaderboardService;
     private final CompetitionCSVSaveRepository csvSaveRepository;
+    private final ScoreService scoreService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -92,12 +94,13 @@ public class CompetitionController {
     public ResponseEntity<CompetitionDto> create(
             @RequestPart("request") String requestJson,
             @RequestPart("trainFile") MultipartFile trainFile,
-            @RequestPart("testFile") MultipartFile testFile
+            @RequestPart("testFile") MultipartFile testFile,
+            @RequestPart(value = "customScoreFile", required = false) MultipartFile customScoreFile
     ) throws JsonProcessingException {
         CompetitionCreateRequest request =
                 objectMapper.readValue(requestJson, CompetitionCreateRequest.class);
 
-        CompetitionDto created = competitionService.createWithFiles(request, trainFile, testFile);
+        CompetitionDto created = competitionService.createWithFiles(request, trainFile, testFile, customScoreFile);
 
         URI location = URI.create("/api/competitions/" + created.id());
         return ResponseEntity.created(location).body(created);
@@ -131,6 +134,20 @@ public class CompetitionController {
 
         // 4) Leaderboard 기록 생성
         leaderboardService.leaderBoardAdd(user, competition, save);
+
+        // 5) 자동 채점 실행 (Python 호출)
+        double score = scoreService.runScore(competition, competition.getTestFilePath(), save.getFilePath());
+
+        if (score < 0) {
+            return ResponseEntity.badRequest().body("SCORING_FAILED");
+        }
+
+        // 6) 제출 CSV의 score 업데이트
+        save.setScore(score);
+        csvSaveRepository.save(save);
+
+        // 7) Leaderboard 점수 반영
+        leaderboardService.updateScore(user, competition, score);
 
         return ResponseEntity.ok("SUBMIT_OK");
     }

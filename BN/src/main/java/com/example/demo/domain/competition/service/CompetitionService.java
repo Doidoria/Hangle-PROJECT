@@ -23,6 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+
 @Service
 @RequiredArgsConstructor
 public class CompetitionService {
@@ -81,7 +84,8 @@ public class CompetitionService {
     public CompetitionDto createWithFiles(
             CompetitionCreateRequest req,
             MultipartFile trainFile,
-            MultipartFile testFile
+            MultipartFile testFile,
+            MultipartFile customScoreFile
     ) {
         try {
             // 1) 기본 엔티티 저장 (ID 먼저 생성)
@@ -104,6 +108,17 @@ public class CompetitionService {
             // 2) CSV 저장
             CompetitionCSVSave trainSave = csvSaveService.saveDatasetFile(trainFile, saved, "train");
             CompetitionCSVSave testSave  = csvSaveService.saveDatasetFile(testFile, saved, "test");
+
+            // 2-1) 커스텀 score.py 업로드 처리
+            if (customScoreFile != null && !customScoreFile.isEmpty()) {
+                String scorePath = "uploads/competitions/" + saved.getId() + "/score.py";
+
+                File scoreFile = new File(scorePath);
+                scoreFile.getParentFile().mkdirs(); // 디렉토리 생성
+                customScoreFile.transferTo(scoreFile);
+
+                saved.setCustomScorePath(scorePath);
+            }
 
             // 3) 파일 저장
             // train.csv

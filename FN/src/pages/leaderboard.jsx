@@ -238,8 +238,6 @@ const Leaderboard = () => {
                     <button disabled={page + 1 >= data.totalPages} onClick={() => movePage(page + 1)}>다음</button>
                 </div>
 
-
-
                 {/* 데이터 받아오는 거 확인 (기본)*/}
                 {/* <div style={{ marginTop: "1rem", background: "#f9f9f9", padding: "1rem" }}>
                     <h4>현재 상태 요약:</h4>

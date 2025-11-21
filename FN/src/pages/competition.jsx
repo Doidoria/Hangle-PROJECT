@@ -100,7 +100,13 @@ const Competition = () => {
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("request", new Blob([JSON.stringify(payload)], { type: "application/json" }));
+      formData.append("trainFile", trainFile);
+      formData.append("testFile", testFile);
+
+      if (customScoreFile) {
+        formData.append("customScoreFile", customScoreFile);
+      }
 
       // TODO: 실제 로그인 유저 id로 교체
       const userid = localStorage.getItem("userid") || "test_user";

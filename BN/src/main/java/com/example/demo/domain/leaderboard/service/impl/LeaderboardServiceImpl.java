@@ -7,12 +7,15 @@ import com.example.demo.domain.leaderboard.entity.Leaderboard;
 import com.example.demo.domain.leaderboard.repository.LeaderboardRepository;
 import com.example.demo.domain.leaderboard.service.LeaderboardService;
 import com.example.demo.domain.user.entity.User;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -139,5 +142,22 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         computeRanksPerComp(competition.getId()); //rank 업데이트
         leaderboardRepository.flush(); //flush 함수 추가
         return lb.getLeaderBoardId();
+    }
+
+    // 점수 계산 업데이트
+    @Transactional
+    public void updateScore(User user, Competition competition, double score) {
+
+        Optional<Leaderboard> opt =
+                leaderboardRepository.findByCompetitionIdAndUserId(competition.getId(), user.getId());
+
+        if (opt.isPresent()) {
+            Leaderboard lb = opt.get();
+            lb.getCompetitionCSVSave().setScore(score);
+            leaderboardRepository.save(lb);
+
+            // 추가: 점수 업데이트 후 랭킹 재계산
+            computeRanksPerComp(competition.getId());
+        }
     }
 }
