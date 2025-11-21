@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../api/axiosConfig';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
@@ -16,10 +16,8 @@ function MyInquiries() {
     const navigate = useNavigate();
 
     // 답변 완료 여부를 판단하는 헬퍼 함수
-    // 백엔드 DTO 필드 answerContent의 존재 유무로 판단합니다.
     const isAnswered = (inq) => inq.answerContent && inq.answerContent.trim().length > 0;
 
-    // fetchMyInquiries와 useEffect, 필터링 로직은 기존 코드를 최대한 유지
     useEffect(() => {
         fetchMyInquiries();
     }, []);
@@ -37,7 +35,7 @@ function MyInquiries() {
         }
     };
 
-    // 필터 적용
+    // 필터 적용 로직
     useEffect(() => {
         let data = [...inquiries];
 
@@ -46,12 +44,13 @@ function MyInquiries() {
             data = data.filter(i => i.title.toLowerCase().includes(search.toLowerCase()));
         }
 
-        // 상태 필터: answeredAt 대신 isAnswered 헬퍼 함수를 사용하여 answerContent로 판단
+        // 상태 필터: statusFilter가 변경될 때마다 적용됨 (버튼 클릭 포함)
         if (statusFilter === '답변완료') {
             data = data.filter(isAnswered);
         } else if (statusFilter === '답변대기') {
             data = data.filter(i => !isAnswered(i));
         }
+        // '전체'일 경우 필터링 없음
 
         // 기간 필터 (기존 로직 유지)
         if (dateFilter !== '전체') {
@@ -73,7 +72,7 @@ function MyInquiries() {
         setFiltered(data);
     }, [search, statusFilter, sortOrder, dateFilter, inquiries]);
 
-    // 통계 계산: answeredAt 대신 isAnswered 사용
+    // 통계 계산
     const totalCount = inquiries.length;
     const answeredCount = inquiries.filter(isAnswered).length;
     const pendingCount = totalCount - answeredCount;
@@ -105,6 +104,13 @@ function MyInquiries() {
         }
     };
 
+    // 카드 버튼 클릭 핸들러: statusFilter를 업데이트하고 검색창을 비웁니다.
+    const handleStatusCardClick = (status) => {
+        setStatusFilter(status);
+        setSearch(''); // 상태 필터 시 검색 초기화
+    };
+
+
     return (
         <div className="my-inquiries-container">
             {/* 고객센터로 이동 버튼 */}
@@ -117,11 +123,26 @@ function MyInquiries() {
             </button>
             <h2>나의 1:1 문의 내역</h2>
 
-            {/* 통계 카드 */}
+            {/* 통계 버튼 카드 */}
             <div className="inquiry-stats">
-                <div className="stat-card total">전체 <span>{totalCount}</span></div>
-                <div className="stat-card pending">대기 <span>{pendingCount}</span></div>
-                <div className="stat-card done">완료 <span>{answeredCount}</span></div>
+                <button
+                    className={`stat-card total ${statusFilter === '전체' ? 'active' : ''}`}
+                    onClick={() => handleStatusCardClick('전체')}
+                >
+                    전체 <span>{totalCount}</span>
+                </button>
+                <button
+                    className={`stat-card pending ${statusFilter === '답변대기' ? 'active' : ''}`}
+                    onClick={() => handleStatusCardClick('답변대기')}
+                >
+                    대기 <span>{pendingCount}</span>
+                </button>
+                <button
+                    className={`stat-card done ${statusFilter === '답변완료' ? 'active' : ''}`}
+                    onClick={() => handleStatusCardClick('답변완료')}
+                >
+                    완료 <span>{answeredCount}</span>
+                </button>
             </div>
 
             {/* 필터 영역 */}
@@ -132,11 +153,6 @@ function MyInquiries() {
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                 />
-                <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-                    <option>전체</option>
-                    <option>답변대기</option>
-                    <option>답변완료</option>
-                </select>
                 <select value={dateFilter} onChange={e => setDateFilter(e.target.value)}>
                     <option>전체</option>
                     <option>1개월</option>
@@ -167,16 +183,15 @@ function MyInquiries() {
                     </thead>
                     <tbody>
                         {filtered.map((inq, index) => (
-                            <tr key={inq.id}>
+                            <tr key={inq.id} onClick={() => setModalData(inq)}>
                                 <td>{index + 1}</td>
-                                <td className="title" onClick={() => setModalData(inq)}>
+                                <td className="title">
                                     {inq.title}
                                 </td>
                                 <td>{new Date(inq.createdAt).toLocaleDateString()}</td>
                                 <td className={isAnswered(inq) ? 'status done' : 'status pending'}>
                                     {getStatusText(inq)}
                                 </td>
-                                {/* answeredAt 대신 백엔드 DTO의 answerDate 필드를 사용해야 합니다. */}
                                 <td>{inq.answerDate ? new Date(inq.answerDate).toLocaleDateString() : '-'}</td>
                                 <td>
                                     <button
@@ -202,28 +217,52 @@ function MyInquiries() {
             {modalData && (
                 <div className="modal-overlay" onClick={() => setModalData(null)}>
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
+
                         <p className="modal-date">
                             작성일: {new Date(modalData.createdAt).toLocaleDateString()}
                         </p>
-                        <h3>{modalData.title}</h3>
 
-                        {/* 문의 내용 카드 */}
+                        {/* 수정 모드 상태 */}
+                        {modalData.editMode ? (
+                            <input
+                                className="edit-title-input"
+                                value={modalData.title}
+                                onChange={(e) =>
+                                    setModalData({ ...modalData, title: e.target.value })
+                                }
+                            />
+                        ) : (
+                            <h3>{modalData.title}</h3>
+                        )}
+
+                        {/* 문의 내용 */}
                         <div className="modal-card">
                             <strong>문의 내용</strong>
-                            <p>
-                                <span className="material-symbols-outlined faq-icon">question_mark</span>
-                                {modalData.content}
-                            </p>
+
+                            {modalData.editMode ? (
+                                <textarea
+                                    className="edit-content-textarea"
+                                    value={modalData.content}
+                                    onChange={(e) =>
+                                        setModalData({ ...modalData, content: e.target.value })
+                                    }
+                                />
+                            ) : (
+                                <p>
+                                    <span className="material-symbols-outlined faq-icon">question_mark</span>
+                                    {modalData.content}
+                                </p>
+                            )}
                         </div>
 
-                        {/* 답변 내용 카드 */}
+                        {/* 답변 내용 */}
                         <div className="modal-card">
                             <strong>답변</strong>
                             <p>
                                 <span className="material-symbols-outlined faq-icon">campaign</span>
                                 {modalData.answerContent || '아직 답변이 등록되지 않았습니다.'}
                             </p>
-                            {/* 답변일 표시 */}
+
                             {modalData.answerDate && (
                                 <p className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200">
                                     답변일: {new Date(modalData.answerDate).toLocaleDateString()}
@@ -231,13 +270,68 @@ function MyInquiries() {
                             )}
                         </div>
 
-                        <button onClick={() => setModalData(null)}>
-                            <span className="material-symbols-outlined">close</span>
-                            닫기
-                        </button>
+                        {/* 버튼 영역 */}
+                        <div className="modal-buttons">
+
+                            {/* 수정 가능: 답변이 없을 때만 */}
+                            {!modalData.answerContent && !modalData.editMode && (
+                                <button
+                                    className="edit-btn"
+                                    onClick={() =>
+                                        setModalData({ ...modalData, editMode: true })
+                                    }
+                                >
+                                    <span className="material-symbols-outlined faq-modal-icon">edit</span>
+                                    수정하기
+                                </button>
+                            )}
+
+                            {/* 저장 버튼 (editMode일 때만 노출) */}
+                            {modalData.editMode && (
+                                <button
+                                    className="edit-btn"
+                                    onClick={async () => {
+                                        try {
+                                            await api.put(`/api/inquiry/${modalData.id}`, {
+                                                title: modalData.title,
+                                                content: modalData.content,
+                                            });
+
+                                            Swal.fire({
+                                                icon: "success",
+                                                title: "수정 완료",
+                                                text: "문의 내용이 수정되었습니다."
+                                            });
+
+                                            setModalData(null); // 모달 닫기
+                                            fetchMyInquiries(); // 목록 갱신
+                                        } catch (err) {
+                                            Swal.fire({
+                                                icon: "error",
+                                                title: "수정 실패",
+                                                text: "서버 오류로 수정할 수 없습니다."
+                                            });
+                                        }
+                                    }}
+                                >
+                                    <span className="material-symbols-outlined faq-modal-icon">check</span>
+                                    저장
+                                </button>
+                            )}
+
+                            {/* 닫기 버튼 */}
+                            <button
+                                className="close-btn"
+                                onClick={() => setModalData(null)}
+                            >
+                                <span className="material-symbols-outlined faq-modal-icon">close</span>
+                                닫기
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
+
         </div>
     );
 }

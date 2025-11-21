@@ -3,25 +3,55 @@ package com.example.demo.controller;
 import com.example.demo.domain.competition.dtos.CompetitionCreateRequest;
 import com.example.demo.domain.competition.dtos.CompetitionDto;
 import com.example.demo.domain.competition.dtos.CompetitionUpdateRequest;
+import com.example.demo.domain.competition.entity.Competition;
+import com.example.demo.domain.competition.entity.CompetitionCSVSave;
 import com.example.demo.domain.competition.entity.Status;
+import com.example.demo.domain.competition.repository.CompetitionCSVSaveRepository;
+import com.example.demo.domain.competition.service.CSVSaveService;
 import com.example.demo.domain.competition.service.CompetitionService;
+import com.example.demo.domain.leaderboard.service.LeaderboardService;
+import com.example.demo.domain.user.entity.User;
+import com.example.demo.domain.user.repository.UserRepository;
+import com.example.demo.domain.user.service.AppUserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-// CompetitionController.java
 @RestController
 @RequestMapping("/api/competitions")
 @RequiredArgsConstructor
 public class CompetitionController {
 
-    private final CompetitionService service;
+    private final CompetitionService competitionService;
+//    private final CompetitionService service;
+    private final CSVSaveService csvSaveService;
+    private final UserRepository userRepository;
+    private final AppUserService appUserService;
+    private final LeaderboardService leaderboardService;
+    private final CompetitionCSVSaveRepository csvSaveRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping
     public Page<CompetitionDto> getAll(
@@ -31,32 +61,140 @@ public class CompetitionController {
             @RequestParam(defaultValue = "12") int size
     ) {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        return service.search(status, keyword, page, size, sort);
+        return competitionService.search(status, keyword, page, size, sort);
     }
 
     @GetMapping("/{id}")
     public CompetitionDto getById(@PathVariable Long id) {
-        return service.get(id);
+        return competitionService.get(id);
     }
 
-    // 생성
-    @PostMapping
-    public ResponseEntity<CompetitionDto> create(@Valid @RequestBody CompetitionCreateRequest req) {
-        CompetitionDto created = service.create(req);
-        URI location = URI.create("/api/competitions/" + created.id());
-        return ResponseEntity.created(location).body(created);
-    }
+    // JSON only 방식 -> multipart 통합으로 사용 x 주석 처리 해둠
+//    @PostMapping
+//    public ResponseEntity<CompetitionDto> create(@Valid @RequestBody CompetitionCreateRequest req) {
+//        CompetitionDto created = service.create(req);
+//        URI location = URI.create("/api/competitions/" + created.id());
+//        return ResponseEntity.created(location).body(created);
+//    }
 
-    // 수정
     @PutMapping("/{id}")
     public CompetitionDto update(@PathVariable Long id, @Valid @RequestBody CompetitionUpdateRequest req) {
-        return service.update(id, req);
+        return competitionService.update(id, req);
     }
 
-    // 삭제
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
-        service.delete(id);
+        competitionService.delete(id);
+    }
+
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<CompetitionDto> create(
+            @RequestPart("request") String requestJson,
+            @RequestPart("trainFile") MultipartFile trainFile,
+            @RequestPart("testFile") MultipartFile testFile
+    ) throws JsonProcessingException {
+        CompetitionCreateRequest request =
+                objectMapper.readValue(requestJson, CompetitionCreateRequest.class);
+
+        CompetitionDto created = competitionService.createWithFiles(request, trainFile, testFile);
+
+        URI location = URI.create("/api/competitions/" + created.id());
+        return ResponseEntity.created(location).body(created);
+//        return ResponseEntity.ok(created);
+    }
+
+
+    /** ======================================================
+     *  🔥🔥 CSV 제출 API
+     * ====================================================== */
+    @PostMapping("/{competitionId}/submit")
+    public ResponseEntity<?> submit(
+            @PathVariable Long competitionId,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("userid") String userid
+    ) {
+        // 1) 유저 조회
+        User user = appUserService.findByUserid(userid);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("INVALID_USER");
+        }
+
+        // 2) 대회 조회
+        Competition competition = competitionService.findEntity(competitionId);
+        if (competition == null) {
+            return ResponseEntity.badRequest().body("INVALID_COMPETITION");
+        }
+
+        // 3) CSV 저장
+        CompetitionCSVSave save = csvSaveService.saveCSV(file, user, competition);
+
+        // 4) Leaderboard 기록 생성
+        leaderboardService.leaderBoardAdd(user, competition, save);
+
+        return ResponseEntity.ok("SUBMIT_OK");
+    }
+
+    @GetMapping("/csv/{saveId}/download")
+    public ResponseEntity<?> downloadCSV(@PathVariable Long saveId) {
+        CompetitionCSVSave save = csvSaveRepository.findById(saveId)
+                .orElse(null);
+
+        if (save == null || save.getFilePath() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("FILE_NOT_FOUND");
+        }
+
+        File file = new File(save.getFilePath());
+        if (!file.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("FILE_NOT_EXIST");
+        }
+
+        try {
+            byte[] data = Files.readAllBytes(file.toPath());
+
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=\"" + save.getFileName() + "\"")
+                    .body(data);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("DOWNLOAD_ERROR");
+        }
+    }
+
+    //리더보드 다운로드 (추가)
+    @GetMapping("/csv/{saveId}/download2")
+    public ResponseEntity<Resource> downloadCSV2(@PathVariable Long saveId) {
+
+        System.out.println("/api/competitions/csv/${saveId}/download2");
+
+        CompetitionCSVSave save = csvSaveRepository.findById(saveId)
+                .orElse(null);
+
+        if (save == null || save.getFilePath() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        File file = new File(save.getFilePath());
+        if (!file.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        try {
+            Path path = file.toPath();
+            UrlResource resource = new UrlResource(path.toUri());
+
+            String encodedName = UriUtils.encode(save.getFileName(), StandardCharsets.UTF_8);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType("text/csv"))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + encodedName + "\"") // ★ 파일 다운로드
+                    .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()))
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

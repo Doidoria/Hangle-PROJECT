@@ -93,8 +93,8 @@ public class SecurityConfig {
             auth.requestMatchers(HttpMethod.PUT,  "/api/inquiry/admin/*/answer").hasAnyRole("ADMIN","MANAGER");
             auth.requestMatchers(HttpMethod.DELETE, "/api/inquiry/admin/*").hasRole("ADMIN");
 
+            auth.requestMatchers(HttpMethod.POST, "/api/competitions/{competitionId}/submit").hasRole("USER");
             // 관리자 대회 권한 설정
-            auth.requestMatchers(HttpMethod.POST, "/api/competitions/**").hasAnyRole("ADMIN", "MANAGER");
             auth.requestMatchers(HttpMethod.PUT, "/api/competitions/**").hasAnyRole("ADMIN", "MANAGER");
             auth.requestMatchers(HttpMethod.DELETE, "/api/competitions/**").hasRole("ADMIN");
             auth.requestMatchers("/api/**").authenticated();

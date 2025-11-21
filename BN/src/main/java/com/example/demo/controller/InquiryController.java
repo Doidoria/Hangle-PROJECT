@@ -1,4 +1,3 @@
-// File: InquiryController.java
 package com.example.demo.controller;
 
 import com.example.demo.config.auth.service.InquiryService;
@@ -74,6 +73,34 @@ public class InquiryController {
         }
 
         return ResponseEntity.ok("문의가 삭제되었습니다.");
+    }
+
+    /**
+     * [USER] 내 문의 수정 (답변이 없을 때만 가능)
+     * - PUT /api/inquiry/{id}
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateInquiry(
+            @PathVariable Long id,
+            @RequestBody InquiryRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        Long userId = extractUserId(principalDetails);
+
+        try {
+            InquiryResponseDto updated = inquiryService.updateInquiry(id, userId, requestDto);
+            return ResponseEntity.ok(updated);
+
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("문의 수정 실패");
+        }
     }
 
     // =========================================================

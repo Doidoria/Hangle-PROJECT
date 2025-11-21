@@ -18,6 +18,7 @@ public class LeaderboardEntryDto {
     private String username;
 
     private Long csvSave_id;
+    private String fileName; //파일 이름
     private Double score; // 점수
 
     private Integer attempt; // N번째 제출

@@ -2,7 +2,10 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
-import '../css/competitionStyle/pages/CompetitionCreate.scss';
+
+// CompetitionCreate.jsx
+import "../css/Competition.scss";
+import "../css/CompetitionCreate.scss";
 
 function CompetitionCreate() {
   const navigate = useNavigate();
@@ -17,6 +20,11 @@ function CompetitionCreate() {
     // 화면엔 안 보여도 전송은 해야 함(백엔드 @NotNull): 
     status: 'UPCOMING',
   });
+
+  // CSV 파일 상태
+  const [trainFile, setTrainFile] = useState(null);
+  const [testFile, setTestFile] = useState(null);
+
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -33,6 +41,9 @@ function CompetitionCreate() {
     if (!form.startAt || !form.endAt) return '시작일과 종료일을 입력해주세요.';
     if (form.endAt < form.startAt) return '종료일은 시작일 이후여야 합니다.';
     if (form.prizeTotal && Number.isNaN(Number(form.prizeTotal))) return '상금은 숫자만 입력해주세요.';
+    // 파일 업로드 검증
+    if (!trainFile) return 'train.csv 파일을 업로드해주세요.';
+    if (!testFile) return 'test.csv 파일을 업로드해주세요.'; 
     return null;
   };
 
@@ -55,10 +66,23 @@ function CompetitionCreate() {
         evaluationMetric: form.evaluationMetric || 'ACCURACY',  // ✅
         prizeTotal: form.prizeTotal ? Number(form.prizeTotal) : null // ✅ 숫자로
       };
+      // 파일 보내기 위한 폼데이터 생성
+      const fd = new FormData();
+
+      // JSON을 Blob으로 감싸서 request 파트로 전송
+      fd.append(
+        "request",
+        new Blob([JSON.stringify(payload)], { type: "application/json" })
+      );
+
+      // 파일 전송
+      fd.append("trainFile", trainFile);
+      fd.append("testFile", testFile);
 
       // baseURL이 /api를 포함한다면 아래 경로는 '/competitions'로 바꿔주세요.
-      const { data: created } = await api.post('/api/competitions', payload, {
-        headers: { 'Content-Type': 'application/json' },
+      const { data: created } = await api.post('/api/competitions', fd, {
+        // headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       alert(`대회가 등록되었습니다! (ID: ${created.id})`);
@@ -76,7 +100,7 @@ function CompetitionCreate() {
 
   return (
     <div className="container comp-create">
-      <Link className="back" to="/competitions">← 목록으로</Link>
+      <Link className="back" to="/competitions/List">← 목록으로</Link>
       <h1>대회 생성</h1>
 
       <form onSubmit={onSubmit} noValidate>
@@ -120,6 +144,16 @@ function CompetitionCreate() {
         <label>
           상금
           <input type="number" step="0.01" name="prizeTotal" value={form.prizeTotal} onChange={onChange} placeholder="예: 1000000" />
+        </label>
+
+        {/* CSV 파일 업로드 */}
+        <label>
+          Train CSV 업로드
+          <input type="file" accept=".csv" onChange={(e) => setTrainFile(e.target.files[0])}/>
+        </label>
+        <label>
+          Test CSV 업로드
+          <input type="file" accept=".csv" onChange={(e) => setTestFile(e.target.files[0])}/>
         </label>
 
         {errorMsg && <div className="error">{errorMsg}</div>}

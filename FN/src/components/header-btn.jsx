@@ -7,17 +7,17 @@ import api from '../api/axiosConfig';
 function SearchBox() {
   const inputRef = useRef(null);
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "/" && document.activeElement !== inputRef.current) {
-        e.preventDefault();
-        inputRef.current?.focus();
-      }
-    };
+  // useEffect(() => {
+  //   const handleKeyDown = (e) => {
+  //     if (e.key === "/" && document.activeElement !== inputRef.current) {
+  //       e.preventDefault();
+  //       inputRef.current?.focus();
+  //     }
+  //   };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  //   window.addEventListener("keydown", handleKeyDown);
+  //   return () => window.removeEventListener("keydown", handleKeyDown);
+  // }, []);
 
   return (
     <div className="header-search" role="search">

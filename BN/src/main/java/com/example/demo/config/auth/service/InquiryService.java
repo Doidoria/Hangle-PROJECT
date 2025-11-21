@@ -1,4 +1,3 @@
-// File: InquiryService.java
 package com.example.demo.config.auth.service;
 
 import com.example.demo.domain.inquiry.dto.InquiryRequestDto;
@@ -86,6 +85,37 @@ public class InquiryService {
         inquiryRepository.delete(inquiry);
         return true;
     }
+
+    @Transactional
+    public InquiryResponseDto updateInquiry(Long inquiryId, Long userId, InquiryRequestDto dto)
+            throws IllegalAccessException {
+
+        Inquiry inquiry = inquiryRepository.findById(inquiryId)
+                .orElseThrow(() -> new RuntimeException("해당 문의를 찾을 수 없습니다."));
+
+        // 작성자 본인인지 확인
+        if (!inquiry.getUserId().equals(userId)) {
+            throw new IllegalAccessException("본인이 작성한 문의만 수정할 수 있습니다.");
+        }
+
+        // 답변이 이미 달렸다면 수정 불가
+        if (inquiry.getAnswerContent() != null && !inquiry.getAnswerContent().isBlank()) {
+            throw new IllegalStateException("답변 완료된 문의는 수정할 수 없습니다.");
+        }
+
+        // 수정
+        inquiry.setTitle(dto.getTitle());
+        inquiry.setContent(dto.getContent());
+
+        Inquiry saved = inquiryRepository.save(inquiry);
+
+        User user = userRepository.findById(userId).orElse(null);
+        String username = user != null ? user.getUsername() : "(탈퇴한 사용자)";
+        String userid = user != null ? user.getUserid() : "-";
+
+        return InquiryResponseDto.of(saved, username, userid);
+    }
+
 
     // =========================================================
     // ↓ 관리자 전용 기능 (Admin)

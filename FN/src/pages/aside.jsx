@@ -11,7 +11,7 @@ const Aside = () => {
     // 일반 USER 메뉴
     const UserMenu = () => (
         <>
-            <Link to="/Competitions" className="nav-create active">
+            <Link to="/competitions/user" className="nav-create active">
                 <img src="/image/+.png" alt="참여" style={{ width: 14 }} />
                 대회 참여
             </Link>
@@ -42,7 +42,7 @@ const Aside = () => {
     // 매니저 메뉴 — (유저 메뉴 포함 X)
     const ManagerMenu = () => (
         <>
-            <Link to="/Competitions" className="nav-create active">
+            <Link to="/competitions/user" className="nav-create active">
                 <img src="/image/+.png" alt="관리" style={{ width: 14 }} />
                 대회 참여
             </Link>
@@ -53,9 +53,15 @@ const Aside = () => {
                 </Link>
             </nav>
             <nav className="nav-group">
-                <Link to="/competitions" className="nav-item">
+                <Link to="/competitions/list" className="nav-item">
                     <span className="material-symbols-outlined">list</span>
                     <span>대회 전체 관리</span>
+                </Link>
+            </nav>
+            <nav className="nav-group">
+                <Link to="/leaderboard" className="nav-item">
+                    <span className="material-symbols-outlined">trophy</span>
+                    <span>리더보드</span>
                 </Link>
             </nav>
             <nav className="nav-group">
@@ -70,7 +76,7 @@ const Aside = () => {
     // 관리자 메뉴 — (유저 메뉴 포함 X)
     const AdminMenu = () => (
         <>
-            <Link to="/Competitions" className="nav-create active">
+            <Link to="/competitions/user" className="nav-create active">
                 <img src="/image/+.png" alt="관리" style={{ width: 14 }} />
                 대회 참여
             </Link>
@@ -81,9 +87,15 @@ const Aside = () => {
                 </Link>
             </nav>
             <nav className="nav-group">
-                <Link to="/competitions" className="nav-item">
+                <Link to="/competitions/list" className="nav-item">
                     <span className="material-symbols-outlined">list</span>
                     <span>대회 전체 관리</span>
+                </Link>
+            </nav>
+            <nav className="nav-group">
+                <Link to="/leaderboard" className="nav-item">
+                    <span className="material-symbols-outlined">trophy</span>
+                    <span>리더보드</span>
                 </Link>
             </nav>
             <nav className="nav-group">

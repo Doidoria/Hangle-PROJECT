@@ -73,6 +73,9 @@ dependencies {
     // SIMPLE (PortOne)
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
+    // JSR 모듈
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
     // =========================
     //   Spring AI / Ollama
     // =========================
