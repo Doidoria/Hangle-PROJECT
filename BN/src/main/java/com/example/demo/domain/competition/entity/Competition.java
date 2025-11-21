@@ -1,10 +1,11 @@
 package com.example.demo.domain.competition.entity;
 
-import com.example.demo.domain.competition.entity.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Getter @Setter
 @Table(name = "competitions")
 public class Competition {
 
@@ -57,4 +59,19 @@ public class Competition {
     void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    @Column
+    private Long trainDatasetSaveId;
+
+    @Column
+    private Long testDatasetSaveId;
+
+    @Column
+    private String trainFilePath;
+
+    @Column
+    private String testFilePath;
+
+    @Column
+    private String customScorePath; //추가
 }

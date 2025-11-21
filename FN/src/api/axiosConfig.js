@@ -1,63 +1,70 @@
-import axios from 'axios';
+import axios from "axios";
 
-// axios 인스턴스 생성 (모듈화)
 const api = axios.create({
-  baseURL: 'http://localhost:8090',
-  withCredentials: true, // HTTP-Only 쿠키 포함
+  baseURL: "http://localhost:8090",
+  withCredentials: true,
 });
 
-//------------------------
-// 요청 인터셉터 설정
-//------------------------
+// ------------------------
+// 요청 인터셉터
+// ------------------------
 api.interceptors.request.use(
-  async (config) => {
-    // 로그인 페이지나 회원가입 페이지 등 인증이 필요없는 경로는 제외
-    const publicPaths = ['/login', '/join','/validate'];
-    if (publicPaths.some(path => config.url.includes(path))) {
-      return config;
-    }
-
-    try {
-      // 토큰 유효성 검증을 위한 별도 엔드포인트 호출
-      await axios.get('http://localhost:8090/validate', {
-        withCredentials: true
-      });
-      console.log("[정상-요청 인터셉터] 인증된 상태입니다");
-      return config;
-
-    } catch (error) {
-      console.log("[오류-요청 인터셉터] ",error);
-      window.location.href = '/login';
-      return Promise.reject('인증이 필요합니다.');
-    }
+  (config) => {
+    // 필요하면 여기서 Authorization 헤더 추가 등 처리 가능
+    // 현재는 서버가 HttpOnly 쿠키 기반이니까 건드릴 필요 없음
+    return config;
   },
   (error) => {
-    console.log("[오류-요청 인터셉터] ",error);
-    window.location.href = '/login';
+    console.error("[요청 인터셉터 에러]", error);
     return Promise.reject(error);
   }
 );
 
-//------------------------
-// 응답 인터셉터 설정
-//------------------------
+// ------------------------
+// 응답 인터셉터
+// ------------------------
 api.interceptors.response.use(
   (response) => {
-    console.log("[정상-응답 인터셉터] ",response);
-    if (response.data?.auth === false) {
-      window.location.href = '/login';
-      return Promise.reject('세션이 만료되었습니다.');
-    }
     return response;
   },
+  async (error) => {
+    const status = error?.response?.status;
+
+    // 토큰 만료 / 인증 실패
+    if (status === 401) {
+      console.warn("[응답 인터셉터] 401 Unauthorized → 로그인 페이지로 이동");
+      // 로컬 스토리지 정리 (AuthContext도 storage 이벤트로 반응)
+      localStorage.removeItem("username");
+      localStorage.removeItem("userid");
+      localStorage.removeItem("role");
+      localStorage.removeItem("profileImage");
+
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+
+      return Promise.reject(error);
+    }
+
+    console.error("[응답 인터셉터 에러]", error);
+    return Promise.reject(error);
+  }
+);
+
+// ------------------------
+// 302 차단 인터셉터
+// ------------------------
+api.interceptors.response.use(
+  (response) => response,
   (error) => {
-  
-    console.log("[오류-응답 인터셉터] ",error);
-    if (error.response?.data?.expired === true) {
-      window.location.href = '/login';
+    if (error?.response?.status === 302) {
+      return Promise.reject({
+        status: 403,
+        message: "권한이 없습니다.",
+      });
     }
     return Promise.reject(error);
   }
 );
 
-export default api; 
+export default api;

@@ -12,5 +12,5 @@ public interface LeaderboardService {
     public List<LeaderboardEntryDto> searchLeaderboard(String keyword);
     public void computeRanksPerComp(Long compId);
     public Long leaderBoardAdd(User user, Competition competition, CompetitionCSVSave competitionCSVSave);
-    public Long leaderBoardUpdate(LeaderboardEntryDto dto);
+    void updateScore(User user, Competition competition, double score);
 }

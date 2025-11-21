@@ -5,19 +5,18 @@ import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import com.example.demo.config.auth.jwt.TokenInfo;
 import com.example.demo.config.auth.redis.RedisUtil;
 import com.example.demo.domain.user.dto.UserDto;
-import com.example.demo.domain.user.repository.JwtTokenRepository;
 import com.example.demo.domain.user.repository.UserRepository;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,17 +30,18 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@Tag(name = "User", description = "사용자 관련 API")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -73,26 +73,19 @@ public class UserRestController {
 
         return ResponseEntity.ok(Map.of("message", "회원가입이 완료되었습니다."));
     }
-    //Header 방식 (Authorization: Bearer <token>)
-    // - XXS 공격에 매우취약 - LocalStorage / SessionStorage에 저장시 문제 발생
-    // - 쿠키방식이 비교적 안전
-    @Operation(
-            summary = "로그인",
-            description = """
-        사용자 아이디(이메일)과 비밀번호를 입력해 JWT Access Token을 발급받습니다.<br><br>
-        발급된 토큰은 Swagger UI 상단의 <b>Authorize</b> 버튼을 눌러 입력하면,<br>
-        인증이 필요한 API(`/user`, `/validate`, `/api/users/me`) 호출 시 자동으로 적용됩니다.<br><br>
-        예시 입력:<br><code>Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</code>""")
+
     @PostMapping(value = "/login" , consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String,Object>> login(@RequestBody UserDto userDto, HttpServletResponse resp) throws IOException {
         log.info("POST /login..." + userDto);
         Map<String, Object> response = new HashMap<>();
 
         User user = userRepository.findByUserid(userDto.getUserid());
+        boolean skipEmailCheck = (user != null && (
+                        "ROLE_ADMIN".equals(user.getRole()) || "ROLE_MANAGER".equals(user.getRole())));
         if (userDto.getUserid() == null || userDto.getUserid().isBlank()) {
             return ResponseEntity.badRequest().body(Map.of("error", "아이디(이메일)를 입력해주세요."));
         }
-        if (!userDto.getUserid().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+        if (!skipEmailCheck && !userDto.getUserid().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             return ResponseEntity.badRequest().body(Map.of("error", "아이디(이메일) 형식으로 입력해주세요."));
         }
         if (userDto.getPassword() == null || userDto.getPassword().isBlank()) {
@@ -129,22 +122,32 @@ public class UserRestController {
             response.put("message","로그인에 성공했습니다.");
             response.put("username", user.getUsername());
             response.put("userid", user.getUserid());
+            response.put("role", user.getRole());
             response.put("token", tokenInfo.getAccessToken());
 
-            Cookie accessCookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, tokenInfo.getAccessToken());
-            accessCookie.setHttpOnly(true);
-            accessCookie.setSecure(false); // Only for HTTPS
-            accessCookie.setPath("/"); // Define valid paths
-            accessCookie.setMaxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000); // 1 hour expiration
+            String accessToken = tokenInfo.getAccessToken();
+            String userid = authentication.getName();
+            // Access Token Cookie
+            resp.addHeader(
+                    "Set-Cookie",
+                    JwtProperties.ACCESS_TOKEN_COOKIE_NAME + "=" + accessToken
+                            + "; Path=/"
+                            + "; HttpOnly"
+                            + "; Secure"
+                            + "; SameSite=None"
+                            + "; Max-Age=" + (JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000)
+            );
 
-            Cookie userCookie = new Cookie("userid", authentication.getName());
-            userCookie.setHttpOnly(true);
-            userCookie.setSecure(false); // Only for HTTPS
-            userCookie.setPath("/");
-            userCookie.setMaxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000); // 7 days expiration
-
-            resp.addCookie(accessCookie);
-            resp.addCookie(userCookie);
+            // User ID Cookie
+            resp.addHeader(
+                    "Set-Cookie",
+                    "userid=" + userid
+                            + "; Path=/"
+                            + "; HttpOnly"
+                            + "; Secure"
+                            + "; SameSite=None"
+                            + "; Max-Age=" + (JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000)
+            );
 
         }catch(AuthenticationException e){
             System.out.println("인증실패 : " + e.getMessage());
@@ -216,13 +219,82 @@ public class UserRestController {
         ));
     }
 
+    @PutMapping("/api/user/change-password")
+    public ResponseEntity<?> changePassword(
+            @RequestBody Map<String, String> req,
+            Authentication authentication,
+            HttpServletResponse response
+    ) {
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+
+        if (user == null) {
+            return ResponseEntity.status(404)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+
+        String currentPw = req.get("currentPassword");
+        String newPw = req.get("newPassword");
+        String confirmPw = req.get("confirmPassword");
+
+        if (currentPw == null || newPw == null || confirmPw == null) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "모든 입력값을 채워주세요."));
+        }
+
+        // 현재 비밀번호 검증
+        if (!passwordEncoder.matches(currentPw, user.getPassword())) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "현재 비밀번호가 올바르지 않습니다."));
+        }
+
+        // 새 비밀번호 = 확인 비밀번호 동일 체크
+        if (!newPw.equals(confirmPw)) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "새 비밀번호가 서로 일치하지 않습니다."));
+        }
+
+        // 동일한 비밀번호 방지
+        if (passwordEncoder.matches(newPw, user.getPassword())) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "기존 비밀번호와 다른 비밀번호를 사용해주세요."));
+        }
+
+        // 비밀번호 업데이트
+        user.setPassword(passwordEncoder.encode(newPw));
+        userRepository.save(user);
+
+        // 로그아웃 처리 (토큰, RT 삭제)
+        redisUtil.delete("RT:" + userid);
+        deleteCookie(response, JwtProperties.ACCESS_TOKEN_COOKIE_NAME);
+        deleteCookie(response, "userid");
+
+        return ResponseEntity.ok(Map.of(
+                "message", "비밀번호가 변경되었습니다. 다시 로그인해주세요."
+        ));
+    }
+
+    private void deleteCookie(HttpServletResponse response, String name) {
+        ResponseCookie cookie = ResponseCookie.from(name, "")
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .maxAge(0)
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    @Value("${file.upload-dir}") // application.properties에서 값 주입
+    private String uploadDir;
+
     @PostMapping("/api/user/profile-image")
     public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, Authentication authentication) {
         try {
             if (file == null || file.isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of("error", "파일이 비어 있습니다."));
             }
-
             // 로그인 사용자 조회
             String userid = authentication.getName();
             User user = userRepository.findByUserid(userid);
@@ -230,21 +302,23 @@ public class UserRestController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "사용자를 찾을 수 없습니다."));
             }
+            // 저장할 폴더 경로 생성 (프로젝트루트/uploads/profile)
+            Path rootPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+            Path profilePath = rootPath.resolve("profile");
+            File profileDir = profilePath.toFile();
 
-            // 업로드 경로 설정
-            String uploadDir = "uploads/profile/";
-            String filename = userid + "_" + System.currentTimeMillis() + ".png";
-            Path uploadPath = Paths.get(uploadDir);
-
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+            // 폴더가 없으면 생성
+            if (!profileDir.exists()) {
+                profileDir.mkdirs();
             }
+            String filename = user.getUserid() + "_" + System.currentTimeMillis() + ".png";
+            File destination = new File(profileDir, filename);
+            file.transferTo(destination);
 
-            Path filePath = uploadPath.resolve(filename);
-            file.transferTo(filePath.toFile());
+            System.out.println("[ 저장 경로 ] : " + destination.getAbsolutePath());
 
-            // DB 저장
-            user.setImageUrl("/uploads/profile/" + filename);
+            // DB에 상대경로만 저장
+            user.setProfileImageUrl("/uploads/profile/" + filename);
             userRepository.save(user);
 
             // 응답 반환
@@ -260,8 +334,26 @@ public class UserRestController {
         }
     }
 
-    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.",
-            security = {@SecurityRequirement(name = "bearerAuth")})
+    @PutMapping("/api/user/theme")
+    public ResponseEntity<?> updateTheme(@RequestBody Map<String, String> req, Authentication authentication) {
+        String userid = authentication.getName();
+        User user = userRepository.findByUserid(userid);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+        }
+        String theme = req.get("theme");
+        if (!theme.equals("light") && !theme.equals("dark")) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "올바른 테마 값이 아닙니다."));
+        }
+        user.setTheme(theme);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "테마가 저장되었습니다.", "theme", theme));
+    }
+
     @GetMapping("/api/user/me")
     public ResponseEntity<?> getUserInfo(Authentication authentication) {
         // 사용자 식별 (JWT에서 userid 가져오기)
@@ -279,7 +371,8 @@ public class UserRestController {
         data.put("createdAt", user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
         data.put("lastLoginAt", user.getLastLoginAt() != null ? user.getLastLoginAt().toString() : null);
         data.put("introduction", user.getIntroduction());
-        data.put("profileImageUrl", user.getImageUrl());
+        data.put("profileImageUrl", user.getProfileImageUrl());
+        data.put("theme", user.getTheme());
 
         return ResponseEntity.ok(data);
     }
@@ -319,20 +412,24 @@ public class UserRestController {
         SecurityContextHolder.clearContext();
     }
 
-    @Operation(summary = "AccessToken 검증", description = "현재 Access Token이 유효한지 확인합니다.",
-            security = {@SecurityRequirement(name = "bearerAuth")})
+
     @GetMapping("/validate")
     public ResponseEntity<String> validateToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("authentication : " + authentication);
+
+        if (authentication == null) {
+            System.out.println("미인증: authentication == null");
+            return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+        }
+
         Collection<? extends GrantedAuthority> auth =  authentication.getAuthorities();
         auth.forEach(System.out::println);
         boolean hasRoleAnon = auth.stream()
-                // 기본 롤이 ROLE_ANONYMOUS 상태라서 로그인 상태가 아니라고 판단
                 .anyMatch(authority -> "ROLE_ANONYMOUS".equals(authority.getAuthority()));
 
         if (authentication.isAuthenticated() && !hasRoleAnon) {
-            System.out.println("인증된 상태입니다.");
+            System.out.println("인증된 상태입니다. -> " + authentication.getName());
             return new ResponseEntity<>("",HttpStatus.OK);
         }
 

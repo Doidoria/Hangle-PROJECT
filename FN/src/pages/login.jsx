@@ -1,17 +1,17 @@
 import '../css/login.scss'
 import { Link, useNavigate } from 'react-router-dom';
-import {useState,useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import api from '../api/axiosConfig';
 import { useAuth } from '../api/AuthContext';
 
 const Login = () => {
-    const [userid ,setUserid] = useState()
-    const [password ,setPassword] = useState()
-    const [message, setMessage] = useState(null)
-    const [isError, setIsError] = useState(false)
-    const navigate = useNavigate()
-    const { setIsLogin, setUsername } = useAuth()
+  const [userid, setUserid] = useState()
+  const [password, setPassword] = useState()
+  const [message, setMessage] = useState(null)
+  const [isError, setIsError] = useState(false)
+  const navigate = useNavigate()
+  const { setIsLogin, setUsername, setRole, login } = useAuth();
 
   // useEffect에서 API 검증 호출 (최초 처음 실행될때 실행 useEffect)
   useEffect(() => {
@@ -29,7 +29,7 @@ const Login = () => {
     validateToken()
   }, [navigate])
 
-    const handleLogin = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
     setMessage(null)
 
@@ -46,11 +46,15 @@ const Login = () => {
 
       setUsername(resp.data.username);
       setIsLogin(true);
+      setIsError(false);
+      login(resp.data);
+      setRole(resp.data.role);
+      setMessage(resp.data.message || '로그인에 성공했습니다.');
+      
       localStorage.setItem('username', resp.data.username)
       localStorage.setItem('userid', resp.data.userid)
-      setIsError(false)
-      setMessage(resp.data.message || '로그인에 성공했습니다.')
-      setIsLogin(true)
+      localStorage.setItem("role", resp.data.role);
+
       setTimeout(() => navigate('/'), 1000)
     } catch (error) {
       console.error('로그인 실패:', error)
@@ -61,14 +65,14 @@ const Login = () => {
 
       setIsError(true);
       setMessage(errMsg);
-      }
     }
+  }
 
-    // 로그인 API(카카오, 네이버, 구글)
-    const handleSocialLogin = (provider) => {
-      window.location.href = `http://localhost:8090/oauth2/authorization/${provider}`;
-    };
-  
+  // 로그인 API(카카오, 네이버, 구글)
+  const handleSocialLogin = (provider) => {
+    window.location.href = `http://localhost:8090/oauth2/authorization/${provider}`;
+  };
+
 
   return (
     <div className="layout-login">
@@ -79,11 +83,11 @@ const Login = () => {
         <form className="login-wrap">
           <div className="input-group">
             <label htmlFor="userid">아이디 (이메일)</label>
-            <input type="text" id="userid" name="userid" onChange={e=>setUserid(e.target.value)} required/>
+            <input type="text" id="userid" name="userid" onChange={e => setUserid(e.target.value)} required />
           </div>
           <div className="input-group">
             <label htmlFor="password">비밀번호</label>
-            <input type="password" id="password" name="password" onChange={e=>setPassword(e.target.value)} required/>
+            <input type="password" id="password" name="password" onChange={e => setPassword(e.target.value)} required />
           </div>
           <button onClick={handleLogin}>로그인</button>
         </form>
@@ -103,13 +107,13 @@ const Login = () => {
         )}
         <div className="login-divider">OR</div>
         <Link onClick={() => handleSocialLogin('kakao')} className="social-login-button kakao-login">
-          <img src="./image/icon_Kakao.png" alt="카카오" /> 카카오 로그인
+          <img src="/image/icon_Kakao.png" alt="카카오" /> 카카오 로그인
         </Link>
         <Link onClick={() => handleSocialLogin('naver')} className="social-login-button naver-login">
-          <img src="./image/icon_Naver.png" alt="네이버" /> 네이버 로그인
+          <img src="/image/icon_Naver.png" alt="네이버" /> 네이버 로그인
         </Link>
         <Link onClick={() => handleSocialLogin('google')} className="social-login-button google-login">
-          <img src="./image/icon_Google.png" alt="구글" /> 구글 로그인
+          <img src="/image/icon_Google.png" alt="구글" /> 구글 로그인
         </Link>
         <div className="login-divider">OR</div>
         <Link to="/join" className="social-login-button join-btn">회원가입</Link>

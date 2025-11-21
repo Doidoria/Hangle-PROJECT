@@ -2,6 +2,7 @@
 package com.example.demo.domain.competition.dtos;
 
 import com.example.demo.domain.competition.entity.Status;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -16,5 +17,9 @@ public record CompetitionDto(
         String evaluationMetric,
         BigDecimal prizeTotal,
         Integer participantCount,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        String trainFilePath,
+        String testFilePath,
+        Long trainDatasetSaveId,
+        Long testDatasetSaveId
 ) {}
