@@ -3,24 +3,25 @@ package com.example.demo.domain.competition.service;
 import com.example.demo.domain.competition.entity.Competition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScoreService {
 
-    public double runScore(Competition competition, String answerPath, String submitPath) {
+    // 3. 반환 타입을 double -> CompletableFuture<Double>로 변경
+    public CompletableFuture<Double> runScore(Competition competition, String answerPath, String submitPath) {
 
-        // 1) 커스텀 score.py 있는지 확인
         if (competition.getCustomScorePath() != null) {
             return runPython(competition.getCustomScorePath(), answerPath, submitPath);
         }
 
-        // 2) 기본 metric-based 점수 스크립트
         String metric = competition.getEvaluationMetric();
 
         String script = switch (metric) {
@@ -34,7 +35,9 @@ public class ScoreService {
     }
 
 
-    private double runPython(String script, String answerPath, String submitPath) {
+    // 4. @Async 어노테이션 추가
+    @Async
+    private CompletableFuture<Double> runPython(String script, String answerPath, String submitPath) {
         try {
             ProcessBuilder pb = new ProcessBuilder(
                     "python",
@@ -50,17 +53,22 @@ public class ScoreService {
             );
 
             String line = br.readLine();
-            int exit = process.waitFor();
+            int exit = process.waitFor(); // 이 부분은 백그라운드 스레드에서 대기
 
-            if (exit != 0) return -1;
-            if (line == null) return -1;
+            if (exit != 0 || line == null) {
+                log.error("채점 스크립트 실행 오류 또는 결과 없음. Exit Code: {}", exit);
+                // 5. 실패 시 -1.0을 완료된 CompletableFuture에 담아 반환
+                return CompletableFuture.completedFuture(-1.0);
+            }
 
-            return Double.parseDouble(line);
+            double score = Double.parseDouble(line);
+            // 6. 성공 시 결과를 완료된 CompletableFuture에 담아 반환
+            return CompletableFuture.completedFuture(score);
 
         } catch (Exception e) {
-            return -1; // 채점 실패
+            log.error("파이썬 프로세스 실행 중 예외 발생: {}", e.getMessage(), e);
+            // 7. 예외 발생 시 -1.0을 완료된 CompletableFuture에 담아 반환
+            return CompletableFuture.completedFuture(-1.0);
         }
     }
 }
-
-

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,9 +29,15 @@ public class PortOneController {
     private final RedisUtil redisUtil;
     private final UserRepository userRepository;
 
+    @Value("${portone.api-key}")
+    private String PORTONE_APIKEY;
+
+    @Value("${portone.api-secret}")
+    private String PORTONE_SECRET;
+
     private final String HOSTNAME = "https://api.iamport.kr";
-    private final String APIKEY = "7125401617111610";
-    private final String SECRET = "HPzom4PG2vUc7KG8WUn1RJSJEkL9QLh0yf6zNanfefU3LwcRGOABGrZ2iNSzPMp367L4HQeXhThdLRVD";
+    private final String APIKEY = PORTONE_APIKEY;
+    private final String SECRET = PORTONE_SECRET;
     private final String REDIS_TOKEN_KEY = "portone:access_token";
 
     // PORTONE ACCESSTOKEN 응답 구조를 위한 DTO

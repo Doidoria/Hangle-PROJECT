@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
@@ -31,6 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -283,6 +286,9 @@ public class UserRestController {
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
+    @Value("${file.upload-dir}") // application.properties에서 값 주입
+    private String uploadDir;
+
     @PostMapping("/api/user/profile-image")
     public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, Authentication authentication) {
         try {
@@ -296,18 +302,20 @@ public class UserRestController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "사용자를 찾을 수 없습니다."));
             }
-            // 업로드 경로를 절대경로로 지정 (운영/로컬 동일하게 접근 가능)
-            String uploadDir = "C:" + File.separator + "HangleUploads" + File.separator + "profile";
-            File uploadDirFile = new File(uploadDir);
-            Files.createDirectories(uploadDirFile.toPath());
+            // 저장할 폴더 경로 생성 (프로젝트루트/uploads/profile)
+            Path rootPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+            Path profilePath = rootPath.resolve("profile");
+            File profileDir = profilePath.toFile();
 
-            String filename = user.getUserid() + "_" + System.currentTimeMillis() + ".png";
-            File destination = new File(uploadDirFile, filename);
-            try (InputStream in = file.getInputStream()) {
-                Files.copy(in, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            // 폴더가 없으면 생성
+            if (!profileDir.exists()) {
+                profileDir.mkdirs();
             }
-            System.out.println("[ 업로드 시도 경로 ] : " + uploadDir);
-            System.out.println("[ 저장될 파일 ] : " + destination.getAbsolutePath());
+            String filename = user.getUserid() + "_" + System.currentTimeMillis() + ".png";
+            File destination = new File(profileDir, filename);
+            file.transferTo(destination);
+
+            System.out.println("[ 저장 경로 ] : " + destination.getAbsolutePath());
 
             // DB에 상대경로만 저장
             user.setProfileImageUrl("/uploads/profile/" + filename);

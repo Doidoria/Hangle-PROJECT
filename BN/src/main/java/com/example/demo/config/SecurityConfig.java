@@ -93,7 +93,7 @@ public class SecurityConfig {
             auth.requestMatchers(HttpMethod.PUT,  "/api/inquiry/admin/*/answer").hasAnyRole("ADMIN","MANAGER");
             auth.requestMatchers(HttpMethod.DELETE, "/api/inquiry/admin/*").hasRole("ADMIN");
 
-            auth.requestMatchers(HttpMethod.POST, "/api/competitions/{competitionId}/submit").hasRole("USER");
+            auth.requestMatchers(HttpMethod.POST, "/api/competitions/{competitionId}/submit").hasAnyRole("USER","ADMIN","MANAGER");
             // 관리자 대회 권한 설정
             auth.requestMatchers(HttpMethod.PUT, "/api/competitions/**").hasAnyRole("ADMIN", "MANAGER");
             auth.requestMatchers(HttpMethod.DELETE, "/api/competitions/**").hasRole("ADMIN");
@@ -113,12 +113,6 @@ public class SecurityConfig {
 			logout.permitAll();
 			logout.addLogoutHandler(customLogoutHandler);
 			logout.logoutSuccessHandler(customLogoutSuccessHandler);
-		});
-
-		//예외처리
-		http.exceptionHandling((ex)->{
-			ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
-			ex.accessDeniedHandler(new CustomAccessDeniedHandler());
 		});
 
 		//OAUTH2-CLIENT

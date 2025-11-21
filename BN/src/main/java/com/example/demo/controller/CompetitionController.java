@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.config.auth.service.PrincipalDetails;
 import com.example.demo.domain.competition.dtos.CompetitionCreateRequest;
 import com.example.demo.domain.competition.dtos.CompetitionDto;
 import com.example.demo.domain.competition.dtos.CompetitionUpdateRequest;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -27,6 +29,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriUtils;
@@ -38,6 +41,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/competitions")
 @RequiredArgsConstructor
@@ -115,8 +119,9 @@ public class CompetitionController {
     public ResponseEntity<?> submit(
             @PathVariable Long competitionId,
             @RequestParam("file") MultipartFile file,
-            @RequestParam("userid") String userid
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
+        String userid = principalDetails.getUser().getUserid();
         // 1) 유저 조회
         User user = appUserService.findByUserid(userid);
         if (user == null) {
@@ -136,20 +141,38 @@ public class CompetitionController {
         leaderboardService.leaderBoardAdd(user, competition, save);
 
         // 5) 자동 채점 실행 (Python 호출)
-        double score = scoreService.runScore(competition, competition.getTestFilePath(), save.getFilePath());
+        scoreService.runScore(competition, competition.getTestFilePath(), save.getFilePath())
+                .thenAccept(score -> { // 채점 완료 시 이 블록이 별도 스레드에서 실행됩니다.
 
-        if (score < 0) {
-            return ResponseEntity.badRequest().body("SCORING_FAILED");
-        }
+                    if (score < 0) {
+                        // 채점 스크립트 오류 발생 (로그는 ScoreService에서 남겼을 것)
+                        // 실패 처리를 위해 score를 -1로 유지하고 DB에 저장
+                        save.setScore(-1.0);
+                        csvSaveRepository.save(save);
+                        return;
+                    }
 
-        // 6) 제출 CSV의 score 업데이트
-        save.setScore(score);
-        csvSaveRepository.save(save);
+                    // 6) 제출 CSV의 score 업데이트
+                    save.setScore(score);
+                    csvSaveRepository.save(save);
 
-        // 7) Leaderboard 점수 반영
-        leaderboardService.updateScore(user, competition, score);
+                    // 7) Leaderboard 점수 반영 (랭킹 로직 실행)
+                    leaderboardService.updateScore(user, competition, score);
 
-        return ResponseEntity.ok("SUBMIT_OK");
+                })
+                .exceptionally(ex -> { // 비동기 작업 중 예외 발생 시 처리
+                    log.error("비동기 채점 프로세스 최종 오류 발생:", ex);
+                    // DB에 실패 기록 (-1.0) 남기기
+                    save.setScore(-1.0);
+                    csvSaveRepository.save(save);
+                    return null;
+                });
+
+        // 8) 클라이언트에게 즉시 응답 반환
+        // HTTP 202 Accepted (요청 접수 완료) 코드를 사용하는 것이 일반적입니다.
+        return ResponseEntity
+                .accepted()
+                .body("SUBMIT_ACCEPTED: 제출이 접수되었으며 백그라운드에서 채점 중입니다.");
     }
 
     @GetMapping("/csv/{saveId}/download")
