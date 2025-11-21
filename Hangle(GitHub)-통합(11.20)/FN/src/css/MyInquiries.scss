@@ -1,0 +1,403 @@
+.my-inquiries-container {
+    position: relative;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+
+    h2 {
+        text-align: center;
+        margin-bottom: 40px;
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 32px;
+        position: relative;
+        padding-bottom: 15px;
+
+        &::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 2px;
+            background: var(--border);
+            border-radius: 10px;
+        }
+    }
+
+    .inquiry-stats {
+        display: flex;
+        justify-content: center;
+        gap: 50px;
+        margin-bottom: 20px;
+
+        /* stat-card를 버튼으로 변경하고 스타일 추가 */
+        .stat-card {
+            width: 150px;
+            text-align: center;
+            padding: 10px 0;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            /* 버튼이므로 커서 변경 */
+            border: 3px solid transparent;
+            /* 활성화 시 테두리 추가를 위한 투명 테두리 */
+
+            &:hover {
+                transform: scale(1.05);
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            /* 활성화된 버튼 스타일 */
+            &.active {
+                transform: scale(1.05);
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            }
+
+            &.total {
+                background-color: #3b82f6;
+            }
+
+            &.pending {
+                background-color: #f59e0b;
+            }
+
+            &.done {
+                background-color: #10b981;
+            }
+
+            span {
+                display: block;
+                font-size: 1.2rem;
+                margin-top: 5px;
+            }
+        }
+    }
+
+    .inquiry-filters {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+
+        /* 상태 필터 드롭다운을 제거했으므로, 남은 필터들의 크기를 조정 */
+        input {
+            width: 50%;
+            /* 검색창 크기 증가 */
+        }
+
+        select {
+            width: 20%;
+            /* 나머지 드롭다운 크기 조정 */
+        }
+
+        input,
+        select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            background: var(--top-faqs-bg);
+            color: var(--text);
+            transition: all 0.2s;
+        }
+    }
+
+    .inquiry-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--surface);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+        th,
+        td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg);
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        tr {
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+
+            &:hover {
+                background: var(--hover-surface);
+                /* 호버 시 배경색 추가 */
+                transform: none;
+                /* 트랜스폼 제거하여 목록이 흔들리는 현상 방지 */
+            }
+        }
+
+        .title {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status {
+            &.pending {
+                color: #f59e0b;
+                font-weight: 700;
+                padding: 2px 6px;
+            }
+
+            &.done {
+                color: #10b981;
+                font-weight: 700;
+                padding: 2px 6px;
+            }
+        }
+    }
+
+    .floating-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        padding: 14px 25px;
+        font-size: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        transition: background 0.3s;
+        display: flex;
+        gap: 7px;
+
+        &:hover {
+            background: var(--primary-hover);
+        }
+    }
+
+    /* ========================= 모달 ========================= */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal {
+        background: var(--surface);
+        border-radius: 12px;
+        width: 500px;
+        max-width: 90%;
+        padding: 25px 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        h3 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .modal-date {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* ================= 문의 / 답변 카드 ================= */
+        .modal-card {
+            /* 배경색 통일 (관리자 모달에도 적용됨) */
+            background: var(--inquiry-details);
+            border-radius: 8px;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+
+            strong {
+                font-size: 14px;
+                color: #555;
+            }
+
+            p {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                font-size: 15px;
+                line-height: 1.6;
+                color: var(--text);
+
+                .faq-icon {
+                    font-size: 20px;
+                    color: var(--primary);
+                    /* 아이콘 색상 통일 */
+                    margin-top: 2px;
+                }
+            }
+
+            /* 유저 답변일 표시 텍스트 스타일 */
+            .text-xs {
+                font-size: 12px;
+                color: #6b7280;
+            }
+        }
+
+        /* 모달 하단 버튼 영역 */
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* 버튼 공통 디자인 */
+        .modal-buttons button {
+            padding: 10px 22px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            height: 42px;
+        }
+
+        /* 수정 버튼 */
+        .edit-btn {
+            background: var(--primary);
+            color: var(--text);
+            border: none;
+            border: 1px solid var(--border);
+
+            &:hover {
+                background: var(--primary-hover);
+            }
+        }
+
+        .faq-modal-icon {
+            font-size: 20px;
+        }
+
+        /* 닫기 버튼 */
+        .close-btn {
+            background: var(--top-faqs-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+
+            &:hover {
+                background: var(--top-faqs-bg-hover);
+            }
+        }
+
+        .faq-modal-icon {
+            font-size: 20px;
+        }
+
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .no-data,
+    .loading {
+        text-align: center;
+        color: var(--text-secondary);
+        padding: 40px 0;
+    }
+}
+
+/* 삭제 버튼 */
+.delete-btn {
+    background: var(--delete-color);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: var(--delete-color-hover);
+        box-shadow: 0 2px 6px rgba(240, 59, 59, 0.3);
+    }
+}
+
+
+/* 고객센터 이동 버튼 */
+.go-faq-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    background: var(--top-faqs-bg);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+        transform: translateX(-2px);
+    }
+}
+
+.edit-title-input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 18px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 8px;
+}
+
+.edit-content-textarea {
+    width: 100%;
+    padding: 12px;
+    min-height: 120px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 8px;
+    resize: vertical;
+    font-size: 15px;
+}

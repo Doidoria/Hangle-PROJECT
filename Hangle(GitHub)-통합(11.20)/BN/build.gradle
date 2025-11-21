@@ -1,0 +1,111 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter() // 필요
+    google()  // 필요
+}
+
+// Spring AI BOM 버전 (필요하면 나중에 1.0.1, 1.0.2로 올리면 됨)
+ext {
+    set('springAiVersion', "1.0.0")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
+}
+
+dependencies {
+    // WEB
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Swagger UI (SpringDoc)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
+    // THYMELEAF
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // DB
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // LOMBOK
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // SECURITY
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+    // OAUTH2 CLIENT
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // REDIS
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.4.5'
+    implementation 'org.springframework.session:spring-session-data-redis:3.4.3'
+
+    // SIMPLE (PortOne)
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
+    // JSR 모듈
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // =========================
+    //   Spring AI / Ollama
+    // =========================
+
+    // 새로운 공식 스타터 (버전은 BOM 에서 자동 관리)
+    implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+
+    // ChatModel, Message 같은 코어 API 직접 쓸 거면 있어도 되고, 아니어도 됨
+    implementation 'org.springframework.ai:spring-ai-core'
+
+    // apache commons-text: 텍스트 처리 유틸리티
+    implementation 'org.apache.commons:commons-text:1.11.0'
+
+    // swagger-parser: OpenAPI 스펙 파싱
+    implementation 'io.swagger.parser.v3:swagger-parser-v3:2.1.23'
+
+    // jaxb-runtime: XML 바인딩 런타임
+    implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
+
+    // jaxb-api: XML 바인딩 API
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+
+    // TEST
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
