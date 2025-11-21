@@ -1,6 +1,5 @@
 package com.example.demo.domain.competition.entity;
 
-import com.example.demo.domain.competition.entity.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

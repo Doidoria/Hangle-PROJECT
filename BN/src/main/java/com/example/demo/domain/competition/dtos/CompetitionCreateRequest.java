@@ -1,7 +1,6 @@
 // com.example.demo.domain.competition.dtos.CompetitionCreateRequest
 package com.example.demo.domain.competition.dtos;
 
-import com.example.demo.domain.competition.entity.Status;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

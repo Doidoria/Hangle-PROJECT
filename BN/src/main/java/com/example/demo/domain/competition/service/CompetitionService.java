@@ -8,23 +8,20 @@ import com.example.demo.domain.competition.entity.Competition;
 import com.example.demo.domain.competition.entity.CompetitionCSVSave;
 import com.example.demo.domain.competition.entity.Status;
 import com.example.demo.domain.competition.repository.CompetitionRepository;
-import com.example.demo.domain.competition.service.CSVSaveService;
 import com.example.demo.global.exception.ConflictException;
 import com.example.demo.global.exception.ResourceNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
 @Service
 @RequiredArgsConstructor

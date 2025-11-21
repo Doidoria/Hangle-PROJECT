@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +34,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                         l.getUser().getUserid(),
                         l.getUser().getUsername(),
                         l.getCompetitionCSVSave().getId(),
+                        l.getCompetitionCSVSave().getFileName(),
                         l.getCompetitionCSVSave().getScore(),
                         l.getAttempt(),
                         l.getSubmittedAt(),
@@ -57,6 +57,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                         l.getUser().getUserid(),
                         l.getUser().getUsername(),
                         l.getCompetitionCSVSave().getId(),
+                        l.getCompetitionCSVSave().getFileName(),
                         l.getCompetitionCSVSave().getScore(),
                         l.getAttempt(),
                         l.getSubmittedAt(),
@@ -72,24 +73,19 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
         if (leaderboardList.isEmpty()) return;
 
-        // 점수 내림차순 → 최근 제출 오름차순
-        leaderboardList.sort(Comparator
-                .comparing((Leaderboard lb) -> getCompScore(lb), Comparator.nullsLast(Comparator.reverseOrder()))
-                .thenComparing(Leaderboard::getSubmittedAt, Comparator.nullsLast(Comparator.naturalOrder()))
+
+        leaderboardList.sort(
+                Comparator
+                        .comparingDouble((Leaderboard lb) -> getCompScore(lb)) // 점수
+                        .reversed()                                            // 점수 내림차순
+                        .thenComparing(Leaderboard::getSubmittedAt)            // 오래된 제출 먼저(오름차순)
         );
-        //순위 계산 (동점자 처리)
+
         int pos = 0;
-        int currentRank = 0;
-        Double prevScore = null;
 
         for (Leaderboard lb : leaderboardList) {
             pos++;
-            Double score = getCompScore(lb);
-            if (prevScore == null || !Objects.equals(prevScore, score)) {
-                currentRank = pos;
-                prevScore = score;
-            }
-            lb.setComprank(currentRank);
+            lb.setComprank(pos);
         }
 
 
@@ -102,52 +98,46 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     }
 
-    //submit => submissionid, score
-    //submitservice에 추가 : 예시 버전 submitex에 있음
+    //변경된 버전
     public Long leaderBoardAdd(User user, Competition competition, CompetitionCSVSave competitionCSVSave){
 
-        //dto -> entity
-        Leaderboard leaderboard = Leaderboard.builder()
-                .leaderBoardId(null)
-                .competition(competition)
-                .user(user)
-                .competitionCSVSave(competitionCSVSave)
-                .attempt(1)
-                .submittedAt(LocalDateTime.now())
-                .comprank(0) //초반에 comprank업데이트 안되있음 => 0으로 초기화
-                .build();
-        leaderboardRepository.save(leaderboard);
-
-        computeRanksPerComp(competition.getId()); //rank 업데이트
-
-        return leaderboard.getLeaderBoardId();
-    }
-
-    public Long leaderBoardUpdate(LeaderboardEntryDto dto) {
+        Long competitionId =competition.getId();
+        Long userId = user.getId();
 
         //기존 리더보드 가져오기
-        Leaderboard list = leaderboardRepository.findById(dto.getLeaderBoardId()).orElse(null);
+        Leaderboard lb = leaderboardRepository
+                .findByCompetitionIdAndUserId(competitionId, userId)
+                .orElse(null);
 
-        if(list == null){
-            return null;
+        //기존 리더보드 없을 경우
+        if(lb == null) {
+
+            //dto -> entity
+            lb = Leaderboard.builder()
+                    .leaderBoardId(null)
+                    .competition(competition)
+                    .user(user)
+                    .competitionCSVSave(competitionCSVSave)
+                    .attempt(1)
+                    .submittedAt(LocalDateTime.now())
+                    .comprank(0) //초반에 comprank업데이트 안되있음 => 0으로 초기화
+                    .build();
+            leaderboardRepository.save(lb);
+        } //기존 리더보드 있을 경우
+        else{
+            Double oldScore = lb.getCompetitionCSVSave().getScore(); //예전 점수
+            Double newScore = competitionCSVSave.getScore();
+
+            lb.setAttempt(lb.getAttempt() + 1);
+            lb.setSubmittedAt(LocalDateTime.now());
+
+            if(oldScore < newScore) {
+                lb.getCompetitionCSVSave().setScore(newScore);
+            }
         }
 
-        Double oldScore = list.getCompetitionCSVSave().getScore(); //예전 점수
-        Double newScore = dto.getScore();
-
-        if(oldScore >= newScore){
-            list.setAttempt(list.getAttempt() + 1);
-            list.setSubmittedAt(LocalDateTime.now());
-        }else{
-            list.setSubmittedAt(LocalDateTime.now());
-            list.setAttempt(list.getAttempt() + 1);
-            list.getCompetitionCSVSave().setScore(newScore);
-        }
-
-        leaderboardRepository.save(list);
-
-        computeRanksPerComp(list.getCompetition().getId());
-
-        return list.getLeaderBoardId();
+        computeRanksPerComp(competition.getId()); //rank 업데이트
+        leaderboardRepository.flush(); //flush 함수 추가
+        return lb.getLeaderBoardId();
     }
 }

@@ -3,34 +3,39 @@ package com.example.demo.controller;
 import com.example.demo.domain.competition.dtos.CompetitionCreateRequest;
 import com.example.demo.domain.competition.dtos.CompetitionDto;
 import com.example.demo.domain.competition.dtos.CompetitionUpdateRequest;
-import com.example.demo.domain.competition.entity.Status;
-import com.example.demo.domain.competition.repository.CompetitionCSVSaveRepository;
-import com.example.demo.domain.competition.service.CompetitionService;
 import com.example.demo.domain.competition.entity.Competition;
 import com.example.demo.domain.competition.entity.CompetitionCSVSave;
+import com.example.demo.domain.competition.entity.Status;
+import com.example.demo.domain.competition.repository.CompetitionCSVSaveRepository;
 import com.example.demo.domain.competition.service.CSVSaveService;
+import com.example.demo.domain.competition.service.CompetitionService;
+import com.example.demo.domain.leaderboard.service.LeaderboardService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
-import com.example.demo.config.auth.service.UserService;
 import com.example.demo.domain.user.service.AppUserService;
-import com.example.demo.domain.leaderboard.service.LeaderboardService;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/api/competitions")
@@ -154,6 +159,42 @@ public class CompetitionController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("DOWNLOAD_ERROR");
+        }
+    }
+
+    //리더보드 다운로드 (추가)
+    @GetMapping("/csv/{saveId}/download2")
+    public ResponseEntity<Resource> downloadCSV2(@PathVariable Long saveId) {
+
+        System.out.println("/api/competitions/csv/${saveId}/download2");
+
+        CompetitionCSVSave save = csvSaveRepository.findById(saveId)
+                .orElse(null);
+
+        if (save == null || save.getFilePath() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        File file = new File(save.getFilePath());
+        if (!file.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        try {
+            Path path = file.toPath();
+            UrlResource resource = new UrlResource(path.toUri());
+
+            String encodedName = UriUtils.encode(save.getFileName(), StandardCharsets.UTF_8);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType("text/csv"))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + encodedName + "\"") // ★ 파일 다운로드
+                    .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()))
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

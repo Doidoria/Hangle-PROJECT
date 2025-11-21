@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Aside from './aside.jsx'
 import Header from './header.jsx'
 import Footer from './footer.jsx'
+import ChatWidget from "../components/ChatWidget.jsx";
 
 const Layout = ({children}) => {
   return (
@@ -13,6 +14,7 @@ const Layout = ({children}) => {
         {children}
       </main>
       <Footer/>
+      <ChatWidget />
     </div>
   )
 }
