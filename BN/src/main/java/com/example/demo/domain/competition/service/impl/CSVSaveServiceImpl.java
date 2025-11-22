@@ -3,7 +3,10 @@ package com.example.demo.domain.competition.service.impl;
 import com.example.demo.domain.competition.entity.Competition;
 import com.example.demo.domain.competition.entity.CompetitionCSVSave;
 import com.example.demo.domain.competition.repository.CompetitionCSVSaveRepository;
+import com.example.demo.domain.competition.repository.CompetitionRepository;
 import com.example.demo.domain.competition.service.CSVSaveService;
+import com.example.demo.domain.competition.service.ScoreService;
+import com.example.demo.domain.leaderboard.service.LeaderboardService;
 import com.example.demo.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +27,9 @@ import java.util.UUID;
 public class CSVSaveServiceImpl implements CSVSaveService {
 
     private final CompetitionCSVSaveRepository csvSaveRepository;
+    private final ScoreService scoreService;
+    private final LeaderboardService leaderboardService;
+    private final CompetitionRepository competitionRepository;
 
     @Value("${file.upload-dir}") // 값 주입
     private String uploadDir;
@@ -116,7 +122,36 @@ public class CSVSaveServiceImpl implements CSVSaveService {
                 .score(0.0)
                 .build();
 
-        return csvSaveRepository.save(save);
+        // 첫 제출인지 확인
+        boolean isFirstSubmission =
+                !csvSaveRepository.existsByCompetitionIdAndUserid(competition.getId(), user.getUserid());
+
+        save = csvSaveRepository.save(save);
+
+        // 2) 점수 계산 (핵심 부분)
+        String answerPath = competition.getTestFilePath();
+        if (answerPath == null || answerPath.isBlank()) {
+            throw new RuntimeException("정답 파일(test.csv) 경로가 존재하지 않습니다.");
+        }
+        String submitPath = save.getFilePath();
+
+        // ScoreService 실행 → Python 채점
+        double score = scoreService.runScore(competition, answerPath, submitPath);
+
+        // 계산된 점수 저장
+        save.setScore(score);
+        csvSaveRepository.save(save);
+
+        // 참가자 수 +1
+        if (isFirstSubmission) {
+            competition.setParticipantCount(competition.getParticipantCount() + 1);
+            competitionRepository.save(competition);
+        }
+
+        // 리더보드 반영
+        leaderboardService.leaderBoardAdd(user, competition, save);
+
+        return save;
     }
 
 }

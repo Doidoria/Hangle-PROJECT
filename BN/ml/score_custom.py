@@ -1,4 +1,9 @@
+import os
 import sys
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, "helpers"))
+
 import pandas as pd
 
 gt_path = sys.argv[1]

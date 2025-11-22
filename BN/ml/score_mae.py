@@ -1,15 +1,26 @@
 import sys
-import pandas as pd
+import os
 import numpy as np
 
-gt_path = sys.argv[1]
-pred_path = sys.argv[2]
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, "helpers"))
 
-gt = pd.read_csv(gt_path)
-pred = pd.read_csv(pred_path)
+from helpers.common import load_csv, find_label_column, validate_same_rows
 
-g = gt["label"]
-p = pred["label"]
+gt = load_csv(sys.argv[1])
+pred = load_csv(sys.argv[2])
 
-mae = np.abs(g - p).mean()
+gt_col = find_label_column(gt)
+pred_col = find_label_column(pred)
+
+if gt_col is None or pred_col is None:
+    print(-1)
+    exit(0)
+
+if not validate_same_rows(gt, pred):
+    print(-1)
+    exit(0)
+
+mae = np.abs(gt[gt_col] - pred[pred_col]).mean()
 print(mae)

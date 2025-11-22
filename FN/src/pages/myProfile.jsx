@@ -19,7 +19,7 @@ const MyProfile = () => {
     const [loading, setLoading] = useState(true);
     const [introduction, setIntroduction] = useState('');
     const [editing, setEditing] = useState(false);
-    const [originalIntroduction, setOriginalIntroduction] = useState(''); 
+    const [originalIntroduction, setOriginalIntroduction] = useState('');
 
     const formatDate = (dateString, includeTime = false) => {
         if (!dateString) return '';

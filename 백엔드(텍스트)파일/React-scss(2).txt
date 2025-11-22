@@ -1,0 +1,1784 @@
+/* =======================================
+   File: src/css/CompetitionList.scss
+   ======================================= */
+.comp-list {
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search {
+      display: inline-flex;
+      gap: 6px;
+    }
+
+    .primary {
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+    }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    background: var(--surface);
+    box-shadow: var(--shadow-md);
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    .status-open {
+      background: rgba(34, 197, 94, .12);
+      border-color: rgba(34, 197, 94, .35);
+    }
+
+    .status-upcoming {
+      background: rgba(59, 130, 246, .12);
+      border-color: rgba(59, 130, 246, .35);
+    }
+
+    .status-closed {
+      background: rgba(107, 114, 128, .12);
+      border-color: rgba(107, 114, 128, .35);
+    }
+
+    .metric {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .title {
+      margin: 6px 0;
+      line-height: 1.3;
+    }
+
+    .purpose {
+      color: var(--muted);
+      min-height: 2.6em;
+    }
+
+    .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .foot {
+      margin-top: 10px;
+    }
+
+    .ghost {
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: var(--bg);
+    }
+  }
+
+  .pagination {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 16px;
+
+    button {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 8px;
+    }
+
+    .pageinfo {
+      margin: 0 6px;
+    }
+  }
+
+  .state {
+    padding: 12px;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin: 10px 0;
+  }
+
+  .state.error {
+    background: rgba(239, 68, 68, .12);
+    border-color: rgba(239, 68, 68, .35);
+    color: var(--error);
+  }
+}
+
+/* =======================================
+   File: header.scss
+   ======================================= */
+.topbar {
+  grid-area: topbar;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--nav);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+
+  .header-search {
+    flex: 1;
+    max-width: 820px;
+    position: relative;
+
+    input {
+      width: 100%;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      padding: 0 120px 0 40px;
+      outline: none;
+
+      &::placeholder {
+        color: var(--muted);
+      }
+
+      &:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--ring);
+      }
+    }
+
+    .icon {
+      position: absolute;
+      left: 12px;
+      top: 55%;
+      transform: translateY(-50%);
+      color: var(--icon-muted);
+    }
+
+    .kbd {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: var(--icon-muted);
+      background: rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 6px;
+    }
+  }
+
+  .top-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      gap: 6px;
+      color: var(--text);
+      font-weight: 700;
+      padding: 6px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      img.theme-icon {
+        width: 22px;
+        height: 22px;
+        display: block;
+      }
+
+      .theme-dark & {
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
+    }
+
+    .login-btn {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--primary);
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 30px;
+
+      &:hover {
+        box-shadow: 0 0 0 3px var(--ring);
+      }
+    }
+
+    .logout-btn {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--logoutbtn);
+      cursor: pointer;
+      font-weight: 800;
+      color: #fff;
+      line-height: 30px;
+
+      &:hover {
+        box-shadow: 0 0 0 3px var(--logout-ring);
+      }
+    }
+
+    .profile-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+
+      .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        display: block;
+      }
+
+      .avatar {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.9rem;
+        color: #0f766e;
+        background: var(--badge);
+      }
+
+      &:hover {
+        border: 2px solid var(--primary);
+      }
+    }
+  }
+
+  .btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.15s;
+
+    &:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* =======================================
+   File: src/css/Competition.scss
+   ======================================= */
+/* 대회 공통 테마 + 레이아웃 + 공통 컴포넌트 스타일 */
+
+/* ===================
+   1) 섹션 래퍼 & 기본
+   =================== */
+
+.section-wrap {
+  grid-area: main;
+  padding: 30px 35px;
+  animation: fadeIn 0.2s ease-out;
+  color: var(--text);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 타이틀 영역 */
+.competition-title {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 22px;
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--muted);
+  }
+}
+
+/* =========================
+   2) 글로벌 베이스 (페이지 내)
+   ========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    'Noto Sans KR',
+    '맑은 고딕',
+    Arial,
+    sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 800px at 10% 0%, rgba(16,185,129,.10), transparent 60%),
+    radial-gradient(1000px 600px at 100% 100%, rgba(56,189,248,.10), transparent 60%),
+    var(--bg);
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--primary-hover);
+}
+
+.container {
+  width: min(1080px, 92%);
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+/* =========================
+   3) 공통 카드 / 버튼 / 인풋
+   ========================= */
+
+/* 카드 공통 */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+  transition: 0.18s ease-in-out;
+  color: var(--text);
+  opacity: 0;
+  transform: translateX(50px);
+  animation: slideInRight 0.5s ease-out forwards;
+
+  &:hover {
+    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+}
+
+/* 카드 애니메이션 */
+@keyframes slideInRight {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* 버튼 기본 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, #ffffff, #f3f4f6);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: .15s ease-in-out;
+  box-shadow: var(--shadow);
+
+  &:hover {
+    background: var(--bg-hover-light, #ebebeb);
+  }
+}
+
+/* 버튼 변형 */
+.btn-ghost {
+  background: transparent;
+  border-color: var(--primary);
+  color: var(--primary);
+
+  &:hover {
+    background: rgba(16, 185, 129, 0.1);
+  }
+}
+
+.btn-primary,
+.btn-accent {
+  background: linear-gradient(180deg, var(--primary), var(--primary-hover));
+  border-color: transparent;
+  color: #ffffff;
+  font-weight: 700;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+}
+
+/* 인풋류 공통 */
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--text);
+  transition: 0.15s ease-out;
+  font: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--ring);
+  }
+}
+
+.textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+/* =========================
+   4) 대회 메인 섹션 레이아웃
+   ========================= */
+
+.section-wrap {
+  /* 타이틀 + 그리드 레이아웃 */
+  .competition-title {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: 0.2px;
+      color: var(--text);
+    }
+
+    p {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+  }
+
+  /* 공통 그리드 */
+  .grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: stretch;
+  }
+
+  .competition-section {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* 한 줄에 카드 1개 (리스트 레이아웃) */
+  .competition-list {
+    grid-template-columns: 1fr;
+  }
+
+  /* 대회 카드 */
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    text-align: left;
+
+    h3 {
+      font-size: 16px;
+      margin-bottom: 5px;
+      line-height: 1.4;
+    }
+
+    p.muted {
+      margin-bottom: 5px;
+      color: var(--muted);
+
+      &.small {
+        font-size: 13px;
+      }
+    }
+
+    a.link {
+      align-self: flex-start;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    input[type='file'] {
+      margin: 10px 0;
+    }
+
+    button.btn {
+      align-self: flex-start;
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+
+      &:hover {
+        background: var(--primary-hover);
+      }
+    }
+  }
+
+  .card-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--badge);
+    color: #065f46;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-weight: 800;
+    font-size: 12px;
+    align-self: flex-start;
+    width: auto;
+  }
+
+  .competition-card {
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .card-top-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      h3 {
+        margin: 0;
+      }
+    }
+
+    .btn.btn-ghost {
+      align-self: auto;
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 6px 12px;
+      border-radius: 999px;
+
+      &:hover {
+        background: rgba(16, 185, 129, 0.06);
+      }
+    }
+
+    .card-main {
+      display: flex;
+      gap: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+      flex-wrap: nowrap;
+    }
+
+    .card-col {
+      flex: 1;
+      min-width: 0;
+
+      h4 {
+        margin: 0 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+    }
+
+    .card-info {
+      .meta-list {
+        margin: 8px 0 12px;
+        padding-left: 16px;
+
+        li {
+          font-size: 14px;
+          margin-bottom: 2px;
+        }
+      }
+    }
+
+    .card-download {
+      .download-links {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 6px;
+      }
+    }
+
+    .card-submit {
+      /* 필요하면 나중에 추가 */
+    }
+
+    .card-bottom {
+      margin-top: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+
+      display: flex;
+      width: 100%;              /* 카드 전체 폭 사용 */
+      justify-content: flex-start; /* 왼쪽 정렬 */
+      align-items: center;
+      gap: 12px;
+
+      input[type='file'] {
+        margin: 0;
+      }
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .competition-card {
+      .card-main {
+        flex-direction: column;
+      }
+
+      .card-bottom {
+        justify-content: flex-start;
+      }
+    }
+  }
+}
+
+/* ============================
+   5) 다크 모드 파일 선택 버튼
+   ============================ */
+
+html.theme-dark input[type="file"] {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+/* Chromium 계열 */
+html.theme-dark input[type="file"]::-webkit-file-upload-button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.15s ease-out;
+}
+
+html.theme-dark input[type="file"]::-webkit-file-upload-button:hover {
+  background: var(--primary-hover);
+}
+
+/* 표준 셀렉터 */
+html.theme-dark input[type="file"]::file-selector-button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.15s ease-out;
+}
+
+html.theme-dark input[type="file"]::file-selector-button:hover {
+  background: var(--primary-hover);
+}
+
+/* =======================================
+   File: footer.scss
+   ======================================= */
+/* ========= Footer ========= */
+footer {
+  grid-area: footer;
+  border-top: 1px solid var(--border);
+  background: var(--nav);
+  padding: 24px 28px;
+  color: var(--muted);
+
+  .footer-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .footer-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      margin-bottom: 12px;
+
+      .footer-col {
+        h4 {
+          margin: 0 0 8px;
+          color: var(--text);
+          font-size: 14px;
+        }
+
+        a {
+          display: block;
+          color: var(--muted);
+          text-decoration: none;
+          padding: 4px 0;
+
+          &:hover {
+            color: var(--text);
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    .copyright {
+      font-size: 12px;
+      color: var(--muted);
+    }
+  }
+}
+
+/* =======================================
+   File: src/css/CompetitionCreate.scss
+   ======================================= */
+.comp-create {
+  .back {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: var(--muted);
+  }
+
+  h1 {
+    margin: 0 0 16px;
+  }
+
+  form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    display: grid;
+    gap: 16px;
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--bg);  /* 카드보다 살짝 어두운 배경 */
+        color: var(--text);
+      }
+
+      textarea {
+        min-height: 140px;
+        resize: vertical;
+      }
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      background: var(--surface);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--ring);
+    }
+
+    .row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 640px) {
+      .row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .error {
+      color: var(--error);
+      background: rgba(239, 68, 68, .12);
+      border: 1px solid rgba(239, 68, 68, .35);
+      padding: 10px 12px;
+      border-radius: 10px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+
+      .primary {
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: .15s;
+      }
+
+      .primary:disabled {
+        opacity: .6;
+        cursor: default;
+      }
+
+      .primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+
+      button:not(.primary) {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+      }
+    }
+  }
+}
+
+/* =======================================
+   File: FaqPage.scss
+   ======================================= */
+.faq-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    color: var(--text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.faq-title {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 30px;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* 검색 & 카테고리 */
+.faq-controls {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.faq-search {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 15px;
+    background: var(--top-faqs-bg);
+    color: var(--text);
+    transition: all 0.2s ease;
+
+    &:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3 rgba(var(--primary-rgb), 0.2);
+        outline: none;
+    }
+}
+
+.faq-categories {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    button {
+        background: var(--top-faqs-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 6px 14px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        transition: all 0.2s;
+
+        &:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        &.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+    }
+}
+
+/* 자주 묻는 질문 */
+.top-faqs {
+    background: var(--top-faqs-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+
+    h3 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 18px;
+        color: var(--primary);
+        margin-bottom: 10px;
+
+        .material-symbols-outlined {
+            font-size: 1.5em;
+        }
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+
+            &:hover {
+                color: var(--primary);
+                transform: translateX(4px);
+            }
+        }
+    }
+}
+
+
+/* FAQ 목록 */
+.faq-item {
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    overflow: hidden;
+
+    .faq-question {
+        padding: 14px 10px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: color 0.2s;
+
+        &:hover {
+            color: var(--primary);
+        }
+    }
+
+    .faq-answer-wrapper {
+        overflow: hidden;
+        height: 0;
+        transition: height 0.3s ease, opacity 0.3s ease;
+        opacity: 0;
+
+        &.open {
+            opacity: 1;
+        }
+    }
+
+    .faq-answer {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+
+        background: var(--badge);
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-size: 14px;
+        color: var(--text);
+        line-height: 1.6;
+
+        .faq-icon {
+            font-size: 22px;
+            color: var(--primary);
+        }
+
+        .faq-answer-text {
+            flex: 1;
+            line-height: inherit;
+        }
+    }
+}
+
+/* 문의 작성 버튼 */
+.faq-footer {
+    justify-content: center;
+    display: flex;
+    text-align: center;
+    margin-top: 30px;
+    gap: 15px;
+
+    button {
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+    }
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+    .faq-container {
+        padding: 15px;
+    }
+
+    .faq-title {
+        font-size: 22px;
+    }
+
+    .faq-search {
+        max-width: 100%;
+    }
+}
+
+/* =======================================
+   File: aside.scss
+   ======================================= */
+.sidebar {
+  grid-area: sidebar;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: var(--nav);
+  border-right: 1px solid var(--border);
+  padding: 12px 12px 16px;
+
+  .nav-group {
+    margin-top: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 600;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      background: var(--badge);
+    }
+  }
+
+  .nav-create {
+    min-width: 130px;
+    height: 50px;
+    margin: 8px 0 12px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 10px;
+    padding: 8px 15px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    width: max-content;
+
+    &:hover {
+      background: var(--primary-hover);
+    }
+  }
+}
+
+/* =======================================
+   File: ChatWidget.scss
+   ======================================= */
+/* ---------------------------------------
+   ChatWidget 전체 컨테이너
+--------------------------------------- */
+.chat-widget-root {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ---------------------------------------
+   플로팅 버튼
+--------------------------------------- */
+.chat-widget-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--surface, #ffffff);
+  box-shadow: var(--shadow, 0 6px 18px rgba(0, 0, 0, 0.12));
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text, #111827);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.chat-widget-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  background: var(--bg-textarea)
+}
+
+.chat-widget-icon {
+  img{
+    width: 20px;
+  }
+}
+
+.chat-widget-label {
+  white-space: nowrap;
+}
+
+/* ---------------------------------------
+   챗봇 패널
+--------------------------------------- */
+.chat-widget-panel {
+  position: absolute;
+  right: 0;
+  bottom: 54px;
+  width: 360px;
+  max-height: 600px;
+
+  background: var(--surface, #ffffff);
+  border-radius: 18px;
+  overflow: hidden;
+
+  border: 1px solid var(--border, #e5e7eb);
+  box-shadow: var(--shadow, 0 18px 40px rgba(15, 23, 42, 0.45));
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------------------------------
+   헤더
+--------------------------------------- */
+.chat-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.12),
+    rgba(37, 99, 235, 0.05)
+  );
+}
+
+.chat-widget-header .title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.chat-widget-header .subtitle {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.close-btn {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 4px 6px;
+  border-radius: 8px;
+}
+
+.close-btn:hover {
+  background: rgba(148, 163, 184, 0.15);
+}
+
+/* ---------------------------------------
+   모드 전환 버튼 영역
+--------------------------------------- */
+.chat-mode-switch {
+  display: flex;
+  gap: 6px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.chat-mode-switch button {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.chat-mode-switch button.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+
+/* ---------------------------------------
+  초기화 버튼
+--------------------------------------- */
+.exit-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    background: var(--closebtn-bg);
+    color: #fff;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  .material-symbols-outlined {
+    font-size: 15px;
+  }
+}
+
+/* 채팅 상단에 나가기 버튼을 놓는 경우 위한 래퍼 */
+.chat-header-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+
+/* ---------------------------------------
+   추천 질문 영역
+--------------------------------------- */
+.chat-recommendations {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.recommend-chip {
+  padding: 6px 10px;
+  font-size: 11px;
+  border-radius: 999px;
+  background: var(--bg-textarea);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: 0.15s ease;
+  color: var(--textarea-text);
+}
+
+.recommend-chip:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* ---------------------------------------
+   메시지 영역
+--------------------------------------- */
+.chat-widget-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 10px 4px;
+  background: var(--bg);
+}
+
+/* 스크롤바 스타일 */
+.chat-widget-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-widget-messages::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.chat-widget-messages::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.chat-widget-messages::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
+}
+
+/* Firefox */
+.chat-widget-messages {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) rgba(0, 0, 0, 0.1);
+}
+
+/* ---------------------------------------
+   메시지 버블
+--------------------------------------- */
+.chat-message {
+  margin-bottom: 8px;
+  display: flex;
+}
+
+.chat-message.user {
+  justify-content: flex-end;
+}
+
+.chat-message.assistant {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: 80%;
+  border-radius: 14px;
+  padding: 2px 12px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* 사용자 메시지 */
+.chat-message.user .bubble {
+  background: var(--primary);
+  color: #fff;
+  border-bottom-right-radius: 2px;
+}
+
+/* 봇 메시지 */
+.chat-message.assistant .bubble {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-bottom-left-radius: 2px;
+}
+
+/* ---------------------------------------
+   API 링크칩 (개발자 모드)
+--------------------------------------- */
+.api-links {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.api-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: var(--bg-textarea);
+
+  text-decoration: none;
+  color: var(--text);
+}
+
+.api-link-chip .method {
+  font-weight: bold;
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.api-link-chip .path {
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------------------------------------
+   typing animation (로딩)
+--------------------------------------- */
+.bubble.typing {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.bubble.typing .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.9);
+  animation: typingBounce 1s infinite;
+}
+
+.bubble.typing .dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.bubble.typing .dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typingBounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  40% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------
+   입력창
+--------------------------------------- */
+.chat-widget-input {
+  border-top: 1px solid var(--border);
+  padding: 8px;
+  background: var(--surface);
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chat-widget-input textarea {
+  flex: 1;
+  resize: none;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  font-size: 12px;
+
+  background: var(--bg);
+  color: var(--text);
+}
+
+.chat-widget-input textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--ring, rgba(16, 185, 129, 0.3));
+}
+
+/* textarea 스크롤 */
+.chat-widget-input textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-widget-input textarea::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 6px;
+}
+
+.send-btn {
+  padding: 10px 10px;
+  font-size: 12px;
+  font-weight: 600;
+
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  transition: 0.15s ease;
+}
+
+.send-btn:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.send-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+// 링크
+.chat-link-btn {
+  display: inline-block;
+  margin: 0 0 5px 0;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+/* ---------------------------------------
+   모바일 대응
+--------------------------------------- */
+@media (max-width: 768px) {
+  .chat-widget-panel {
+    width: 300px;
+    max-height: 450px;
+  }
+
+  .chat-widget-label {
+    display: none;
+  }
+}
+
+/* =======================================
+   File: src/css/CompetitionDetail.scss
+   ======================================= */
+.comp-detail {
+  .back {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: var(--muted);
+  }
+
+  .hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    margin-bottom: 24px;
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+    }
+
+    .meta {
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .prize {
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .links {
+      display: flex;
+      gap: 12px;
+    }
+
+    .links .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: .15s;
+      box-shadow: var(--shadow-md);
+    }
+
+    .links .btn:hover {
+      box-shadow: 0 0 0 3px var(--ring);
+    }
+  }
+
+  .desc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+  }
+
+  .detail-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px 0;
+
+    .wide-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 28px;
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      transition: 0.2s;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      }
+
+      h3 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        font-size: 18px;
+        color: var(--primary);
+      }
+
+      .card-content {
+        line-height: 1.8;
+        font-size: 15px;
+      }
+    }
+  }
+}

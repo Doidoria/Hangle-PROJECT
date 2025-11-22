@@ -1,4 +1,9 @@
+import os
 import sys
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, "helpers"))
+
 from helpers.common import load_csv, find_label_column, validate_same_rows
 
 gt = load_csv(sys.argv[1])

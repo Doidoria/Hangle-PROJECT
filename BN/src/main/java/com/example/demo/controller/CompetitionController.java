@@ -54,7 +54,6 @@ public class CompetitionController {
     private final AppUserService appUserService;
     private final LeaderboardService leaderboardService;
     private final CompetitionCSVSaveRepository csvSaveRepository;
-    private final ScoreService scoreService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -134,45 +133,11 @@ public class CompetitionController {
             return ResponseEntity.badRequest().body("INVALID_COMPETITION");
         }
 
-        // 3) CSV 저장
+        // 3) CSV 저장 + 점수 계산 + 리더보드 반영 (모두 saveCSV 안에서 처리)
         CompetitionCSVSave save = csvSaveService.saveCSV(file, user, competition);
 
-        // 4) Leaderboard 기록 생성
-        leaderboardService.leaderBoardAdd(user, competition, save);
-
-        // 5) 자동 채점 실행 (Python 호출)
-        scoreService.runScore(competition, competition.getTestFilePath(), save.getFilePath())
-                .thenAccept(score -> { // 채점 완료 시 이 블록이 별도 스레드에서 실행됩니다.
-
-                    if (score < 0) {
-                        // 채점 스크립트 오류 발생 (로그는 ScoreService에서 남겼을 것)
-                        // 실패 처리를 위해 score를 -1로 유지하고 DB에 저장
-                        save.setScore(-1.0);
-                        csvSaveRepository.save(save);
-                        return;
-                    }
-
-                    // 6) 제출 CSV의 score 업데이트
-                    save.setScore(score);
-                    csvSaveRepository.save(save);
-
-                    // 7) Leaderboard 점수 반영 (랭킹 로직 실행)
-                    leaderboardService.updateScore(user, competition, score);
-
-                })
-                .exceptionally(ex -> { // 비동기 작업 중 예외 발생 시 처리
-                    log.error("비동기 채점 프로세스 최종 오류 발생:", ex);
-                    // DB에 실패 기록 (-1.0) 남기기
-                    save.setScore(-1.0);
-                    csvSaveRepository.save(save);
-                    return null;
-                });
-
-        // 8) 클라이언트에게 즉시 응답 반환
-        // HTTP 202 Accepted (요청 접수 완료) 코드를 사용하는 것이 일반적입니다.
-        return ResponseEntity
-                .accepted()
-                .body("SUBMIT_ACCEPTED: 제출이 접수되었으며 백그라운드에서 채점 중입니다.");
+        // 성공 응답
+        return ResponseEntity.ok("SUBMISSION_OK");
     }
 
     @GetMapping("/csv/{saveId}/download")

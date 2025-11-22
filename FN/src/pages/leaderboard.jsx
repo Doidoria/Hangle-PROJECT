@@ -194,7 +194,7 @@ const Leaderboard = () => {
                                             <tr key={entry.leaderBoardId}>
                                                 <td>{entry.comprank}</td>
                                                 <td>{entry.username}</td>
-                                                <td>{entry.score}</td>
+                                                <td>{(entry.score * 100).toFixed(2)} 점</td>
                                                 <td>{entry.attempt}</td>
                                                 <td>
                                                     {new Date(entry.submittedAt).toLocaleString("ko-KR", {

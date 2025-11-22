@@ -1,0 +1,1178 @@
+/* header.jsx */
+import '../css/header.scss'
+import { SearchBox, ThemeToggle, HeaderButtons, Profilebtn} from '../components/header-btn'
+
+const Header = () => {
+
+  return (
+    <header className="topbar" aria-label="상단바">
+      <SearchBox />
+      <div className="top-actions">
+        <ThemeToggle />
+        <HeaderButtons/>
+        <Profilebtn/>
+      </div>
+    </header>
+  )
+}
+export default Header
+
+/* aside.jsx */
+import '../css/aside.scss'
+import { Link } from 'react-router-dom';
+import { useAuth } from '../api/AuthContext';
+
+const Aside = () => {
+    const { role, isLoading } = useAuth();
+    if (isLoading) return null;
+
+    const userRole = role?.toUpperCase();
+
+    // 일반 USER 메뉴
+    const UserMenu = () => (
+        <>
+            <Link to="/competitions/user" className="nav-create active">
+                <img src="/image/+.png" alt="참여" style={{ width: 14 }} />
+                대회 참여
+            </Link>
+
+            <nav className="nav-group">
+                <Link to="/mydata" className="nav-item">
+                    <span className="material-symbols-outlined">dataset</span>
+                    <span>마이데이터</span>
+                </Link>
+            </nav>
+
+            <nav className="nav-group">
+                <Link to="/leaderboard" className="nav-item">
+                    <span className="material-symbols-outlined">trophy</span>
+                    <span>리더보드</span>
+                </Link>
+            </nav>
+
+            <nav className="nav-group">
+                <Link to="/FaqPage" className="nav-item">
+                    <span className="material-symbols-outlined">support_agent</span>
+                    <span>고객센터</span>
+                </Link>
+            </nav>
+        </>
+    );
+
+    // 매니저 메뉴 — (유저 메뉴 포함 X)
+    const ManagerMenu = () => (
+        <>
+            <Link to="/competitions/user" className="nav-create active">
+                <img src="/image/+.png" alt="관리" style={{ width: 14 }} />
+                대회 참여
+            </Link>
+            <nav className="nav-group">
+                <Link to="/competitions/new" className="nav-item">
+                    <span className="material-symbols-outlined">add_circle</span>
+                    <span>대회 생성</span>
+                </Link>
+            </nav>
+            <nav className="nav-group">
+                <Link to="/competitions/list" className="nav-item">
+                    <span className="material-symbols-outlined">list</span>
+                    <span>대회 전체 관리</span>
+                </Link>
+            </nav>
+            <nav className="nav-group">
+                <Link to="/leaderboard" className="nav-item">
+                    <span className="material-symbols-outlined">trophy</span>
+                    <span>리더보드</span>
+                </Link>
+            </nav>
+            <nav className="nav-group">
+                <Link to="/admin/inquiries" className="nav-item">
+                    <span className="material-symbols-outlined">admin_panel_settings</span>
+                    <span>1:1 문의 관리</span>
+                </Link>
+            </nav>
+        </>
+    );
+
+    // 관리자 메뉴 — (유저 메뉴 포함 X)
+    const AdminMenu = () => (
+        <>
+            <Link to="/competitions/user" className="nav-create active">
+                <img src="/image/+.png" alt="관리" style={{ width: 14 }} />
+                대회 참여
+            </Link>
+            <nav className="nav-group">
+                <Link to="/competitions/new" className="nav-item">
+                    <span className="material-symbols-outlined">add_circle</span>
+                    <span>대회 생성</span>
+                </Link>
+            </nav>
+            <nav className="nav-group">
+                <Link to="/competitions/list" className="nav-item">
+                    <span className="material-symbols-outlined">list</span>
+                    <span>대회 전체 관리</span>
+                </Link>
+            </nav>
+            <nav className="nav-group">
+                <Link to="/leaderboard" className="nav-item">
+                    <span className="material-symbols-outlined">trophy</span>
+                    <span>리더보드</span>
+                </Link>
+            </nav>
+            <nav className="nav-group">
+                <Link to="/admin/inquiries" className="nav-item">
+                    <span className="material-symbols-outlined">admin_panel_settings</span>
+                    <span>1:1 문의 관리</span>
+                </Link>
+            </nav>
+        </>
+    );
+
+    return (
+        <aside className="sidebar" aria-label="왼쪽 내비게이션">
+            <Link to="/" className="logo" aria-label="메인 이동">
+                <span className="dot" aria-hidden="true" />
+                <span className="name">Hangle</span>
+            </Link>
+
+            {/* 권한별로 완전히 분리 출력 */}
+            {{
+                'ROLE_ADMIN': <AdminMenu />,
+                'ROLE_MANAGER': <ManagerMenu />,
+                'ROLE_USER': <UserMenu />
+            }[userRole] || <UserMenu />}
+        </aside>
+    );
+};
+
+export default Aside;
+
+
+/* Competition.jsx */
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../api/axiosConfig";
+import "../css/Competition.scss";
+
+const API_BASE_URL = api.defaults.baseURL || "";
+
+const Competition = () => {
+  const navigate = useNavigate();
+
+  const [competitions, setCompetitions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [files, setFiles] = useState({}); // 각 대회별 업로드 파일
+
+  useEffect(() => {
+    const fetchCompetitions = async () => {
+      try {
+        const res = await api.get("/api/competitions", {
+          params: { status: "OPEN", page: 0, size: 12 },
+        });
+
+        const data = res.data;
+        let list = [];
+
+        if (Array.isArray(data)) list = data;
+        else if (Array.isArray(data?.content)) list = data.content;
+        else if (Array.isArray(data?.items)) list = data.items;
+
+        if (!list.length) {
+          setErrorMsg("현재 진행 중인 대회가 없습니다.");
+        } else {
+          setCompetitions(list);
+        }
+      } catch (e) {
+        console.error("[대회 조회 오류]", e);
+        setErrorMsg("대회 정보를 불러오지 못했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCompetitions();
+  }, []);
+
+  const handleFileChange = (competitionId, e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFiles((prev) => ({
+      ...prev,
+      [competitionId]: file,
+    }));
+  };
+
+  const downloadFile = async (saveId, fileName) => {
+    try {
+      const res = await api.get(`/api/competitions/csv/${saveId}/download`, {
+        responseType: "blob",
+      });
+
+      // Blob 생성
+      const blob = new Blob([res.data], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+
+      // 가짜 링크 생성
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      // URL 해제
+      window.URL.revokeObjectURL(url);
+
+    } catch (e) {
+      console.error("[파일 다운로드 오류]", e);
+      alert("파일 다운로드 중 문제가 발생했습니다.");
+    }
+  };
+
+  const submitFile = async (competitionId) => {
+    const file = files[competitionId];
+    if (!file) {
+      alert("CSV 파일을 선택하세요.");
+      return;
+    }
+
+    const isCsv = /\.csv$/i.test(file.name);
+    const isUnder5MB = file.size <= 5 * 1024 * 1024;
+    if (!isCsv) {
+      alert("CSV 파일만 업로드할 수 있습니다.");
+      return;
+    }
+    if (!isUnder5MB) {
+      alert("파일 크기는 5MB 이하만 허용됩니다.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // TODO: 실제 로그인 유저 id로 교체
+      const userid = localStorage.getItem("userid") || "test_user";
+      formData.append("userid", userid);
+
+      await api.post(
+        `/api/competitions/${competitionId}/submit`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      alert(`"${file.name}" 제출 완료! 점수 계산 중입니다.`);
+      window.location.reload(); // 페이지 새로고침 (제출 시 참가자 바로 반영을 위해 사용)
+
+      // 제출 후 해당 대회 파일 선택 상태 초기화 (선택사항)
+      setFiles((prev) => ({
+        ...prev,
+        [competitionId]: undefined,
+      }));
+    } catch (e) {
+      console.error("[제출 실패]", e);
+      alert("제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
+  };
+
+  const Section = () => {
+    if (loading) {
+      return (
+        <div className="competition-section">
+          <div className="grid competition-list">
+            <article className="card">
+              <h3>대회 정보를 불러오는 중입니다...</h3>
+            </article>
+          </div>
+        </div>
+      );
+    }
+
+    if (errorMsg) {
+      return (
+        <div className="competition-section">
+          <div className="grid competition-list">
+            <article className="card">
+              <h3>대회 정보</h3>
+              <p className="muted">{errorMsg}</p>
+            </article>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="competition-section">
+        <div className="grid competition-list">
+          {competitions.map((competition) => {
+            const {
+              id,
+              title,
+              purpose,
+              startAt,
+              endAt,
+              status,
+              prizeTotal,
+              participantCount,
+            } = competition;
+
+            // 대회 상세 API 결과를 competition 변수에 넣었다고 가정
+            const trainId = competition.trainDatasetSaveId;
+            const testId = competition.testDatasetSaveId;
+
+            const selectedFile = files[id];
+
+            return (
+              <article key={id} className="card competition-card">
+                {/* 상단: 왼쪽 제목, 오른쪽 자세히 보기 */}
+                <div className="card-top">
+                  <div className="card-top-left">
+                    <span className="card-title">대회 카드</span>
+                    <h3>{title || "대회 제목 미정"}</h3>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-ghost"
+                    onClick={() => navigate(`/competitions/${id}`)}
+                  >
+                    자세히 보기
+                  </button>
+                </div>
+
+                {/* 가운데: 3등분 레이아웃 */}
+                <div className="card-main">
+                  {/* 1) 대회 정보 */}
+                  <div className="card-col card-info">
+                    <h4>대회 정보</h4>
+                    <p className="muted">
+                      {purpose || "대회 설명이 없습니다."}
+                    </p>
+                    <ul className="meta-list">
+                      <li>
+                        상태: <code>{status}</code>
+                      </li>
+                      <li>
+                        기간: {startAt} ~ {endAt}
+                      </li>
+                      <li>
+                        참가자 수: {participantCount ?? 0}명
+                      </li>
+                      {prizeTotal && (
+                        <li>총 상금: {prizeTotal.toLocaleString()}원</li>
+                      )}
+                    </ul>
+                  </div>
+
+                  {/* 2) 데이터 다운로드 */}
+                  <div className="card-col card-download">
+                    <h4>데이터 다운로드</h4>
+                    <p className="muted small">
+                      Train / Test 파일을 내려받아 모델을 학습하세요.
+                    </p>
+                    <div className="download-links">
+                      {/* <a
+                        href={`${API_BASE_URL}/api/competitions/${id}/dataset/train`}
+                        className="link"
+                      >
+                        train.csv 다운로드
+                      </a>
+                      <a
+                        href={`${API_BASE_URL}/api/competitions/${id}/dataset/test`}
+                        className="link"
+                      >
+                        test.csv 다운로드
+                      </a> */}
+                      <button
+                        className="link"
+                        onClick={() => downloadFile(trainId, "train.csv")}
+                      >
+                        train.csv 다운로드
+                      </button>
+
+                      <button
+                        className="link"
+                        onClick={() => downloadFile(testId, "test.csv")}
+                      >
+                        test.csv 다운로드
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 3) 결과 제출 (설명만) */}
+                  <div className="card-col card-submit">
+                    <h4>결과 제출</h4>
+                    <p className="muted small">
+                      예측 결과 CSV를 업로드하면 점수가 자동 계산된다고
+                      가정합니다.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 하단: 파일 선택 + 제출하기 */}
+                <div className="card-bottom">
+                  {/* 실제 파일 인풋은 숨김 */}
+                  <input
+                    id={`csv-input-${id}`}
+                    type="file"
+                    accept=".csv,text/csv"
+                    style={{ display: "none" }}
+                    aria-label={`대회 ${id} 예측 결과 CSV 업로드`}
+                    onChange={(e) => handleFileChange(id, e)}
+                  />
+
+                  {/* 파일 선택 버튼 (label이 input을 대신 클릭) */}
+                  <label
+                    htmlFor={`csv-input-${id}`}
+                    className="btn btn-outline"
+                    style={{ marginRight: "8px", cursor: "pointer" }}
+                  >
+                    파일 선택
+                  </label>
+
+                  {/* 선택된 파일명 표시 */}
+                  <span className="file-name muted" style={{ marginRight: "auto" }}>
+                    {selectedFile
+                      ? `선택된 파일: ${selectedFile.name}`
+                      : '제출 CSV 컬럼명은 반드시 ( label )해주세요.'}
+                  </span>
+
+                  {/* 제출 버튼 */}
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() => submitFile(id)}
+                    disabled={!selectedFile}
+                  >
+                    제출하기
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <section className="section-wrap">
+      <div className="competition-title">
+        <div>
+          <h1>대회 참여</h1>
+          <p>다양한 대회에 참여해보세요!</p>
+        </div>
+      </div>
+      <Section />
+    </section>
+  );
+};
+
+export default Competition;
+
+
+
+/* CompetitionCreate.jsx */
+// src/pages/CompetitionCreate.jsx
+// src/pages/CompetitionCreate.jsx
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import api from '../api/axiosConfig';
+import AutoCompetitionButton from '../components/CreateAllCompetitions';
+
+// CompetitionCreate.jsx
+import "../css/Competition.scss";
+import "../css/CompetitionCreate.scss";
+
+function CompetitionCreate() {
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    title: '',
+    description: '',        // 목적(한 줄) -> backend purpose
+    detail: '',             // ✅ 상세 설명
+    startAt: '',            // "YYYY-MM-DDTHH:mm"
+    endAt: '',
+    evaluationMetric: 'ACCURACY', // ✅ 기본값
+    prizeTotal: '',         // ✅ 숫자 입력
+    // 화면엔 안 보여도 전송은 해야 함(백엔드 @NotNull): 
+    status: 'UPCOMING',
+  });
+
+  // CSV 파일 상태
+  const [trainFile, setTrainFile] = useState(null);
+  const [testFile, setTestFile] = useState(null);
+
+  const [saving, setSaving] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setForm(f => ({ ...f, [name]: value }));
+  };
+
+  const normDT = (v) => (v ? (v.length === 16 ? `${v}:00` : v) : null);
+
+  const validate = () => {
+    if (!form.title.trim()) return '제목을 입력해주세요.';
+    if (!form.description.trim()) return '목적을 입력해주세요.';
+    if (!form.startAt || !form.endAt) return '시작일과 종료일을 입력해주세요.';
+    if (form.endAt < form.startAt) return '종료일은 시작일 이후여야 합니다.';
+    if (form.prizeTotal && Number.isNaN(Number(form.prizeTotal))) return '상금은 숫자만 입력해주세요.';
+    // 파일 업로드 검증
+    if (!trainFile) return 'train.csv 파일을 업로드해주세요.';
+    if (!testFile) return 'test.csv 파일을 업로드해주세요.';
+    return null;
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (saving) return;
+    setErrorMsg('');
+    const v = validate();
+    if (v) { setErrorMsg(v); return; }
+
+    try {
+      setSaving(true);
+      const payload = {
+        title: form.title.trim(),
+        description: form.description?.trim() || null,
+        detail: form.detail?.trim() || null,               // ✅ 상세 설명
+        status: 'UPCOMING',                                 // 숨김 기본값
+        startAt: normDT(form.startAt),
+        endAt: normDT(form.endAt),
+        evaluationMetric: form.evaluationMetric || 'ACCURACY',  // ✅
+        prizeTotal: form.prizeTotal ? Number(form.prizeTotal) : null // ✅ 숫자로
+      };
+      // 파일 보내기 위한 폼데이터 생성
+      const fd = new FormData();
+
+      // JSON을 Blob으로 감싸서 request 파트로 전송
+      fd.append(
+        "request",
+        new Blob([JSON.stringify(payload)], { type: "application/json" })
+      );
+
+      // 파일 전송
+      fd.append("trainFile", trainFile);
+      fd.append("testFile", testFile);
+
+      // baseURL이 /api를 포함한다면 아래 경로는 '/competitions'로 바꿔주세요.
+      const { data: created } = await api.post('/api/competitions', fd, {
+        // headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      alert(`대회가 등록되었습니다! (ID: ${created.id})`);
+      navigate(`/competitions/${created.id}`, { replace: true });
+    } catch (err) {
+      console.error(err);
+      if (err.code === 'ERR_NETWORK') return setErrorMsg('서버에 연결할 수 없습니다. (네트워크 오류)');
+      const msg = err.response?.data?.message || err.response?.data?.error ||
+        `저장 중 오류가 발생했습니다. (HTTP ${err.response?.status ?? '???'})`;
+      setErrorMsg(msg);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="container comp-create">
+      <Link className="back" to="/competitions/List">← 목록으로</Link>
+      <h1>대회 생성</h1>
+
+      <form onSubmit={onSubmit} noValidate>
+        <label>
+          제목
+          <input name="title" value={form.title} onChange={onChange} required placeholder="대회 제목" />
+        </label>
+
+        <label>
+          목적(한 줄)
+          <input name="description" value={form.description} onChange={onChange} required placeholder="예) 고양이/강아지 분류 모델 개발" />
+        </label>
+
+        <label>
+          상세 설명
+          <textarea name="detail" value={form.detail} onChange={onChange} rows={8} placeholder="대회의 상세 목표/데이터 설명/제출 형식 등" />
+        </label>
+
+        <div className="row">
+          <label>
+            시작일
+            <input type="datetime-local" name="startAt" value={form.startAt} onChange={onChange} required />
+          </label>
+          <label>
+            종료일
+            <input type="datetime-local" name="endAt" value={form.endAt} onChange={onChange} min={form.startAt || undefined} required />
+          </label>
+        </div>
+
+        <label>
+          평가 지표
+          <select name="evaluationMetric" value={form.evaluationMetric} onChange={onChange}>
+            <option value="ACCURACY">ACCURACY</option>
+            <option value="F1">F1</option>
+            <option value="AUC">AUC</option>
+            <option value="RMSE">RMSE</option>
+            <option value="MAE">MAE</option>
+          </select>
+        </label>
+
+        <label>
+          상금
+          <input type="number" step="0.01" name="prizeTotal" value={form.prizeTotal} onChange={onChange} placeholder="예: 1000000" />
+        </label>
+
+        {/* CSV 파일 업로드 */}
+        <label>
+          Train CSV 업로드
+          <input type="file" accept=".csv" onChange={(e) => setTrainFile(e.target.files[0])} />
+        </label>
+        <label>
+          Test CSV 업로드
+          <input type="file" accept=".csv" onChange={(e) => setTestFile(e.target.files[0])} />
+        </label>
+
+        {errorMsg && <div className="error">{errorMsg}</div>}
+
+        <div className="actions">
+          <button type="submit" className="primary" disabled={saving}>
+            {saving ? '저장 중...' : '저장'}
+          </button>
+          <button type="button" onClick={() => navigate('/competitions')} disabled={saving}>
+            취소
+          </button>
+          <AutoCompetitionButton />
+        </div>
+      </form>
+    </div>
+  );
+}
+
+export default CompetitionCreate;
+
+
+/* CompetitionDetail.jsx */
+import { useEffect, useMemo, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import api from '../api/axiosConfig';
+
+// CompetitionDetail.jsx
+import "../css/Competition.scss";
+import "../css/CompetitionDetail.scss";
+
+export default function CompetitionDetail() {
+  const { id } = useParams();
+  const [comp, setComp] = useState(null);
+  const [state, setState] = useState({ loading: false, error: null });
+
+  useEffect(() => {
+    (async () => {
+      setState({ loading: true, error: null });
+      try {
+        const res = await api.get(`/api/competitions/${id}`);
+        setComp(res.data);
+        setState({ loading: false, error: null });
+      } catch (e) {
+        // 실패 시 예시 데이터로 채워서 화면은 유지
+        setComp({
+          id,
+          title: '예시 대회',
+          status: 'OPEN',
+          startAt: '2025-11-01',
+          endAt: '2025-12-01',
+          prize: '총상금 100만원',
+          summary: '예시 요약입니다.',
+          description: '예시 설명입니다.',
+          datasetUrl: '#',
+          rulesUrl: '#',
+        });
+        setState({
+          loading: false,
+          error:
+            e.response?.status === 404
+              ? '존재하지 않는 대회입니다.'
+              : e.message || '요청 실패',
+        });
+      }
+    })();
+  }, [id]);
+
+  const fmtDate = (d) => (typeof d === 'string' ? d.slice(0, 10) : d);
+
+  const daysLeft = useMemo(() => {
+    if (!comp?.endAt) return null;
+    const end = new Date(comp.endAt);
+    const diff = Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24));
+    return diff;
+  }, [comp?.endAt]);
+
+  if (state.loading) return <div style={{ padding: 24 }}>불러오는 중...</div>;
+  if (!comp) return <div style={{ padding: 24 }}>데이터가 없습니다.</div>;
+
+  return (
+    <div className="container comp-detail">
+      <Link className="back" to="/competitions/user">
+        ← 목록으로
+      </Link>
+      {state.error && (
+        <div style={{ marginTop: 12, color: '#b91c1c' }}>{state.error}</div>
+      )}
+
+      {/* 상단 정보 */}
+      <section className="hero">
+        <h1>{comp.title}</h1>
+        <div className="meta">
+          상태:&nbsp;
+          <span className="badge">{comp.status}</span> | 기간:{' '}
+          {fmtDate(comp.startAt)} ~ {fmtDate(comp.endAt)}
+        </div>
+        {comp.summary && (
+          <p className="muted" style={{ marginTop: 6 }}>
+            {comp.summary}
+          </p>
+        )}
+        {comp.prize && <div className="prize">상금: {comp.prize}</div>}
+
+        <div className="links">
+          {comp.datasetUrl && (
+            <a
+              href={comp.datasetUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="btn"
+            >
+              데이터셋
+            </a>
+          )}
+          {comp.rulesUrl && (
+            <a
+              href={comp.rulesUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="btn"
+            >
+              규칙
+            </a>
+          )}
+        </div>
+      </section>
+
+      {/* 세부 카드들 */}
+      <div className="detail-cards">
+        <article className="wide-card">
+          <h3>📅 진행 정보</h3>
+          <div className="card-content">
+            <p>
+              <strong>상태:</strong> {comp.status}
+            </p>
+            <p>
+              <strong>기간:</strong> {fmtDate(comp.startAt)} ~{' '}
+              {fmtDate(comp.endAt)}
+            </p>
+            <p>
+              <strong>남은 기간:</strong>{' '}
+              {daysLeft === null
+                ? '-'
+                : daysLeft >= 0
+                  ? `${daysLeft}일 남음`
+                  : `마감 (${Math.abs(daysLeft)}일 경과)`}
+            </p>
+          </div>
+        </article>
+
+        <article className="wide-card">
+          <h3>🧾 기본 정보</h3>
+          <div className="card-content">
+            <p>
+              <strong>제목:</strong> {comp.title}
+            </p>
+            <p>
+              <strong>요약:</strong> {comp.summary || '—'}
+            </p>
+            <p>
+              <strong>ID:</strong> {comp.id}
+            </p>
+          </div>
+        </article>
+
+        <article className="wide-card">
+          <h3>💰 보상 정보</h3>
+          <div className="card-content">
+            <p>
+              <strong>상금:</strong> {comp.prize || '표기된 상금 없음'}
+            </p>
+            <p className="muted">
+              우승자 및 상위권 참가자에게 제공되는 보상 정보를 표시하세요.
+            </p>
+          </div>
+        </article>
+
+        <article className="wide-card">
+          <h3>🔗 참고 링크</h3>
+          <div className="card-content">
+            <p>
+              데이터셋:{' '}
+              {comp.datasetUrl ? (
+                <a href={comp.datasetUrl} target="_blank" rel="noreferrer">
+                  열기
+                </a>
+              ) : (
+                <span className="muted">없음</span>
+              )}
+            </p>
+            <p>
+              규칙:{' '}
+              {comp.rulesUrl ? (
+                <a href={comp.rulesUrl} target="_blank" rel="noreferrer">
+                  열기
+                </a>
+              ) : (
+                <span className="muted">없음</span>
+              )}
+            </p>
+          </div>
+        </article>
+
+
+      </div>
+
+      {/* 상세 설명 */}
+      <section className="desc">
+        <h3>📝 대회 설명</h3>
+        <p>{comp.description || '설명이 없습니다.'}</p>
+      </section>
+    </div>
+  );
+}
+
+
+/* CompetitionList.jsx */
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import api from '../api/axiosConfig';
+
+// CompetitionList.jsx
+import "../css/Competition.scss";
+import "../css/CompetitionList.scss";
+
+function fmtDT(v) {
+  if (!v) return '-';
+  // "2025-12-01T18:00:00" → "2025-12-01 18:00"
+  return v.replace('T', ' ').slice(0, 16);
+}
+
+export default function CompetitionList() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  // URL 쿼리 ↔ 상태
+  const status = searchParams.get('status') || '';
+  const keyword = searchParams.get('keyword') || '';
+  const page = Number(searchParams.get('page') || 0);
+  const size = Number(searchParams.get('size') || 12);
+
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [data, setData] = useState({ content: [], totalPages: 0, number: 0, totalElements: 0 });
+
+  const params = useMemo(() => {
+    const p = { page, size };
+    if (status) p.status = status; // UPCOMING | OPEN | CLOSED
+    if (keyword.trim()) p.keyword = keyword.trim();
+    return p;
+  }, [status, keyword, page, size]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        setErrorMsg('');
+        // NOTE: axiosConfig.baseURL이 http://localhost:8090 라면 경로에 /api 포함해야 함
+        const res = await api.get('/api/competitions', { params });
+        setData(res.data);
+      } catch (err) {
+        console.error(err);
+        setErrorMsg('목록을 불러오지 못했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [params]);
+
+  const onSearch = (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const next = new URLSearchParams(searchParams);
+    next.set('page', '0'); // 새 검색은 첫 페이지부터
+    next.set('size', String(size));
+    next.set('status', fd.get('status') || '');
+    next.set('keyword', fd.get('keyword') || '');
+    setSearchParams(next);
+  };
+
+  const movePage = (nextPage) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('page', String(nextPage));
+    setSearchParams(next);
+  };
+
+  return (
+    <section className="container" style={{padding:'16px'}}>
+      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+        <h1 style={{margin:0}}>대회 목록</h1>
+        <Link className="button" to="/competitions/new">대회 생성</Link>
+      </div>
+
+      {/* 검색/필터 */}
+      <form onSubmit={onSearch} style={{display:'grid', gap:8, gridTemplateColumns:'150px 1fr 120px', marginBottom:12}}>
+        <select name="status" defaultValue={status}>
+          <option value="">상태(전체)</option>
+          <option value="UPCOMING">UPCOMING</option>
+          <option value="OPEN">OPEN</option>
+          <option value="CLOSED">CLOSED</option>
+        </select>
+        <input name="keyword" defaultValue={keyword} placeholder="제목 검색" />
+        <button type="submit">검색</button>
+      </form>
+
+      {/* 에러/로딩 */}
+      {errorMsg && <div style={{color:'#c00', marginBottom:8}}>{errorMsg}</div>}
+      {loading && <div style={{marginBottom:8}}>불러오는 중…</div>}
+
+      {/* 목록 */}
+      <div style={{overflowX:'auto', border:'1px solid var(--border, #e5e7eb)', borderRadius:8}}>
+        <table style={{width:'100%', borderCollapse:'collapse'}}>
+          <thead style={{background:'var(--surface, #f9fafb)'}}>
+            <tr>
+              <th style={th}>ID</th>
+              <th style={th}>제목</th>
+              <th style={th}>목적</th>
+              <th style={th}>상태</th>
+              <th style={th}>시작</th>
+              <th style={th}>종료</th>
+              <th style={th}>지표</th>
+              <th style={th}>상금</th>
+              <th style={th}>참가자</th>
+              <th style={th}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.content.length === 0 && !loading && (
+              <tr><td colSpan={10} style={{textAlign:'center', padding:'16px'}}>데이터가 없습니다.</td></tr>
+            )}
+            {data.content.map((it) => (
+              <tr key={it.id} style={{borderTop:'1px solid var(--border, #e5e7eb)'}}>
+                <td style={td}>{it.id}</td>
+                <td style={td}>{it.title}</td>
+                <td style={td}>{it.purpose || '-'}</td>
+                <td style={td}>{it.status}</td>
+                <td style={td}>{fmtDT(it.startAt)}</td>
+                <td style={td}>{fmtDT(it.endAt)}</td>
+                <td style={td}>{it.evaluationMetric || '-'}</td>
+                <td style={td}>{it.prizeTotal != null ? Number(it.prizeTotal).toLocaleString() : '-'}</td>
+                <td style={td}>{it.participantCount ?? 0}</td>
+                <td style={td}>
+                  <Link to={`/competitions/${it.id}`}>상세</Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 페이지네이션 */}
+      <div style={{display:'flex', gap:8, justifyContent:'center', marginTop:12}}>
+        <button disabled={page <= 0} onClick={() => movePage(page - 1)}>이전</button>
+        <span>Page {page + 1} / {Math.max(data.totalPages, 1)}</span>
+        <button disabled={page + 1 >= data.totalPages} onClick={() => movePage(page + 1)}>다음</button>
+      </div>
+    </section>
+  );
+}
+
+const th = { textAlign:'left', padding:'10px 12px', fontWeight:700, fontSize:14 };
+const td = { padding:'10px 12px', fontSize:14 };
+
+
+/* FaqPage.jsx */
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "../css/FaqPage.scss";
+
+// 질문 목록
+const faqData = [
+    { id: 1, category: "회원", question: "회원가입은 어떻게 하나요?", answer: "로그인 페이지 하단의 '회원가입'을 통해 가입하실 수 있습니다." },
+    { id: 2, category: "회원", question: "비밀번호 변경은 어떻게 하나요?", answer: "마이페이지 상단의 '설정'을 통해 변경하실 수 있습니다." },
+    { id: 3, category: "서비스", question: "작성한 문의는 어디서 확인하나요?", answer: "현재 페이지 하단의 '나의 문의 목록'을 통해 확인 가능합니다." },
+    { id: 4, category: "서비스", question: "답변은 얼마나 걸리나요?", answer: "평균적으로 1~3 영업일 이내에 답변드립니다." },
+    { id: 5, category: "서비스", question: "고객센터 이용시간은 어떻게 되나요?", answer: "고객센터는 평일 오전 9시부터 오후 6시까지 운영됩니다." },
+    { id: 6, category: "기타", question: "점심메뉴 추천 해주세요", answer: "순대국밥·뼈해장국·콩나물국밥·김치찌개·된장찌개·부대찌개·김밥·라면·떡볶이·순대·튀김·어묵·돈까스·카레" },
+    { id: 7, category: "기타", question: "수료날짜는 어떻게 되나요?", answer: "수료 날짜는 2025.12.05 입니다." },
+];
+
+function FaqPage() {
+    const navigate = useNavigate();
+    const [openId, setOpenId] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState("전체");
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const categories = ["전체", "회원", "서비스", "기타"];
+
+    const toggleFaq = (id) => {
+        setOpenId(openId === id ? null : id);
+    };
+
+    const filteredFaqs = faqData.filter((faq) => {
+        const matchCategory = selectedCategory === "전체" || faq.category === selectedCategory;
+        const matchSearch = faq.question.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchCategory && matchSearch;
+    });
+
+    const topFaqs = faqData.slice(0, 5);
+
+    return (
+        <div className="faq-container">
+            <h2 className="faq-title">고객센터 (FAQ)</h2>
+
+            <div className="faq-controls">
+                <input
+                    type="text"
+                    placeholder="궁금한 내용을 검색해보세요."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="faq-search"
+                />
+                <div className="faq-categories">
+                    {categories.map((cat) => (
+                        <button
+                            key={cat}
+                            className={selectedCategory === cat ? "active" : ""}
+                            onClick={() => setSelectedCategory(cat)}
+                        >
+                            {cat}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div className="top-faqs">
+                <h3>
+                    <span className="material-symbols-outlined">brand_awareness</span>
+                    자주 묻는 질문
+                </h3>
+                <ul>
+                    {topFaqs.map((faq) => (
+                        <li key={faq.id} onClick={() => setOpenId(faq.id)}>
+                            {faq.question}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+
+            <div className="faq-list">
+                {filteredFaqs.map((faq) => (
+                    <FaqItem
+                        key={faq.id}
+                        faq={faq}
+                        open={openId === faq.id}
+                        onToggle={() => toggleFaq(faq.id)}
+                    />
+                ))}
+            </div>
+
+            <div className="faq-footer">
+                <button onClick={() => navigate("/inquiry/write")}>
+                    1:1 문의 작성하기
+                </button>
+
+                <button onClick={() => navigate("/myprofile/inquiries")}>
+                    나의 문의 목록
+                </button>
+            </div>
+
+        </div>
+    );
+}
+
+/* 개별 FAQ 아이템 (애니메이션 포함) */
+function FaqItem({ faq, open, onToggle }) {
+    const contentRef = useRef(null);
+    const [height, setHeight] = useState("0px");
+
+    useEffect(() => {
+        setHeight(open ? `${contentRef.current.scrollHeight}px` : "0px");
+    }, [open]);
+
+    return (
+        <div className="faq-item">
+            <div className="faq-question" onClick={onToggle}>
+                {faq.question}
+                <span>{open ? "▲" : "▼"}</span>
+            </div>
+            <div
+                ref={contentRef}
+                className={`faq-answer-wrapper ${open ? "open" : ""}`}
+                style={{ height }}
+            >
+                <div className="faq-answer">
+                    <span className="material-symbols-outlined faq-icon">
+                        brand_awareness
+                    </span>
+                    {faq.answer}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default FaqPage;
+
+
+/* footer.jsx */
+import '../css/footer.scss'
+
+const Footer = ()=>{
+    return (
+        <footer>
+          <div className="footer-wrap">
+            <div className="footer-grid">
+              <div className="footer-col">
+                <h4>회사</h4>
+                <a href="#">회사 소개</a>
+                <a href="#">채용</a>
+                <a href="#">보도자료</a>
+              </div>
+              <div className="footer-col">
+                <h4>정책</h4>
+                <a href="#">이용약관</a>
+                <a href="#">개인정보처리방침</a>
+                <a href="#">쿠키 정책</a>
+              </div>
+              <div className="footer-col">
+                <h4>지원</h4>
+                <a href="#">도움말 센터</a>
+                <a href="#">문의하기</a>
+                <a href="#">신고/피드백</a>
+              </div>
+              <div className="footer-col">
+                <h4>리소스</h4>
+                <a href="#">개발자 문서</a>
+                <a href="#">API</a>
+                <a href="#">브랜드 가이드</a>
+              </div>
+            </div>
+            <div className="copyright">
+              © <span id="year" /> hangle. 모든 권리 보유.
+            </div>
+          </div>
+        </footer>
+    )
+}
+export default Footer
+
