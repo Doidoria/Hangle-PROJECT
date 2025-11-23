@@ -26,9 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 
-	@Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+	@Value("${kakao.redirect-uri}")
 	String KAKAO_CLIENT_ID;
-	@Value("${spring.security.oauth2.client.kakao.logout.redirect.uri}")
+	@Value("${kakao.logout.redirect.uri}")
 	String KAKAO_LOGOUT_REDIRECT_URI;
 
 	@Autowired

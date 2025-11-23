@@ -1,5 +1,149 @@
-//fileName: SwaggerTestController.java
-//
+package com.example.demo.controller;
+
+import com.example.demo.config.auth.jwt.JwtProperties;
+import com.example.demo.config.auth.jwt.JwtTokenProvider;
+import com.example.demo.config.auth.jwt.TokenInfo;
+import com.example.demo.config.auth.redis.RedisUtil;
+import com.example.demo.config.auth.service.InquiryService;
+import com.example.demo.config.auth.service.PrincipalDetails;
+import com.example.demo.domain.competition.dtos.CompetitionCreateRequest;
+import com.example.demo.domain.competition.dtos.CompetitionDto;
+import com.example.demo.domain.competition.dtos.CompetitionUpdateRequest;
+import com.example.demo.domain.competition.entity.Competition;
+import com.example.demo.domain.competition.entity.CompetitionCSVSave;
+import com.example.demo.domain.competition.entity.Status;
+import com.example.demo.domain.competition.repository.CompetitionCSVSaveRepository;
+import com.example.demo.domain.competition.service.CSVSaveService;
+import com.example.demo.domain.competition.service.CompetitionService;
+import com.example.demo.domain.competition.service.ScoreService;
+import com.example.demo.domain.inquiry.dto.InquiryAnswerRequestDto;
+import com.example.demo.domain.inquiry.dto.InquiryRequestDto;
+import com.example.demo.domain.inquiry.dto.InquiryResponseDto;
+import com.example.demo.domain.leaderboard.dto.LeaderboardEntryDto;
+import com.example.demo.domain.leaderboard.service.LeaderboardService;
+import com.example.demo.domain.user.dto.UserDto;
+import com.example.demo.domain.user.entity.User;
+import com.example.demo.domain.user.repository.UserRepository;
+import com.example.demo.domain.user.service.AppUserService;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/leaderboard")
+@RequiredArgsConstructor
+@Slf4j
+public class LeaderboardController {
+
+    private final LeaderboardService leaderboardService;
+
+    @GetMapping("")
+    public ResponseEntity<Map<String, Object>> LeaderboardAllList(
+            @RequestParam(name = "keyword", required = false) String keyword
+    )throws Exception{
+        log.info("leaderboard list");
+        List<LeaderboardEntryDto> allList = leaderboardService.getAllLeaderboard();
+        List<LeaderboardEntryDto> resultList;
+
+
+        if(keyword == null || keyword.trim().isEmpty()) {
+            resultList = allList;
+            keyword = "";
+        }
+        else {
+            //검색 결과
+            resultList = leaderboardService.searchLeaderboard(keyword);
+
+        }
+
+        // 변경
+        List<CompItem> compItem = resultList.stream()
+                .map(dto ->new CompItem(dto.getCompetitionId(),dto.getCompetitionTitle()))
+                .distinct()
+                .toList();
+        System.out.println("compItem"+ compItem);
+
+        //변경
+        resultList = resultList.stream()
+                .sorted(Comparator
+                        .comparing(LeaderboardEntryDto::getCompetitionId, Comparator.nullsLast(Long::compareTo))
+                        .thenComparing(LeaderboardEntryDto::getComprank, Comparator.nullsLast(Integer::compareTo)))
+                .toList();
+
+        System.out.println("leaderboard"+resultList);
+        //react에서 여러 데이터 받기
+        Map<String, Object> response = new HashMap<>();
+        response.put("leaderboard", resultList);
+        response.put("compItem", compItem);
+        response.put("keyword", keyword == null ? "" : keyword);
+        return ResponseEntity.ok(response);
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CompItem{
+
+        private Long id;
+        private String title;
+
+    }
+
+
+}
+
 //package com.example.demo.controller;
 //
 //import org.springframework.web.bind.annotation.GetMapping;
@@ -15,50 +159,145 @@
 //    }
 //}
 
-//fileName: UserRestController.java
-package com.example.demo.controller;
+@RestController
+@RequestMapping("/api/inquiry")
+@RequiredArgsConstructor
+public class InquiryController {
 
-import com.example.demo.config.auth.jwt.JwtProperties;
-import com.example.demo.config.auth.jwt.JwtTokenProvider;
-import com.example.demo.config.auth.jwt.TokenInfo;
-import com.example.demo.config.auth.redis.RedisUtil;
-import com.example.demo.domain.user.dto.UserDto;
-import com.example.demo.domain.user.repository.UserRepository;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import com.example.demo.domain.user.entity.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+    private final InquiryService inquiryService;
 
-import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+    // 로그인 유저의 PK(id) 추출
+    private Long extractUserId(PrincipalDetails principalDetails) {
+        if (principalDetails == null || principalDetails.getUser() == null) {
+            throw new RuntimeException("인증된 사용자 정보를 찾을 수 없습니다.");
+        }
+        return principalDetails.getUser().getId(); // PK
+    }
+
+    /**
+     * [USER] 1:1 문의 작성
+     * - POST /api/inquiry
+     */
+    @PostMapping
+    public ResponseEntity<InquiryResponseDto> createInquiry(
+            @RequestBody InquiryRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        Long userId = extractUserId(principalDetails);
+        InquiryResponseDto response = inquiryService.createInquiry(userId, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * [USER] 내 문의 목록 조회
+     * - GET /api/inquiry/my
+     */
+    @GetMapping("/my")
+    public ResponseEntity<List<InquiryResponseDto>> getMyInquiries(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        Long userId = extractUserId(principalDetails);
+        List<InquiryResponseDto> response = inquiryService.getMyInquiries(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * [USER] 내 문의 삭제
+     * - DELETE /api/inquiry/{id}
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteInquiry(
+            @PathVariable Long id,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        Long userId = extractUserId(principalDetails);
+        boolean deleted = inquiryService.deleteInquiry(id, userId);
+
+        if (!deleted) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("본인이 작성한 문의만 삭제할 수 있습니다.");
+        }
+
+        return ResponseEntity.ok("문의가 삭제되었습니다.");
+    }
+
+    /**
+     * [USER] 내 문의 수정 (답변이 없을 때만 가능)
+     * - PUT /api/inquiry/{id}
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateInquiry(
+            @PathVariable Long id,
+            @RequestBody InquiryRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        Long userId = extractUserId(principalDetails);
+
+        try {
+            InquiryResponseDto updated = inquiryService.updateInquiry(id, userId, requestDto);
+            return ResponseEntity.ok(updated);
+
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("문의 수정 실패");
+        }
+    }
+
+    // =========================================================
+    // ↓ 관리자 전용 (별도 SecurityConfig에서 ROLE_ADMIN 제한)
+    // =========================================================
+
+    /**
+     * [ADMIN] 전체 문의 목록 조회
+     * - GET /api/inquiry/admin
+     */
+    @GetMapping("/admin")
+    public ResponseEntity<List<InquiryResponseDto>> getAllInquiriesForAdmin() {
+        List<InquiryResponseDto> response = inquiryService.getAllInquiries();
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * [ADMIN] 문의 답변 등록 / 수정
+     * - POST /api/inquiry/admin/{id}/answer  (등록)
+     * - PUT  /api/inquiry/admin/{id}/answer  (수정)
+     */
+    @PostMapping("/admin/{id}/answer")
+    public ResponseEntity<InquiryResponseDto> answerInquiry(
+            @PathVariable("id") Long inquiryId,
+            @RequestBody InquiryAnswerRequestDto requestDto
+    ) {
+        InquiryResponseDto response =
+                inquiryService.answerInquiry(inquiryId, requestDto.getAnswerContent());
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/admin/{id}/answer")
+    public ResponseEntity<InquiryResponseDto> updateAnswer(
+            @PathVariable("id") Long inquiryId,
+            @RequestBody InquiryAnswerRequestDto requestDto
+    ) {
+        InquiryResponseDto response =
+                inquiryService.answerInquiry(inquiryId, requestDto.getAnswerContent());
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * [ADMIN] 문의 삭제
+     * - DELETE /api/inquiry/admin/{id}
+     */
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<?> deleteInquiryByAdmin(@PathVariable("id") Long inquiryId) {
+        inquiryService.deleteInquiryByAdmin(inquiryId);
+        return ResponseEntity.ok("문의가 삭제되었습니다. (관리자)");
+    }
+}
 
 @RestController
 @Slf4j
@@ -304,8 +543,8 @@ public class UserRestController {
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
-    @Value("${file.upload-dir}") // application.properties에서 값 주입
-    private String uploadDir;
+    @Value("${profile.upload-dir}")
+    private String profileUploadDir;
 
     @PostMapping("/api/user/profile-image")
     public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, Authentication authentication) {
@@ -320,12 +559,9 @@ public class UserRestController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "사용자를 찾을 수 없습니다."));
             }
-            // 저장할 폴더 경로 생성 (프로젝트루트/uploads/profile)
-            Path rootPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-            Path profilePath = rootPath.resolve("profile");
+            Path profilePath = Paths.get(profileUploadDir).toAbsolutePath().normalize();
             File profileDir = profilePath.toFile();
 
-            // 폴더가 없으면 생성
             if (!profileDir.exists()) {
                 profileDir.mkdirs();
             }
@@ -465,394 +701,8 @@ public class UserRestController {
     }
 }
 
-//fileName: InquiryController.java
-package com.example.demo.controller;
-
-import com.example.demo.config.auth.service.InquiryService;
-import com.example.demo.config.auth.service.PrincipalDetails;
-import com.example.demo.domain.inquiry.dto.InquiryAnswerRequestDto;
-import com.example.demo.domain.inquiry.dto.InquiryRequestDto;
-import com.example.demo.domain.inquiry.dto.InquiryResponseDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/inquiry")
-@RequiredArgsConstructor
-public class InquiryController {
-
-    private final InquiryService inquiryService;
-
-    // 로그인 유저의 PK(id) 추출
-    private Long extractUserId(PrincipalDetails principalDetails) {
-        if (principalDetails == null || principalDetails.getUser() == null) {
-            throw new RuntimeException("인증된 사용자 정보를 찾을 수 없습니다.");
-        }
-        return principalDetails.getUser().getId(); // PK
-    }
-
-    /**
-     * [USER] 1:1 문의 작성
-     * - POST /api/inquiry
-     */
-    @PostMapping
-    public ResponseEntity<InquiryResponseDto> createInquiry(
-            @RequestBody InquiryRequestDto requestDto,
-            @AuthenticationPrincipal PrincipalDetails principalDetails
-    ) {
-        Long userId = extractUserId(principalDetails);
-        InquiryResponseDto response = inquiryService.createInquiry(userId, requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    /**
-     * [USER] 내 문의 목록 조회
-     * - GET /api/inquiry/my
-     */
-    @GetMapping("/my")
-    public ResponseEntity<List<InquiryResponseDto>> getMyInquiries(
-            @AuthenticationPrincipal PrincipalDetails principalDetails
-    ) {
-        Long userId = extractUserId(principalDetails);
-        List<InquiryResponseDto> response = inquiryService.getMyInquiries(userId);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * [USER] 내 문의 삭제
-     * - DELETE /api/inquiry/{id}
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteInquiry(
-            @PathVariable Long id,
-            @AuthenticationPrincipal PrincipalDetails principalDetails
-    ) {
-        Long userId = extractUserId(principalDetails);
-        boolean deleted = inquiryService.deleteInquiry(id, userId);
-
-        if (!deleted) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("본인이 작성한 문의만 삭제할 수 있습니다.");
-        }
-
-        return ResponseEntity.ok("문의가 삭제되었습니다.");
-    }
-
-    /**
-     * [USER] 내 문의 수정 (답변이 없을 때만 가능)
-     * - PUT /api/inquiry/{id}
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateInquiry(
-            @PathVariable Long id,
-            @RequestBody InquiryRequestDto requestDto,
-            @AuthenticationPrincipal PrincipalDetails principalDetails
-    ) {
-        Long userId = extractUserId(principalDetails);
-
-        try {
-            InquiryResponseDto updated = inquiryService.updateInquiry(id, userId, requestDto);
-            return ResponseEntity.ok(updated);
-
-        } catch (IllegalAccessException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("문의 수정 실패");
-        }
-    }
-
-    // =========================================================
-    // ↓ 관리자 전용 (별도 SecurityConfig에서 ROLE_ADMIN 제한)
-    // =========================================================
-
-    /**
-     * [ADMIN] 전체 문의 목록 조회
-     * - GET /api/inquiry/admin
-     */
-    @GetMapping("/admin")
-    public ResponseEntity<List<InquiryResponseDto>> getAllInquiriesForAdmin() {
-        List<InquiryResponseDto> response = inquiryService.getAllInquiries();
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * [ADMIN] 문의 답변 등록 / 수정
-     * - POST /api/inquiry/admin/{id}/answer  (등록)
-     * - PUT  /api/inquiry/admin/{id}/answer  (수정)
-     */
-    @PostMapping("/admin/{id}/answer")
-    public ResponseEntity<InquiryResponseDto> answerInquiry(
-            @PathVariable("id") Long inquiryId,
-            @RequestBody InquiryAnswerRequestDto requestDto
-    ) {
-        InquiryResponseDto response =
-                inquiryService.answerInquiry(inquiryId, requestDto.getAnswerContent());
-        return ResponseEntity.ok(response);
-    }
-
-    @PutMapping("/admin/{id}/answer")
-    public ResponseEntity<InquiryResponseDto> updateAnswer(
-            @PathVariable("id") Long inquiryId,
-            @RequestBody InquiryAnswerRequestDto requestDto
-    ) {
-        InquiryResponseDto response =
-                inquiryService.answerInquiry(inquiryId, requestDto.getAnswerContent());
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * [ADMIN] 문의 삭제
-     * - DELETE /api/inquiry/admin/{id}
-     */
-    @DeleteMapping("/admin/{id}")
-    public ResponseEntity<?> deleteInquiryByAdmin(@PathVariable("id") Long inquiryId) {
-        inquiryService.deleteInquiryByAdmin(inquiryId);
-        return ResponseEntity.ok("문의가 삭제되었습니다. (관리자)");
-    }
-}
-
-//fileName: CompetitionController.java
-package com.example.demo.controller;
-
-import com.example.demo.config.auth.service.PrincipalDetails;
-import com.example.demo.domain.competition.dtos.CompetitionCreateRequest;
-import com.example.demo.domain.competition.dtos.CompetitionDto;
-import com.example.demo.domain.competition.dtos.CompetitionUpdateRequest;
-import com.example.demo.domain.competition.entity.Competition;
-import com.example.demo.domain.competition.entity.CompetitionCSVSave;
-import com.example.demo.domain.competition.entity.Status;
-import com.example.demo.domain.competition.repository.CompetitionCSVSaveRepository;
-import com.example.demo.domain.competition.service.CSVSaveService;
-import com.example.demo.domain.competition.service.CompetitionService;
-import com.example.demo.domain.competition.service.ScoreService;
-import com.example.demo.domain.leaderboard.service.LeaderboardService;
-import com.example.demo.domain.user.entity.User;
-import com.example.demo.domain.user.repository.UserRepository;
-import com.example.demo.domain.user.service.AppUserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-@Slf4j
-@RestController
-@RequestMapping("/api/competitions")
-@RequiredArgsConstructor
-public class CompetitionController {
-
-    private final CompetitionService competitionService;
-//    private final CompetitionService service;
-    private final CSVSaveService csvSaveService;
-    private final UserRepository userRepository;
-    private final AppUserService appUserService;
-    private final LeaderboardService leaderboardService;
-    private final CompetitionCSVSaveRepository csvSaveRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @GetMapping
-    public Page<CompetitionDto> getAll(
-            @RequestParam(required = false) Status status,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "12") int size
-    ) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        return competitionService.search(status, keyword, page, size, sort);
-    }
-
-    @GetMapping("/{id}")
-    public CompetitionDto getById(@PathVariable Long id) {
-        return competitionService.get(id);
-    }
-
-    // JSON only 방식 -> multipart 통합으로 사용 x 주석 처리 해둠
-//    @PostMapping
-//    public ResponseEntity<CompetitionDto> create(@Valid @RequestBody CompetitionCreateRequest req) {
-//        CompetitionDto created = service.create(req);
-//        URI location = URI.create("/api/competitions/" + created.id());
-//        return ResponseEntity.created(location).body(created);
-//    }
-
-    @PutMapping("/{id}")
-    public CompetitionDto update(@PathVariable Long id, @Valid @RequestBody CompetitionUpdateRequest req) {
-        return competitionService.update(id, req);
-    }
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        competitionService.delete(id);
-    }
-
-    @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<CompetitionDto> create(
-            @RequestPart("request") String requestJson,
-            @RequestPart("trainFile") MultipartFile trainFile,
-            @RequestPart("testFile") MultipartFile testFile,
-            @RequestPart(value = "customScoreFile", required = false) MultipartFile customScoreFile
-    ) throws JsonProcessingException {
-        CompetitionCreateRequest request =
-                objectMapper.readValue(requestJson, CompetitionCreateRequest.class);
-
-        CompetitionDto created = competitionService.createWithFiles(request, trainFile, testFile, customScoreFile);
-
-        URI location = URI.create("/api/competitions/" + created.id());
-        return ResponseEntity.created(location).body(created);
-//        return ResponseEntity.ok(created);
-    }
-
-
-    /** ======================================================
-     *  🔥🔥 CSV 제출 API
-     * ====================================================== */
-    @PostMapping("/{competitionId}/submit")
-    public ResponseEntity<?> submit(
-            @PathVariable Long competitionId,
-            @RequestParam("file") MultipartFile file,
-            @AuthenticationPrincipal PrincipalDetails principalDetails
-    ) {
-        String userid = principalDetails.getUser().getUserid();
-        // 1) 유저 조회
-        User user = appUserService.findByUserid(userid);
-        if (user == null) {
-            return ResponseEntity.badRequest().body("INVALID_USER");
-        }
-
-        // 2) 대회 조회
-        Competition competition = competitionService.findEntity(competitionId);
-        if (competition == null) {
-            return ResponseEntity.badRequest().body("INVALID_COMPETITION");
-        }
-
-        // 3) CSV 저장 + 점수 계산 + 리더보드 반영 (모두 saveCSV 안에서 처리)
-        CompetitionCSVSave save = csvSaveService.saveCSV(file, user, competition);
-
-        // 성공 응답
-        return ResponseEntity.ok("SUBMISSION_OK");
-    }
-
-    @GetMapping("/csv/{saveId}/download")
-    public ResponseEntity<?> downloadCSV(@PathVariable Long saveId) {
-        CompetitionCSVSave save = csvSaveRepository.findById(saveId)
-                .orElse(null);
-
-        if (save == null || save.getFilePath() == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("FILE_NOT_FOUND");
-        }
-
-        File file = new File(save.getFilePath());
-        if (!file.exists()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("FILE_NOT_EXIST");
-        }
-
-        try {
-            byte[] data = Files.readAllBytes(file.toPath());
-
-            return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=\"" + save.getFileName() + "\"")
-                    .body(data);
-
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("DOWNLOAD_ERROR");
-        }
-    }
-
-    //리더보드 다운로드 (추가)
-    @GetMapping("/csv/{saveId}/download2")
-    public ResponseEntity<Resource> downloadCSV2(@PathVariable Long saveId) {
-
-        System.out.println("/api/competitions/csv/${saveId}/download2");
-
-        CompetitionCSVSave save = csvSaveRepository.findById(saveId)
-                .orElse(null);
-
-        if (save == null || save.getFilePath() == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        File file = new File(save.getFilePath());
-        if (!file.exists()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        try {
-            Path path = file.toPath();
-            UrlResource resource = new UrlResource(path.toUri());
-
-            String encodedName = UriUtils.encode(save.getFileName(), StandardCharsets.UTF_8);
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("text/csv"))
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + encodedName + "\"") // ★ 파일 다운로드
-                    .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()))
-                    .body(resource);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-}
-
-//fileName: PortOneController.java
-package com.example.demo.controller;
-
-import com.example.demo.config.auth.redis.RedisUtil;
-import com.example.demo.config.auth.service.PrincipalDetails;
-import com.example.demo.domain.user.entity.User;
-import com.example.demo.domain.user.repository.UserRepository;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
-
-@RestController
-@Slf4j
+@Slf4d
 @RequiredArgsConstructor
 @RequestMapping("/portOne")
 public class PortOneController {
@@ -1049,86 +899,165 @@ public class PortOneController {
     }
 }
 
-//fileName: LeaderboardController.java
-package com.example.demo.controller;
-
-import com.example.demo.domain.leaderboard.dto.LeaderboardEntryDto;
-import com.example.demo.domain.leaderboard.service.LeaderboardService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-@RestController
-@RequestMapping("/api/leaderboard")
-@RequiredArgsConstructor
 @Slf4j
-public class LeaderboardController {
+@RestController
+@RequestMapping("/api/competitions")
+@RequiredArgsConstructor
+public class CompetitionController {
 
+    private final CompetitionService competitionService;
+//    private final CompetitionService service;
+    private final CSVSaveService csvSaveService;
+    private final UserRepository userRepository;
+    private final AppUserService appUserService;
     private final LeaderboardService leaderboardService;
+    private final CompetitionCSVSaveRepository csvSaveRepository;
 
-    @GetMapping("")
-    public ResponseEntity<Map<String, Object>> LeaderboardAllList(
-            @RequestParam(name = "keyword", required = false) String keyword
-    )throws Exception{
-        log.info("leaderboard list");
-        List<LeaderboardEntryDto> allList = leaderboardService.getAllLeaderboard();
-        List<LeaderboardEntryDto> resultList;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-
-        if(keyword == null || keyword.trim().isEmpty()) {
-            resultList = allList;
-            keyword = "";
-        }
-        else {
-            //검색 결과
-            resultList = leaderboardService.searchLeaderboard(keyword);
-
-        }
-
-        // 변경
-        List<CompItem> compItem = resultList.stream()
-                .map(dto ->new CompItem(dto.getCompetitionId(),dto.getCompetitionTitle()))
-                .distinct()
-                .toList();
-        System.out.println("compItem"+ compItem);
-
-        //변경
-        resultList = resultList.stream()
-                .sorted(Comparator
-                        .comparing(LeaderboardEntryDto::getCompetitionId, Comparator.nullsLast(Long::compareTo))
-                        .thenComparing(LeaderboardEntryDto::getComprank, Comparator.nullsLast(Integer::compareTo)))
-                .toList();
-
-        System.out.println("leaderboard"+resultList);
-        //react에서 여러 데이터 받기
-        Map<String, Object> response = new HashMap<>();
-        response.put("leaderboard", resultList);
-        response.put("compItem", compItem);
-        response.put("keyword", keyword == null ? "" : keyword);
-        return ResponseEntity.ok(response);
+    @GetMapping
+    public Page<CompetitionDto> getAll(
+            @RequestParam(required = false) Status status,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size
+    ) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        return competitionService.search(status, keyword, page, size, sort);
     }
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class CompItem{
+    @GetMapping("/{id}")
+    public CompetitionDto getById(@PathVariable Long id) {
+        return competitionService.get(id);
+    }
 
-        private Long id;
-        private String title;
+    // JSON only 방식 -> multipart 통합으로 사용 x 주석 처리 해둠
+//    @PostMapping
+//    public ResponseEntity<CompetitionDto> create(@Valid @RequestBody CompetitionCreateRequest req) {
+//        CompetitionDto created = service.create(req);
+//        URI location = URI.create("/api/competitions/" + created.id());
+//        return ResponseEntity.created(location).body(created);
+//    }
 
+    @PutMapping("/{id}")
+    public CompetitionDto update(@PathVariable Long id, @Valid @RequestBody CompetitionUpdateRequest req) {
+        return competitionService.update(id, req);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        competitionService.delete(id);
+    }
+
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<CompetitionDto> create(
+            @RequestPart("request") String requestJson,
+            @RequestPart("trainFile") MultipartFile trainFile,
+            @RequestPart("testFile") MultipartFile testFile,
+            @RequestPart(value = "customScoreFile", required = false) MultipartFile customScoreFile
+    ) throws JsonProcessingException {
+        CompetitionCreateRequest request =
+                objectMapper.readValue(requestJson, CompetitionCreateRequest.class);
+
+        CompetitionDto created = competitionService.createWithFiles(request, trainFile, testFile, customScoreFile);
+
+        URI location = URI.create("/api/competitions/" + created.id());
+        return ResponseEntity.created(location).body(created);
+//        return ResponseEntity.ok(created);
     }
 
 
+    /** ======================================================
+     * 🔥🔥 CSV 제출 API
+     * ====================================================== */
+    @PostMapping("/{competitionId}/submit")
+    public ResponseEntity<?> submit(
+            @PathVariable Long competitionId,
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        String userid = principalDetails.getUser().getUserid();
+        // 1) 유저 조회
+        User user = appUserService.findByUserid(userid);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("INVALID_USER");
+        }
+
+        // 2) 대회 조회
+        Competition competition = competitionService.findEntity(competitionId);
+        if (competition == null) {
+            return ResponseEntity.badRequest().body("INVALID_COMPETITION");
+        }
+
+        // 3) CSV 저장 + 점수 계산 + 리더보드 반영 (모두 saveCSV 안에서 처리)
+        CompetitionCSVSave save = csvSaveService.saveCSV(file, user, competition);
+
+        // 성공 응답
+        return ResponseEntity.ok("SUBMISSION_OK");
+    }
+
+    @GetMapping("/csv/{saveId}/download")
+    public ResponseEntity<?> downloadCSV(@PathVariable Long saveId) {
+        CompetitionCSVSave save = csvSaveRepository.findById(saveId)
+                .orElse(null);
+
+        if (save == null || save.getFilePath() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("FILE_NOT_FOUND");
+        }
+
+        File file = new File(save.getFilePath());
+        if (!file.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("FILE_NOT_EXIST");
+        }
+
+        try {
+            byte[] data = Files.readAllBytes(file.toPath());
+
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=\"" + save.getFileName() + "\"")
+                    .body(data);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("DOWNLOAD_ERROR");
+        }
+    }
+
+    //리더보드 다운로드 (추가)
+    @GetMapping("/csv/{saveId}/download2")
+    public ResponseEntity<Resource> downloadCSV2(@PathVariable Long saveId) {
+
+        System.out.println("/api/competitions/csv/${saveId}/download2");
+
+        CompetitionCSVSave save = csvSaveRepository.findById(saveId)
+                .orElse(null);
+
+        if (save == null || save.getFilePath() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        File file = new File(save.getFilePath());
+        if (!file.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        try {
+            Path path = file.toPath();
+            UrlResource resource = new UrlResource(path.toUri());
+
+            String encodedName = UriUtils.encode(save.getFileName(), StandardCharsets.UTF_8);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType("text/csv"))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + encodedName + "\"") // ★ 파일 다운로드
+                    .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()))
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

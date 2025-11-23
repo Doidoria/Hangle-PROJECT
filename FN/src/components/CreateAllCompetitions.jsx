@@ -22,7 +22,7 @@ async function createCompetition(requestObj, trainPath, testPath) {
   formData.append("trainFile", trainFile);
   formData.append("testFile", testFile);
 
-  const res = await fetch("http://localhost:8090/api/competitions", {
+  const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/competitions`, {
     method: "POST",
     body: formData,
     credentials: "include"

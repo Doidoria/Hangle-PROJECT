@@ -1,67 +1,15 @@
-// CompetitionUpdateRequest.java
-package com.example.demo.domain.competition.dtos;
-
-import jakarta.validation.constraints.NotBlank;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-public record CompetitionUpdateRequest(
-        @NotBlank String title,
-        String description,
-        String detail,                  // ✅ 상세 설명
-        @NotBlank String status,        // 문자열로 들어와서 서비스에서 valueOf
-        LocalDateTime startAt,
-        LocalDateTime endAt,
-        String evaluationMetric,        // ✅ 평가 지표
-        BigDecimal prizeTotal           // ✅ 상금
-) {}
-
-// CompetitionCSVSave.java
-package com.example.demo.domain.competition.entity;
-
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "competitioncsvsave")
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class CompetitionCSVSave {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private Long competitionId;
-
-    private String userid;  // 제출자
-
-    private String fileName;
-
-    private String filePath;
-
-    private LocalDateTime submittedAt;
-
-    private Double score;
-}
-
-// CompetitionCSVSaveRepository.java
+// src/main/java/com/example/demo/domain/competition/repository/CompetitionRepository.java
 package com.example.demo.domain.competition.repository;
 
-import com.example.demo.domain.competition.entity.CompetitionCSVSave;
+import com.example.demo.domain.competition.entity.Competition;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface CompetitionCSVSaveRepository extends JpaRepository<CompetitionCSVSave, Long> {
-    boolean existsByCompetitionIdAndUserid(Long competitionId, String userid);
+public interface CompetitionRepository
+        extends JpaRepository<Competition, Long>, JpaSpecificationExecutor<Competition> {
 }
 
-
-// CompetitionMapper.java
+// com.example.demo.domain.competition.dtos.CompetitionMapper
 package com.example.demo.domain.competition.dtos;
 
 import com.example.demo.domain.competition.entity.Competition;
@@ -92,14 +40,15 @@ public final class CompetitionMapper {
 }
 
 
-// Status.java
-package com.example.demo.domain.competition.entity;
+package com.example.demo.domain.competition.repository;
 
-public enum Status {
-    OPEN, CLOSED, UPCOMING
+import com.example.demo.domain.competition.entity.CompetitionCSVSave;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CompetitionCSVSaveRepository extends JpaRepository<CompetitionCSVSave, Long> {
+    boolean existsByCompetitionIdAndUserid(Long competitionId, String userid);
 }
 
-// Competition.java
 package com.example.demo.domain.competition.entity;
 
 import jakarta.persistence.*;
@@ -178,7 +127,78 @@ public class Competition {
     private String customScorePath; //추가
 }
 
-// CompetitionDto.java
+// com.example.demo.domain.competition.dtos.CompetitionCreateRequest
+package com.example.demo.domain.competition.dtos;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record CompetitionCreateRequest(
+        @NotBlank String title,
+        String description,              // 목적(=엔티티 purpose)
+        String detail,                   // ✅ 상세 설명
+        @NotNull String status,          // UPCOMING/OPEN/CLOSED (프론트에 안 보이더라도 기본값으로 전송)
+        LocalDateTime startAt,
+        LocalDateTime endAt,
+        String evaluationMetric,         // ✅ 평가 지표 (예: ACCURACY/F1/AUC/RMSE/MAE)
+        BigDecimal prizeTotal            // ✅ 상금
+) {}
+
+// com.example.demo.domain.competition.dtos.CompetitionUpdateRequest
+package com.example.demo.domain.competition.dtos;
+
+import jakarta.validation.constraints.NotBlank;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record CompetitionUpdateRequest(
+        @NotBlank String title,
+        String description,
+        String detail,                  // ✅ 상세 설명
+        @NotBlank String status,        // 문자열로 들어와서 서비스에서 valueOf
+        LocalDateTime startAt,
+        LocalDateTime endAt,
+        String evaluationMetric,        // ✅ 평가 지표
+        BigDecimal prizeTotal           // ✅ 상금
+) {}
+
+package com.example.demo.domain.competition.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "competitioncsvsave")
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CompetitionCSVSave {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long competitionId;
+
+    private String userid;  // 제출자
+
+    private String fileName;
+
+    private String filePath;
+
+    private LocalDateTime submittedAt;
+
+    private Double score;
+}
+
+// com.example.demo.domain.competition.dtos.CompetitionDto
 package com.example.demo.domain.competition.dtos;
 
 import com.example.demo.domain.competition.entity.Status;
@@ -204,500 +224,8 @@ public record CompetitionDto(
         Long testDatasetSaveId
 ) {}
 
-// CompetitionRepository.java
-package com.example.demo.domain.competition.repository;
+package com.example.demo.domain.competition.entity;
 
-import com.example.demo.domain.competition.entity.Competition;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
-public interface CompetitionRepository
-        extends JpaRepository<Competition, Long>, JpaSpecificationExecutor<Competition> {
+public enum Status {
+    OPEN, CLOSED, UPCOMING
 }
-
-// CompetitionCreateRequest.java
-package com.example.demo.domain.competition.dtos;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-public record CompetitionCreateRequest(
-        @NotBlank String title,
-        String description,              // 목적(=엔티티 purpose)
-        String detail,                   // ✅ 상세 설명
-        @NotNull String status,          // UPCOMING/OPEN/CLOSED (프론트에 안 보이더라도 기본값으로 전송)
-        LocalDateTime startAt,
-        LocalDateTime endAt,
-        String evaluationMetric,         // ✅ 평가 지표 (예: ACCURACY/F1/AUC/RMSE/MAE)
-        BigDecimal prizeTotal            // ✅ 상금
-) {}
-
-// fileName: ScoreService.java
-package com.example.demo.domain.competition.service;
-
-import com.example.demo.domain.competition.entity.Competition;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.file.Paths;
-import java.util.concurrent.CompletableFuture;
-
-@Slf4j
-@Service
-@RequiredArgsConstructor
-public class ScoreService {
-
-    public double runScore(Competition competition, String answerPath, String submitPath) {
-
-        String script;
-
-        // 1) 커스텀 스크립트가 있으면 그것을 실행
-        if (competition.getCustomScorePath() != null) {
-            script = competition.getCustomScorePath();
-        }
-        // 2) 평가 지표별 스크립트 선택
-        else {
-            script = switch (competition.getEvaluationMetric()) {
-                case "F1" -> "ml/score_f1.py";
-                case "AUC" -> "ml/score_auc.py";
-                case "RMSE" -> "ml/score_rmse.py";
-                case "MAE" -> "ml/score_mae.py";
-                default -> "ml/score_accuracy.py";
-            };
-        }
-        String absoluteScriptPath = Paths.get(script).toAbsolutePath().toString();
-
-        return runPython(absoluteScriptPath, answerPath, submitPath);
-    }
-
-    private double runPython(String script, String answerPath, String submitPath) {
-        try {
-            String scriptPath = Paths.get(script).toAbsolutePath().toString();
-            log.error("SCRIPT PATH = {}", scriptPath);
-
-            ProcessBuilder pb = new ProcessBuilder(
-                    "python",
-                    scriptPath,
-                    answerPath,
-                    submitPath
-            );
-
-            pb.redirectErrorStream(true);
-            Process process = pb.start();
-
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(process.getInputStream())
-            );
-
-            StringBuilder output = new StringBuilder();
-            String line;
-            String lastLine = null;
-
-            // Python 출력 전체 읽기 + 마지막 줄 저장
-            while ((line = br.readLine()) != null) {
-                output.append(line).append("\n");
-                lastLine = line;
-            }
-
-            int exit = process.waitFor();
-
-            if (exit != 0) {
-                log.error("🔥 Python 채점 실패(exit={}):\n{}", exit, output);
-                return -1;
-            }
-
-            if (lastLine == null) {
-                log.error("🔥 Python 출력이 없습니다.");
-                return -1;
-            }
-
-            log.info("🔥 Python 출력(last line) = {}", lastLine);
-
-            return Double.parseDouble(lastLine.trim());
-
-        } catch (Exception e) {
-            log.error("🔥 채점 중 예외 발생: {}", e.getMessage(), e);
-            return -1;
-        }
-    }
-}
-
-
-
-// fileName: CSVSaveService.java
-package com.example.demo.domain.competition.service;
-
-import com.example.demo.domain.competition.entity.Competition;
-import com.example.demo.domain.competition.entity.CompetitionCSVSave;
-import com.example.demo.domain.user.entity.User;
-import org.springframework.web.multipart.MultipartFile;
-
-public interface CSVSaveService {
-    CompetitionCSVSave saveDatasetFile(MultipartFile file, Competition competition, String type);
-
-    CompetitionCSVSave saveCSV(MultipartFile file, User user, Competition competition);
-}
-
-
-// fileName: CompetitionService.java
-package com.example.demo.domain.competition.service;
-
-import com.example.demo.domain.competition.dtos.CompetitionCreateRequest;
-import com.example.demo.domain.competition.dtos.CompetitionDto;
-import com.example.demo.domain.competition.dtos.CompetitionMapper;
-import com.example.demo.domain.competition.dtos.CompetitionUpdateRequest;
-import com.example.demo.domain.competition.entity.Competition;
-import com.example.demo.domain.competition.entity.CompetitionCSVSave;
-import com.example.demo.domain.competition.entity.Status;
-import com.example.demo.domain.competition.repository.CompetitionRepository;
-import com.example.demo.global.exception.ConflictException;
-import com.example.demo.global.exception.ResourceNotFoundException;
-import jakarta.persistence.criteria.Predicate;
-import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-@Service
-@RequiredArgsConstructor
-public class CompetitionService {
-
-    private final CompetitionRepository repository;
-
-    // ✅ CSV 저장 전담 서비스 주입 (dataset + 제출 CSV)
-    private final CSVSaveService csvSaveService;
-
-    // 파일 저장 루트(로컬)
-    private static final String ROOT_PATH = "uploads/competitions/";
-
-    @Transactional(readOnly = true)
-    public Page<CompetitionDto> search(Status status, String keyword, int page, int size, Sort sort) {
-        Specification<Competition> spec = (root, q, cb) -> {
-            Predicate p = cb.conjunction();
-            if (status != null) {
-                p = cb.and(p, cb.equal(root.get("status"), status));
-            }
-            if (keyword != null && !keyword.isBlank()) {
-                String like = "%" + keyword.trim() + "%";
-                p = cb.and(p, cb.like(root.get("title"), like));
-            }
-            return p;
-        };
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return repository.findAll(spec, pageable).map(CompetitionMapper::toDto);
-    }
-
-    @Transactional(readOnly = true)
-    public CompetitionDto get(Long id) {
-        Competition c = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Competition not found: " + id));
-        return CompetitionMapper.toDto(c);
-    }
-
-    // 생성
-    @Transactional
-    public CompetitionDto create(CompetitionCreateRequest req) {
-        Competition c = new Competition();
-        c.setTitle(req.title());
-        c.setPurpose(req.description());
-        c.setDetail(req.detail());
-        c.setStatus(Status.valueOf(req.status()));
-        c.setStartAt(req.startAt());
-        c.setEndAt(req.endAt());
-        if (req.evaluationMetric() != null) c.setEvaluationMetric(req.evaluationMetric());
-        if (req.prizeTotal() != null)       c.setPrizeTotal(req.prizeTotal());
-        Competition saved = repository.save(c);
-        return CompetitionMapper.toDto(saved);
-    }
-
-    // 파일 업로드
-    @Transactional
-    public CompetitionDto createWithFiles(
-            CompetitionCreateRequest req,
-            MultipartFile trainFile,
-            MultipartFile testFile,
-            MultipartFile customScoreFile
-    ) {
-        try {
-            // 1) 기본 엔티티 저장 (ID 먼저 생성)
-            Competition c = new Competition();
-            c.setTitle(req.title());
-            c.setPurpose(req.description());
-            c.setDetail(req.detail());
-            c.setStatus(Status.valueOf(req.status()));
-            c.setStartAt(req.startAt());
-            c.setEndAt(req.endAt());
-            if (req.evaluationMetric() != null) c.setEvaluationMetric(req.evaluationMetric());
-            if (req.prizeTotal() != null)       c.setPrizeTotal(req.prizeTotal());
-
-            Competition saved = repository.save(c);
-
-            // 2) 파일 저장 경로 생성
-//            String compDir = ROOT_PATH + saved.getId() + "/";
-//            File dir = new File(compDir);
-//            if (!dir.exists()) dir.mkdirs();
-            // 2) CSV 저장
-            CompetitionCSVSave trainSave = csvSaveService.saveDatasetFile(trainFile, saved, "train");
-            CompetitionCSVSave testSave  = csvSaveService.saveDatasetFile(testFile, saved, "test");
-
-            // 2-1) 커스텀 score.py 업로드 처리
-            if (customScoreFile != null && !customScoreFile.isEmpty()) {
-                String scorePath = "uploads/competitions/" + saved.getId() + "/score.py";
-
-                File scoreFile = new File(scorePath);
-                scoreFile.getParentFile().mkdirs(); // 디렉토리 생성
-                customScoreFile.transferTo(scoreFile);
-
-                saved.setCustomScorePath(scorePath);
-            }
-
-            // 3) 파일 저장
-            // train.csv
-//            String trainPath = compDir + "train.csv";
-//            Files.copy(trainFile.getInputStream(), Path.of(trainPath),
-//                    StandardCopyOption.REPLACE_EXISTING);
-//
-//            // test.csv
-//            String testPath = compDir + "test.csv";
-//            Files.copy(testFile.getInputStream(), Path.of(testPath),
-//                    StandardCopyOption.REPLACE_EXISTING);
-
-            // 4) 엔티티에 파일 경로 기록
-//            saved.setTrainFilePath("/" + trainPath);
-//            saved.setTestFilePath("/" + testPath);
-            // 3) Competition에 ID + 파일 경로 저장
-            saved.setTrainDatasetSaveId(trainSave.getId());
-            saved.setTestDatasetSaveId(testSave.getId());
-
-            saved.setTrainFilePath(trainSave.getFilePath());
-            saved.setTestFilePath(testSave.getFilePath());
-
-            repository.save(saved);
-
-            // 5) DTO 변환 후 반환
-            return CompetitionMapper.toDto(saved);
-
-        } catch (Exception e) {
-            throw new RuntimeException("대회 생성 중 파일 저장 오류: " + e.getMessage(), e);
-        }
-    }
-
-    // 수정
-    @Transactional
-    public CompetitionDto update(Long id, CompetitionUpdateRequest req) {
-        Competition c = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Competition not found: " + id));
-
-        c.setTitle(req.title());
-        c.setPurpose(req.description());
-        c.setDetail(req.detail());                               // ✅ 상세 설명
-        if (req.status() != null) c.setStatus(Status.valueOf(req.status()));
-        c.setStartAt(req.startAt());
-        c.setEndAt(req.endAt());
-        if (req.evaluationMetric() != null) c.setEvaluationMetric(req.evaluationMetric()); // ✅
-        if (req.prizeTotal() != null)       c.setPrizeTotal(req.prizeTotal());             // ✅
-
-        Competition updated = repository.save(c);
-        return CompetitionMapper.toDto(updated);
-    }
-
-    // 삭제
-    @Transactional
-    public void delete(Long id) {
-        try {
-            repository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ResourceNotFoundException("Competition not found: " + id);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("참조 중인 데이터가 있어 삭제할 수 없습니다: " + id);
-        }
-    }
-
-    // ==========================================
-    // CSV 제출용 Competition 엔티티 조회
-    // ==========================================
-    @Transactional(readOnly = true)
-    public Competition findEntity(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Competition not found: " + id));
-    }
-
-}
-
-
-// fileName: CSVSaveServiceImpl.java
-package com.example.demo.domain.competition.service.impl;
-
-import com.example.demo.domain.competition.entity.Competition;
-import com.example.demo.domain.competition.entity.CompetitionCSVSave;
-import com.example.demo.domain.competition.repository.CompetitionCSVSaveRepository;
-import com.example.demo.domain.competition.repository.CompetitionRepository;
-import com.example.demo.domain.competition.service.CSVSaveService;
-import com.example.demo.domain.competition.service.ScoreService;
-import com.example.demo.domain.leaderboard.service.LeaderboardService;
-import com.example.demo.domain.user.entity.User;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-@Service
-@RequiredArgsConstructor
-public class CSVSaveServiceImpl implements CSVSaveService {
-
-    private final CompetitionCSVSaveRepository csvSaveRepository;
-    private final ScoreService scoreService;
-    private final LeaderboardService leaderboardService;
-    private final CompetitionRepository competitionRepository;
-
-    @Value("${file.upload-dir}") // 값 주입
-    private String uploadDir;
-
-    /* ============================================================
-     *  🔥 [A] Dataset 저장 (train.csv / test.csv)
-     *      - 대회 생성 시 호출됨
-     *      - userid 없음
-     *      - score 없음
-     * ============================================================ */
-    @Override
-    public CompetitionCSVSave saveDatasetFile(MultipartFile file,
-                                              Competition competition,
-                                              String type) {
-
-        // 경로: (설정된경로)/dataset/{competitionId}/
-        Path rootPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-        Path targetDir = rootPath.resolve("dataset")
-                .resolve(String.valueOf(competition.getId()));
-
-        File dir = targetDir.toFile();
-        if (!dir.exists()) dir.mkdirs();
-
-        // 파일명: train.csv 또는 test.csv 고정
-        String fileName = type.equals("train") ? "train.csv" : "test.csv";
-        Path filePath = targetDir.resolve(fileName);
-
-        // 실제 파일 저장
-        try {
-            Files.copy(file.getInputStream(), filePath,
-                    StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("CSV 저장 실패", e);
-        }
-
-        // DB 기록 저장
-        CompetitionCSVSave save = CompetitionCSVSave.builder()
-                .competitionId(competition.getId())
-                .userid(null)
-                .fileName(fileName)
-                .filePath(filePath.toString()) // Path 객체의 문자열 사용
-                .submittedAt(LocalDateTime.now())
-                .score(null)
-                .build();
-
-        return csvSaveRepository.save(save);
-    }
-
-
-    /* ============================================================
-     *  🔥 [B] 참가자 제출 CSV 저장
-     *      - 참가자가 제출할 때 호출됨
-     *      - userid 기록 필요
-     *      - score 기본값 0.0 (AI 채점 후 업데이트)
-     * ============================================================ */
-    @Override
-    public CompetitionCSVSave saveCSV(MultipartFile file,
-                                      User user,
-                                      Competition competition) {
-
-        // 업로드 경로 = /uploads/submission/{competitionId}/
-        Path rootPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-        Path targetDir = rootPath.resolve("submission")
-                .resolve(String.valueOf(competition.getId()));
-
-        File dir = targetDir.toFile();
-        if (!dir.exists()) dir.mkdirs();
-
-        // 원본 파일명 유지하되 UUID 붙여 충돌 방지
-        String originalName = file.getOriginalFilename();
-        String storedName = UUID.randomUUID() + "_" + originalName;
-
-        Path filePath = targetDir.resolve(storedName);
-
-        // 실제 파일 복사
-        try {
-            Files.copy(file.getInputStream(), filePath,
-                    StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("제출 CSV 저장 실패", e);
-        }
-
-        // 제출 기록 DB 저장
-        CompetitionCSVSave save = CompetitionCSVSave.builder()
-                .competitionId(competition.getId())
-                .userid(user.getUserid())
-                .fileName(originalName)
-                .filePath(filePath.toString()) // Path 객체의 문자열 사용
-                .submittedAt(LocalDateTime.now())
-                .score(0.0)
-                .build();
-
-        save = csvSaveRepository.save(save);
-
-        // 2) 점수 계산 (핵심 부분)
-        String answerPath = competition.getTestFilePath();
-        if (answerPath == null || answerPath.isBlank()) {
-            throw new RuntimeException("정답 파일(test.csv) 경로가 존재하지 않습니다.");
-        }
-        String submitPath = save.getFilePath();
-
-        // ScoreService 실행 → Python 채점
-        double score = scoreService.runScore(competition, answerPath, submitPath);
-
-        // 계산된 점수 저장
-        save.setScore(score);
-        csvSaveRepository.save(save);
-
-        // 참가자 수 +1
-        boolean isFirstSubmission =
-                !csvSaveRepository.existsByCompetitionIdAndUserid(competition.getId(), user.getUserid());
-        if (isFirstSubmission) {
-            competition.setParticipantCount(competition.getParticipantCount() + 1);
-            competitionRepository.save(competition);
-        }
-
-        // 리더보드 반영
-        leaderboardService.leaderBoardAdd(user, competition, save);
-
-        return save;
-    }
-
-}
-

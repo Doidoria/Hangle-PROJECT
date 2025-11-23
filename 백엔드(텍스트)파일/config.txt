@@ -1,4 +1,158 @@
-// SecurityConfig.java
+==================== DataSourceConfig.java ====================
+package com.example.demo.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import com.zaxxer.hikari.HikariDataSource;
+
+@Configuration
+public class DataSourceConfig {
+
+	@Value("${spring.datasource.driver-class-name}")
+	private String DBClassName;
+	@Value("${spring.datasource.url}")
+	private String DBJdbcUrl;
+	@Value("${spring.datasource.username}")
+	private String username;
+	@Value("${spring.datasource.password}")
+	private String password;
+	@Bean
+	public HikariDataSource dataSource()
+	{
+		HikariDataSource dataSource = new HikariDataSource();
+		dataSource.setDriverClassName(DBClassName);
+		dataSource.setJdbcUrl(DBJdbcUrl);
+		dataSource.setUsername(username);
+		dataSource.setPassword(password);
+
+		return dataSource;
+	}
+
+}
+
+==================== JpaConfig.java ====================
+package com.example.demo.config;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+@Configuration
+@EntityScan(basePackages = {
+        "com.example.demo.domain.user.entity",
+        "com.example.demo.domain.competition.entity",
+        "com.example.demo.domain.inquiry.entity",
+        "com.example.demo.domain.leaderboard.entity",
+})
+@EnableJpaRepositories
+(
+                basePackages = {
+                        "com.example.demo.domain.user.repository",
+                        "com.example.demo.domain.competition.repository",
+                        "com.example.demo.domain.myProfile.repository",
+                        "com.example.demo.domain.mySetting.repository",
+                        "com.example.demo.domain.inquiry.repository",
+                        "com.example.demo.domain.leaderboard.repository",
+                },
+                transactionManagerRef = "jpaTransactionManager"
+)
+public class JpaConfig {
+    @Autowired
+    private DataSource dataSource;
+
+    @Bean
+    LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+        entityManagerFactoryBean.setDataSource(dataSource);
+        entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        entityManagerFactoryBean.setPackagesToScan("com.example.demo.domain");
+
+        Properties jpaProperties = new Properties();
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("hibernate.hbm2ddl.auto", "update");                         // 필요에 따라 'create', 'validate' 등으로 변경
+        properties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect"); // 사용 중인 DB에 맞게 변경
+//        properties.put("hibernate.show_sql", true);
+//        properties.put("hibernate.format_sql", true);
+        properties.put("hibernate.hibernate.jdbc.batch_size", 1000);
+        properties.put("hibernate.hibernate.order_inserts", true);
+        properties.put("hibernate.order_updates", true);
+        properties.put("hibernate.jdbc.batch_versioned_data", true);
+        entityManagerFactoryBean.setJpaPropertyMap(properties);
+
+        return entityManagerFactoryBean;
+    }
+}
+
+==================== PasswordEncoderConfig.java ====================
+package com.example.demo.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@Configuration
+public class PasswordEncoderConfig {
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+
+==================== RedisConfig.java ====================
+package com.example.demo.config;
+
+import com.example.demo.config.auth.redis.RedisProperties;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+@RequiredArgsConstructor
+@Configuration
+@EnableRedisRepositories
+public class RedisConfig {
+
+    @Autowired
+    private RedisProperties redisProperties;
+
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+        config.setHostName(redisProperties.getHost());
+        config.setPort(redisProperties.getPort());
+        return new LettuceConnectionFactory(config);
+    }
+
+    @Bean
+    public RedisTemplate<?, ?> redisTemplate() {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        return redisTemplate;
+    }
+
+}
+
+==================== SecurityConfig.java ====================
 package com.example.demo.config;
 
 import com.example.demo.config.auth.jwt.JwtAuthorizationFilter;
@@ -14,6 +168,7 @@ import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.global.exceptionHandler.CustomAccessDeniedHandler;
 import com.example.demo.global.exceptionHandler.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -26,175 +181,127 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.web.context.NullSecurityContextRepository;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.Collections;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
-@EnableWebSecurity(debug = false)
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final CustomLoginSuccessHandler customLoginSuccessHandler;
-	private final CustomLogoutHandler customLogoutHandler;
-	private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
-	private final UserRepository userRepository;
-	private final JwtTokenProvider jwtTokenProvider;
-	private final RedisUtil redisUtil;
+    private final CorsFilter corsFilter;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RedisUtil redisUtil;
     private final PrincipalDetailsOAuth2Service principalDetailsOAuth2Service;
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final UserRepository userRepository;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
 
     @Bean
-    public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(userRepository, jwtTokenProvider, redisUtil);
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
-	@Bean
-    @Order(2)
-	protected SecurityFilterChain configure(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
-        http.securityMatcher("/**");
-        // CORS 활성화
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-		// CSRF비활성화
-		http.csrf((config)->{config.disable();});
-        http.exceptionHandling(ex -> ex
-                .authenticationEntryPoint(customAuthenticationEntryPoint) // 401 JSON
-                .accessDeniedHandler(customAccessDeniedHandler)           // 403 JSON
-        )
-                .formLogin(AbstractHttpConfigurer::disable)  // ★ 로그인 폼 리다이렉트 금지
-                .logout(AbstractHttpConfigurer::disable);    // API 체인에는 불필요
-
-		//권한체크
-        http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers(
-                    "/", "/index.html",
-                    "/css/**", "/js/**", "/images/**",
-                    "/favicon.ico",
-                    "/login", "/join", "/validate/**",
-                    "/swagger-ui/**", "/v3/api-docs/**",
-                    "/oauth2/**",
-                    "/error"
-            ).permitAll();
-            auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-            auth.requestMatchers(HttpMethod.POST, "/logout").permitAll();
-            auth.requestMatchers(HttpMethod.OPTIONS, "/logout").permitAll();
-            auth.requestMatchers("/api/v1/chat/user").permitAll();
-            auth.requestMatchers("/api/v1/chat/dev").hasAnyRole("ADMIN", "MANAGER");
-
-            // 관리자 문의 API 권한 설정
-            auth.requestMatchers(HttpMethod.GET, "/api/inquiry/admin").hasAnyRole("ADMIN","MANAGER");
-            auth.requestMatchers(HttpMethod.POST, "/api/inquiry/admin/*/answer").hasAnyRole("ADMIN","MANAGER");
-            auth.requestMatchers(HttpMethod.PUT,  "/api/inquiry/admin/*/answer").hasAnyRole("ADMIN","MANAGER");
-            auth.requestMatchers(HttpMethod.DELETE, "/api/inquiry/admin/*").hasRole("ADMIN");
-
-            auth.requestMatchers(HttpMethod.POST, "/api/competitions/{competitionId}/submit").hasRole("USER");
-            // 관리자 대회 권한 설정
-            auth.requestMatchers(HttpMethod.PUT, "/api/competitions/**").hasAnyRole("ADMIN", "MANAGER");
-            auth.requestMatchers(HttpMethod.DELETE, "/api/competitions/**").hasRole("ADMIN");
-            auth.requestMatchers("/api/**").authenticated();
-            auth.anyRequest().permitAll();
-        });
-
-		//-----------------------------------------------------
-		// [수정] 로그인(직접처리 - UserRestController)
-		//-----------------------------------------------------
-		http.formLogin((login)->{
-			login.disable();
-		});
-
-		//로그아웃
-		http.logout((logout)->{
-			logout.permitAll();
-			logout.addLogoutHandler(customLogoutHandler);
-			logout.logoutSuccessHandler(customLogoutSuccessHandler);
-		});
-
-		//OAUTH2-CLIENT
-		http.oauth2Login(oauth -> oauth
-                .loginPage("/login") // 커스텀 로그인 페이지 유지
-                .userInfoEndpoint(userInfo -> userInfo.userService(principalDetailsOAuth2Service))
-                .defaultSuccessUrl("http://localhost:3000/", true) // 로그인 성공 후 React 메인 페이지로 리다이렉트
-                .successHandler(oAuth2LoginSuccessHandler())
-                .failureUrl("http://localhost:3000/login?error=true") // 실패 시 React 로그인 페이지로
-        );
-
-		//SESSION INVALIDATED
-        http.securityContext(c -> c.securityContextRepository(new NullSecurityContextRepository()));
-		http.sessionManagement((sessionManagerConfigure)->{
-			sessionManagerConfigure.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		});
-
-        //JWT FILTER ADD
-        http.addFilterBefore(jwtAuthorizationFilter, LogoutFilter.class);
-
-		//-----------------------------------------------
-		//[추가] CORS
-		//-----------------------------------------------
-		http.cors((config)->{
-			config.configurationSource(corsConfigurationSource());
-		});
-
-		return http.build();
-	}
-
-	//-----------------------------------------------------
-	//[추가] CORS
-	//-----------------------------------------------------
-	@Bean
-	CorsConfigurationSource corsConfigurationSource(){
-        CorsConfiguration config = new CorsConfiguration();
-        // React 개발 서버 주소만 허용
-        config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000")); //"http://localhost:5173"
-        // 모든 헤더와 메서드 허용
-        config.setAllowedHeaders(Collections.singletonList("*"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        // 쿠키 포함 요청 허용
-        config.setAllowCredentials(true);
-        // 쿠키 삭제 시 필요한 헤더 노출
-        config.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
-        // SameSite=None 쿠키를 주고받기 위해 반드시 Secure(false)로 일관성 유지
-        // (이건 쿠키 생성/삭제할 때 맞춰줘야 함)
-        // 쿠키 생성 시에도 동일하게 secure=false, SameSite=None으로 만들어야 브라우저 인식됨
-        // URL 매핑
-//        config.setMaxAge(3600L); // 1시간 동안 캐싱 (1시간 동안은 매번 OPTIONS 요청을 다시 보내지 않음)
-        org.springframework.web.cors.UrlBasedCorsConfigurationSource source =
-                new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-	}
-
-	//-----------------------------------------------------
-	//[추가] ATHENTICATION MANAGER 설정 - 로그인 직접처리를 위한 BEAN
-	//-----------------------------------------------------
-	@Bean
-	public AuthenticationManager authenticationManager(
-			AuthenticationConfiguration authenticationConfiguration) throws Exception {
-		return authenticationConfiguration.getAuthenticationManager();
-	}
-
     @Bean
-    public AuthenticationSuccessHandler oAuth2LoginSuccessHandler() {
+    @Order(1)
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http
+                .addFilter(corsFilter) // @CrossOrigin(인증X), SecurityFilter에 등록(인증O)
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider, redisUtil), UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(authorize -> authorize
+                        // --- Swagger
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                        // --- Static Resources
+                        .requestMatchers("/uploads/**", "/favicon.ico", "/error").permitAll()
+                        // --- OAuth2 Redirect
+                        .requestMatchers("/oauth2/authorization/**").permitAll()
+                        .requestMatchers("/login/oauth2/code/**").permitAll()
+                        // --- Public APIs
+                        .requestMatchers(HttpMethod.GET, "/api/competition/**").permitAll() // 대회 목록 조회는 전체 공개
+                        .requestMatchers(HttpMethod.GET, "/api/competition/{id}").permitAll() // 대회 상세 조회는 전체 공개
+                        .requestMatchers("/api/user/join").permitAll() // 회원가입
+                        .requestMatchers("/api/user/login").permitAll() // 로그인
+                        .requestMatchers("/api/user/check/**").permitAll() // 아이디, 닉네임 중복 확인
+                        .requestMatchers("/api/user/find-userid").permitAll() // 아이디 찾기
+                        .requestMatchers("/api/user/reset-password").permitAll() // 비밀번호 재설정
+                        .requestMatchers("/api/inquiry/**").permitAll() // 1:1 문의 (인증 없이)
+                        .requestMatchers("/api/portone/verify-identity").permitAll() // 본인 인증 요청
+
+                        // --- User (ROLE_USER)
+                        .requestMatchers("/api/user/detail").hasAnyRole("USER", "ADMIN", "MANAGER") // 내 정보 조회
+                        .requestMatchers("/api/user/update-profile").hasAnyRole("USER", "ADMIN", "MANAGER") // 프로필 수정
+                        .requestMatchers("/api/user/change-password").hasAnyRole("USER", "ADMIN", "MANAGER") // 비밀번호 변경
+                        .requestMatchers("/api/user/delete").hasAnyRole("USER", "ADMIN", "MANAGER") // 회원 탈퇴
+
+                        // --- Manager (ROLE_MANAGER)
+                        .requestMatchers("/api/manager/**").hasAnyRole("MANAGER", "ADMIN")
+
+                        // --- Admin (ROLE_ADMIN)
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // --- All authenticated users
+                        .requestMatchers("/api/user/logout", "/api/user/reissue-token").hasAnyRole("USER", "ADMIN", "MANAGER")
+                        .anyRequest().authenticated()
+                )
+
+                // --- Exception Handling
+                .exceptionHandling(e -> e
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                )
+
+                // --- OAuth2 Login
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(principalDetailsOAuth2Service)
+                        )
+                        .successHandler(customLoginSuccessHandler())
+                )
+
+                // --- Logout
+                .logout(l -> l
+                        .logoutUrl("/api/user/logout")
+                        .addLogoutHandler(logoutHandler())
+                        .logoutSuccessHandler(logoutSuccessHandler())
+                        .deleteCookies(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, JwtProperties.REFRESH_TOKEN_COOKIE_NAME)
+                );
+
+        return http.build();
+    }
+
+    /**
+     * OAuth2 로그인 성공 시 처리 핸들러
+     * - JWT 생성 및 쿠키에 담아 리다이렉트
+     */
+    @Bean
+    public CustomLoginSuccessHandler customLoginSuccessHandler() {
         return (request, response, authentication) -> {
-
-            // PrincipalDetails 캐스팅
-            com.example.demo.config.auth.service.PrincipalDetails principalDetails =
-                    (com.example.demo.config.auth.service.PrincipalDetails) authentication.getPrincipal();
-
-            // 사용자 이름 가져오기
-            String username = principalDetails.getUser().getUsername();
-            String userid = principalDetails.getUser().getUserid();
-
             // 1. JWT 생성
             TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-            // 2. Redis에 Refresh 저장
-            redisUtil.setDataExpire("RT:" + authentication.getName(),
+            String username = authentication.getName(); // Spring Security UserDetails의 username
+
+            String userid = userRepository.findByUserid(username)
+                    .map(user -> user.getUserid())
+                    .orElseGet(() -> userRepository.findByEmail(username)
+                            .map(user -> user.getUserid())
+                            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."))
+                    );
+
+            // 2. Redis에 Refresh Token 저장 (key: username)
+            redisUtil.setData(
+                    authentication.getName(),
                     tokenInfo.getRefreshToken(),
                     JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000);
             // 3. 쿠키 생성 (Access + User)
@@ -215,7 +322,7 @@ public class SecurityConfig {
                     .build();
 
             // React로 username과 함께 리다이렉트
-            String redirectUrl = "http://localhost:3000/oauth-success?username="
+            String redirectUrl = allowedOrigins+"/oauth-success?username="
                     + java.net.URLEncoder.encode(username, java.nio.charset.StandardCharsets.UTF_8)
                     + "&userid=" + java.net.URLEncoder.encode(userid, java.nio.charset.StandardCharsets.UTF_8);
 
@@ -226,38 +333,26 @@ public class SecurityConfig {
         };
     }
 
-}
-// TxConfig.java
-package com.example.demo.config;
-
-import jakarta.persistence.EntityManagerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import javax.sql.DataSource;
-
-@Configuration
-@EnableTransactionManagement
-public class TxConfig {
-    @Autowired
-    private DataSource dataSource;
-
-    //    JPA TransactionManager Settings
-    @Bean(name="jpaTransactionManager")
-    public JpaTransactionManager jpaTransactionManager(EntityManagerFactory entityManagerFactory) {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory);
-        transactionManager.setDataSource(dataSource);
-
-        return transactionManager;
+    /**
+     * 로그아웃 핸들러
+     * - Refresh Token 삭제
+     */
+    @Bean
+    public LogoutHandler logoutHandler() {
+        return new CustomLogoutHandler(redisUtil, jwtTokenProvider);
     }
 
+    /**
+     * 로그아웃 성공 핸들러
+     * - 성공 시 200 OK 응답
+     */
+    @Bean
+    public LogoutSuccessHandler logoutSuccessHandler() {
+        return new CustomLogoutSuccessHandler();
+    }
 }
-// SwaggerConfig.java
+
+==================== SwaggerConfig.java ====================
 package com.example.demo.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -317,187 +412,39 @@ public class SwaggerConfig {
                 ));
     }
 }
-// JpaConfig.java
+
+==================== TxConfig.java ====================
 package com.example.demo.config;
 
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 @Configuration
-@EntityScan(basePackages = {
-        "com.example.demo.domain.user.entity",
-        "com.example.demo.domain.competition.entity",
-        "com.example.demo.domain.inquiry.entity",
-        "com.example.demo.domain.leaderboard.entity",
-})
-@EnableJpaRepositories
-(
-                basePackages = {
-                        "com.example.demo.domain.user.repository",
-                        "com.example.demo.domain.competition.repository",
-                        "com.example.demo.domain.myProfile.repository",
-                        "com.example.demo.domain.mySetting.repository",
-                        "com.example.demo.domain.inquiry.repository",
-                        "com.example.demo.domain.leaderboard.repository",
-                },
-                transactionManagerRef = "jpaTransactionManager"
-)
-public class JpaConfig {
+@EnableTransactionManagement
+public class TxConfig {
     @Autowired
     private DataSource dataSource;
 
-    @Bean
-    LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-        entityManagerFactoryBean.setDataSource(dataSource);
-        entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        entityManagerFactoryBean.setPackagesToScan("com.example.demo.domain");
+    //    JPA TransactionManager Settings
+    @Bean(name="jpaTransactionManager")
+    public JpaTransactionManager jpaTransactionManager(EntityManagerFactory entityManagerFactory) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory);
+        transactionManager.setDataSource(dataSource);
 
-        Properties jpaProperties = new Properties();
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("hibernate.hbm2ddl.auto", "update");                         // 필요에 따라 'create', 'validate' 등으로 변경
-        properties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect"); // 사용 중인 DB에 맞게 변경
-        properties.put("hibernate.show_sql", true);
-        properties.put("hibernate.format_sql", true);
-        properties.put("hibernate.hibernate.jdbc.batch_size", 1000);
-        properties.put("hibernate.hibernate.order_inserts", true);
-        properties.put("hibernate.order_updates", true);
-        properties.put("hibernate.jdbc.batch_versioned_data", true);
-        entityManagerFactoryBean.setJpaPropertyMap(properties);
-
-        return entityManagerFactoryBean;
-    }
-}
-// PasswordEncoderConfig.java
-package com.example.demo.config;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-@Configuration
-public class PasswordEncoderConfig {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-}
-// DataSourceConfig.java
-package com.example.demo.config;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import com.zaxxer.hikari.HikariDataSource;
-
-@Configuration
-public class DataSourceConfig {
-
-	@Value("${spring.datasource.driver-class-name}")
-	private String DBClassName;
-	@Value("${spring.datasource.url}")
-	private String DBJdbcUrl;
-	@Value("${spring.datasource.username}")
-	private String username;
-	@Value("${spring.datasource.password}")
-	private String password;
-	@Bean
-	public HikariDataSource dataSource()
-	{
-		HikariDataSource dataSource = new HikariDataSource();
-		dataSource.setDriverClassName(DBClassName);
-		dataSource.setJdbcUrl(DBJdbcUrl);
-		dataSource.setUsername(username);
-		dataSource.setPassword(password);
-
-		return dataSource;
-	}
-
-}
-// CorsConfig.java
-package com.example.demo.config;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-@Configuration
-public class CorsConfig {
-
-    @Bean
-    public WebMvcConfigurer webMvcConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // 모든 경로 허용 (특히 /validate 등)
-                        .allowedOrigins(
-                                "http://localhost:3000",
-                                "http://localhost:5173"
-                        )
-                        .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true)
-                        .exposedHeaders("Set-Cookie") // 응답 쿠키 허용
-                        .maxAge(3600);
-            }
-        };
-    }
-}
-// RedisConfig.java
-package com.example.demo.config;
-
-import com.example.demo.config.auth.redis.RedisProperties;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-@RequiredArgsConstructor
-@Configuration
-@EnableRedisRepositories
-public class RedisConfig {
-
-    @Autowired
-    private RedisProperties redisProperties;
-
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
-        config.setHostName(redisProperties.getHost());
-        config.setPort(redisProperties.getPort());
-        return new LettuceConnectionFactory(config);
-    }
-
-    @Bean
-    public RedisTemplate<?, ?> redisTemplate() {
-        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-        return redisTemplate;
+        return transactionManager;
     }
 
 }
-// WebConfig.java
+
+==================== WebConfig.java ====================
 package com.example.demo.config;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -511,7 +458,7 @@ import java.nio.file.Paths;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("${file.upload-dir}")
+    @Value("${file.upload-root}")
     private String uploadDir;
 
     @Override
@@ -527,7 +474,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations(uploadPath);
     }
 }
-// AdminAccountInitializer.java
+
+==================== AdminAccountInitializer.java ====================
 package com.example.demo.config;
 
 import com.example.demo.domain.user.entity.User;
@@ -584,6 +532,38 @@ public class AdminAccountInitializer {
 
         System.out.println("[INIT] 기본 계정 생성 완료");
         System.out.println(" ▶ userid : " + userid);
-        System.out.println(" ▶ role   : " + role);
+        System.out.println(" ▶ password : " + password);
+    }
+}
+
+==================== CorsConfig.java ====================
+package com.example.demo.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class CorsConfig {
+
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
+
+    @Bean
+    public WebMvcConfigurer webMvcConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins(allowedOrigins.split(","))
+                        .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true)
+                        .exposedHeaders("Set-Cookie")
+                        .maxAge(3600);
+            }
+        };
     }
 }

@@ -1,4 +1,3 @@
-// LeaderboardServiceImpl.java
 package com.example.demo.domain.leaderboard.service.impl;
 
 import com.example.demo.domain.competition.entity.Competition;
@@ -162,8 +161,8 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         }
     }
 }
-
-// Leaderboard.java
+// LeaderboardServiceImpl.java
+// --------------------
 package com.example.demo.domain.leaderboard.entity;
 
 import com.example.demo.domain.competition.entity.Competition;
@@ -224,8 +223,8 @@ public class Leaderboard {
 //    private Integer comprank;
 
 }
-
-// LeaderboardEntryDto.java
+// Leaderboard.java
+// --------------------
 package com.example.demo.domain.leaderboard.dto;
 
 import lombok.*;
@@ -255,26 +254,8 @@ public class LeaderboardEntryDto {
 
 
 }
-
-// LeaderboardService.java
-package com.example.demo.domain.leaderboard.service;
-
-import com.example.demo.domain.competition.entity.Competition;
-import com.example.demo.domain.competition.entity.CompetitionCSVSave;
-import com.example.demo.domain.leaderboard.dto.LeaderboardEntryDto;
-import com.example.demo.domain.user.entity.User;
-
-import java.util.List;
-
-public interface LeaderboardService {
-    public List<LeaderboardEntryDto> getAllLeaderboard();
-    public List<LeaderboardEntryDto> searchLeaderboard(String keyword);
-    public void computeRanksPerComp(Long compId);
-    public Long leaderBoardAdd(User user, Competition competition, CompetitionCSVSave competitionCSVSave);
-    void updateScore(User user, Competition competition, double score);
-}
-
-// LeaderboardRepository.java
+// LeaderboardEntryDto.java
+// --------------------
 package com.example.demo.domain.leaderboard.repository;
 
 
@@ -325,6 +306,24 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard,Long> {
     );
 
 
-
-
 }
+
+// LeaderboardRepository.java
+// --------------------
+package com.example.demo.domain.leaderboard.service;
+
+import com.example.demo.domain.competition.entity.Competition;
+import com.example.demo.domain.competition.entity.CompetitionCSVSave;
+import com.example.demo.domain.leaderboard.dto.LeaderboardEntryDto;
+import com.example.demo.domain.user.entity.User;
+
+import java.util.List;
+
+public interface LeaderboardService {
+    public List<LeaderboardEntryDto> getAllLeaderboard();
+    public List<LeaderboardEntryDto> searchLeaderboard(String keyword);
+    public void computeRanksPerComp(Long compId);
+    public Long leaderBoardAdd(User user, Competition competition, CompetitionCSVSave competitionCSVSave);
+    void updateScore(User user, Competition competition, double score);
+}
+// LeaderboardService.java

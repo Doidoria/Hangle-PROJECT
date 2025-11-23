@@ -54,7 +54,7 @@ const MyProfile = () => {
 
             const imageUrl = res.data.profileImageUrl;
             if (imageUrl && imageUrl !== 'null') {
-                const fullUrl = 'http://localhost:8090' + imageUrl + '?t=' + Date.now();
+                const fullUrl = process.env.REACT_APP_API_BASE_URL + imageUrl + '?t=' + Date.now();
                 setProfileImage(fullUrl);
                 localStorage.setItem('profileImage', fullUrl);
             } else {
@@ -101,7 +101,7 @@ const MyProfile = () => {
 
                     const imageUrl = res.data.profileImageUrl;
                     if (imageUrl && imageUrl !== 'null') {
-                        const fullUrl = 'http://localhost:8090' + imageUrl + '?t=' + Date.now();
+                        const fullUrl = process.env.REACT_APP_API_BASE_URL + imageUrl + '?t=' + Date.now();
                         setProfileImage(fullUrl);
                         localStorage.setItem('profileImage', fullUrl);
                     } else {
@@ -173,10 +173,7 @@ const MyProfile = () => {
                     {!editing ? (
                         <p className="intro-text">{introduction || '아직 자기소개가 없습니다.'}</p>
                     ) : (
-                        <textarea
-                            className="intro-edit"
-                            rows="4"
-                            value={introduction}
+                        <textarea className="intro-edit" rows="4" value={introduction}
                             onChange={(e) => setIntroduction(e.target.value)}/>
                     )}
                     <div className="action">

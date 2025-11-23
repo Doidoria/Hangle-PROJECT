@@ -286,8 +286,8 @@ public class UserRestController {
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
-    @Value("${file.upload-dir}") // application.properties에서 값 주입
-    private String uploadDir;
+    @Value("${profile.upload-dir}")
+    private String profileUploadDir;
 
     @PostMapping("/api/user/profile-image")
     public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, Authentication authentication) {
@@ -302,12 +302,9 @@ public class UserRestController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "사용자를 찾을 수 없습니다."));
             }
-            // 저장할 폴더 경로 생성 (프로젝트루트/uploads/profile)
-            Path rootPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-            Path profilePath = rootPath.resolve("profile");
+            Path profilePath = Paths.get(profileUploadDir).toAbsolutePath().normalize();
             File profileDir = profilePath.toFile();
 
-            // 폴더가 없으면 생성
             if (!profileDir.exists()) {
                 profileDir.mkdirs();
             }
