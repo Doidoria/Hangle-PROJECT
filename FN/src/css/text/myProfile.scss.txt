@@ -1,0 +1,323 @@
+.profile-page {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding-bottom: 60px;
+  animation: fadeUp 0.4s ease-out;
+
+  .profile-header {
+    position: relative;
+    width: 100%;
+    padding-bottom: 20px;
+
+    .banner {
+      height: 100px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
+    }
+
+    .profile-main {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      padding: 0 40px;
+      margin-top: -120px;
+
+      .avatar-wrap {
+        position: relative;
+        width: 130px;
+        height: 130px;
+        flex-shrink: 0;
+
+        .avatar-img {
+          width: 130px;
+          height: 130px;
+          object-fit: cover;
+          border-radius: 50%;
+          border: 6px solid var(--surface);
+          box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+          transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+        }
+
+        &:hover .avatar-img {
+          transform: scale(1.05) rotate(1deg);
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .change-photo {
+          position: absolute;
+          top: 140px;
+          right: 0;
+          transform: translateX(-50%);
+          background: var(--surface-light);
+          color: var(--text);
+          padding: 4px 8px;
+          border-radius: 10px;
+          font-size: 11px;
+          cursor: pointer;
+          border: 1px solid var(--border);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+          }
+        }
+      }
+
+      .info {
+        padding-top: 40px;
+
+        h2 {
+          margin: 0;
+          font-size: 32px;
+          font-weight: 800;
+        }
+
+        .meta {
+          font-size: 14px;
+          color: var(--muted);
+          margin-top: 8px;
+        }
+
+        /* 설정 버튼 스타일 수정 및 호버 추가 */
+        .setting-btn {
+          margin-top: 10px;
+          display: inline-flex;
+          gap: 6px;
+          align-items: center;
+          font-size: 14px;
+          font-weight: 600;
+          padding: 8px 15px;
+          border-radius: 8px;
+          background: var(--surface-light);
+          color: var(--text);
+          border: 1px solid var(--border);
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.3);
+            transform: translateY(-2px);
+          }
+
+          .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 250, 'GRAD' 0, 'opsz' 14;
+          }
+        }
+      }
+    }
+
+    .profile-stats {
+      display: flex;
+      justify-content: flex-start;
+      gap: 40px;
+      padding: 20px 40px 0;
+      border-top: 1px solid var(--border);
+      margin-top: 25px;
+
+      .stat {
+        text-align: left;
+        transition: transform 0.2s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+
+        strong {
+          display: block;
+          font-size: 28px;
+          font-weight: 800;
+          color: var(--primary);
+        }
+
+        span {
+          font-size: 13px;
+          color: var(--muted);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  hr {
+    border: none;
+    height: 1px;
+    background-color: var(--border);
+    margin: 40px 40px 0;
+  }
+
+  /* 메인 그리드 */
+  .profile-grid {
+    margin-top: 10px;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+
+    .card {
+      background: var(--surface);
+      padding: 30px;
+      padding-bottom: 20px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+      }
+
+      &.full-width {
+        grid-column: 1 / -1;
+      }
+
+      h3 {
+        display: block;
+        margin: -20px -30px 15px -30px;
+        padding: 15px 30px;
+        font-size: 20px;
+        font-weight: 700;
+        background: linear-gradient(90deg, var(--primary-light) 0%, rgba(255, 255, 255, 0) 100%);
+        
+        color: var(--text-heading);
+        border-top-left-radius: 14px;
+        border-top-right-radius: 14px;
+        border-bottom: 1px solid var(--border);
+
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      .intro-text {
+        white-space: pre-line;
+        // margin-bottom: 20px;
+        color: var(--text);
+      }
+
+      textarea.intro-edit {
+        width: 100%;
+        min-height: 80px;
+        resize: vertical;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border-dark);
+        background: var(--bg-textarea);
+        color: var(--textarea-text);
+        font-size: 15px;
+        line-height: 1.5;
+      }
+
+      .action {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+
+        /* 버튼 호버 속성 추가 및 애니메이션 강화 */
+        button {
+          padding: 10px 20px;
+          border-radius: 8px;
+          border: 1px solid var(--border);
+          background: var(--surface-light);
+          color: #fff;
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.25s ease;
+
+          &:hover {
+            background: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+          }
+        }
+
+        .primary {
+          // 저장 버튼
+          background: var(--primary);
+          color: #fff;
+          border: none;
+
+          &:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.4);
+            transform: translateY(-1px);
+          }
+        }
+      }
+
+      .badge-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding-top: 10px;
+        margin-bottom: 15px;
+
+        img {
+          width: 70px;
+          height: 70px;
+          border-radius: 50%;
+          border: 3px solid var(--primary-light);
+          padding: 5px;
+          background: #fff;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+          &:hover {
+            transform: scale(1.1);
+            border-color: var(--primary);
+          }
+        }
+      }
+
+      .activity-list {
+        list-style: none;
+        padding: 0;
+
+        li {
+          padding: 8px 0;
+          border-bottom: 1px dashed var(--border-light);
+          font-size: 15px;
+          color: var(--text);
+          transition: background-color 0.3s ease;
+
+          &:hover {
+            background-color: var(--surface-hover);
+            padding-left: 5px;
+          }
+
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+      }
+    }
+
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
