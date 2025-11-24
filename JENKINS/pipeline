@@ -5,6 +5,9 @@ pipeline {
         GITHUB_REPO = 'https://github.com/Doidoria/Docker.git'
         EC2_HOST = '3.37.7.103'  // EC2 인스턴스의 퍼블릭 IP나 DNS
         EC2_USER = 'ec2-user'       // EC2 사용자 이름 (Amazon Linux의 경우 'ec2-user', Ubuntu의 경우 'ubuntu')
+
+        REACT_APP_SERVER='http://${EC2_HOST}:8090'
+        REACT_APP_API_BASE_URL='http://${EC2_HOST}:8090'
     }
     
     stages {
