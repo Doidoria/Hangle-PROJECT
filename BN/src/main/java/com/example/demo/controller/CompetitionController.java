@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.config.auth.service.PrincipalDetails;
 import com.example.demo.domain.competition.dtos.CompetitionCreateRequest;
 import com.example.demo.domain.competition.dtos.CompetitionDto;
 import com.example.demo.domain.competition.dtos.CompetitionUpdateRequest;
@@ -9,6 +10,7 @@ import com.example.demo.domain.competition.entity.Status;
 import com.example.demo.domain.competition.repository.CompetitionCSVSaveRepository;
 import com.example.demo.domain.competition.service.CSVSaveService;
 import com.example.demo.domain.competition.service.CompetitionService;
+import com.example.demo.domain.competition.service.ScoreService;
 import com.example.demo.domain.leaderboard.service.LeaderboardService;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
@@ -17,7 +19,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -26,6 +30,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriUtils;
@@ -37,6 +42,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/competitions")
 @RequiredArgsConstructor
@@ -92,12 +98,13 @@ public class CompetitionController {
     public ResponseEntity<CompetitionDto> create(
             @RequestPart("request") String requestJson,
             @RequestPart("trainFile") MultipartFile trainFile,
-            @RequestPart("testFile") MultipartFile testFile
+            @RequestPart("testFile") MultipartFile testFile,
+            @RequestPart(value = "customScoreFile", required = false) MultipartFile customScoreFile
     ) throws JsonProcessingException {
         CompetitionCreateRequest request =
                 objectMapper.readValue(requestJson, CompetitionCreateRequest.class);
 
-        CompetitionDto created = competitionService.createWithFiles(request, trainFile, testFile);
+        CompetitionDto created = competitionService.createWithFiles(request, trainFile, testFile, customScoreFile);
 
         URI location = URI.create("/api/competitions/" + created.id());
         return ResponseEntity.created(location).body(created);
@@ -112,8 +119,10 @@ public class CompetitionController {
     public ResponseEntity<?> submit(
             @PathVariable Long competitionId,
             @RequestParam("file") MultipartFile file,
-            @RequestParam("userid") String userid
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
+        String userid = principalDetails.getUser().getUserid();
+
         // 1) 유저 조회
         User user = appUserService.findByUserid(userid);
         if (user == null) {
@@ -126,14 +135,23 @@ public class CompetitionController {
             return ResponseEntity.badRequest().body("INVALID_COMPETITION");
         }
 
-        // 3) CSV 저장
-        CompetitionCSVSave save = csvSaveService.saveCSV(file, user, competition);
+        try {
+            // 3) CSV 저장 + 점수 계산
+            CompetitionCSVSave save = csvSaveService.saveCSV(file, user, competition);
+            // 성공 응답
+            return ResponseEntity.ok("SUBMISSION_OK");
 
-        // 4) Leaderboard 기록 생성
-        leaderboardService.leaderBoardAdd(user, competition, save);
+        } catch (RuntimeException e) {
+            // 응답 실패 시 프론트가 받을 메시지 전달됨
+            // ====== 🔥 하루 제출 제한 에러 처리 ======
+            if ("SUBMIT_LIMIT_EXCEEDED".equals(e.getMessage())) {
+                return ResponseEntity.status(429).body("오늘 제출 가능 횟수를 모두 소진했습니다.");
+            }
 
-        return ResponseEntity.ok("SUBMIT_OK");
+            return ResponseEntity.internalServerError().body("SUBMISSION_FAILED");
+        }
     }
+
 
     @GetMapping("/csv/{saveId}/download")
     public ResponseEntity<?> downloadCSV(@PathVariable Long saveId) {
@@ -195,6 +213,31 @@ public class CompetitionController {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/{competitionId}/download/{type}")
+    public ResponseEntity<Resource> downloadDataset(
+            @PathVariable Long competitionId,
+            @PathVariable String type
+    ) {
+        try {
+            String filePath = csvSaveService.getDatasetFilePath(competitionId, type);
+
+            FileSystemResource resource = new FileSystemResource(filePath);
+            if (!resource.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .contentLength(resource.getFile().length())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
         }
     }
 }

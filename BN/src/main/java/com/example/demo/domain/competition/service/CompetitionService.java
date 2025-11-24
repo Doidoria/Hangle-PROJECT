@@ -12,6 +12,7 @@ import com.example.demo.global.exception.ConflictException;
 import com.example.demo.global.exception.ResourceNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -76,12 +82,16 @@ public class CompetitionService {
         return CompetitionMapper.toDto(saved);
     }
 
+    @Value("${customscore.upload-dir}")
+    private String customScoreRootDir;
+
     // 파일 업로드
     @Transactional
     public CompetitionDto createWithFiles(
             CompetitionCreateRequest req,
             MultipartFile trainFile,
-            MultipartFile testFile
+            MultipartFile testFile,
+            MultipartFile customScoreFile
     ) {
         try {
             // 1) 기본 엔티티 저장 (ID 먼저 생성)
@@ -104,6 +114,17 @@ public class CompetitionService {
             // 2) CSV 저장
             CompetitionCSVSave trainSave = csvSaveService.saveDatasetFile(trainFile, saved, "train");
             CompetitionCSVSave testSave  = csvSaveService.saveDatasetFile(testFile, saved, "test");
+
+            // 2-1) 커스텀 score.py 업로드 처리
+            if (customScoreFile != null && !customScoreFile.isEmpty()) {
+                String scorePath = Paths.get(customScoreRootDir, saved.getId() + "_score.py").toString();
+
+                File scoreFile = new File(scorePath);
+                scoreFile.getParentFile().mkdirs(); // 디렉토리 생성
+                customScoreFile.transferTo(scoreFile);
+
+                saved.setCustomScorePath(scorePath);
+            }
 
             // 3) 파일 저장
             // train.csv
@@ -175,8 +196,5 @@ public class CompetitionService {
         return repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Competition not found: " + id));
     }
-
-
-
 
 }

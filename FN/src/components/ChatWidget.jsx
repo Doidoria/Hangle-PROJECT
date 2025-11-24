@@ -159,7 +159,7 @@ const ChatWidget = () => {
         role: "assistant",
         text: resp.data.reply || "응답을 처리하는 중 문제가 발생했습니다.",
         link: resp.data.link || null,
-        links: resp.data.links || null,
+        // links: resp.data.links || null,
       });
     } catch (error) {
       console.error("챗봇 오류:", error);
@@ -178,7 +178,7 @@ const ChatWidget = () => {
         role: "assistant",
         text: msg,
         link: null,
-        links: null,
+        // links: null,
       });
     } finally {
       setLoading(false);

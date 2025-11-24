@@ -1,7 +1,8 @@
 // src/pages/CompetitionCreate.jsx
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import api from '../api/axiosConfig';
+import AutoCompetitionButton from '../components/CreateAllCompetitions';
 
 // CompetitionCreate.jsx
 import "../css/Competition.scss";
@@ -9,6 +10,8 @@ import "../css/CompetitionCreate.scss";
 
 function CompetitionCreate() {
   const navigate = useNavigate();
+  const { id } = useParams();          // /competitions/:id/edit 에서 넘어오는 id
+  const isEdit = !!id;                 // 있으면 수정 모드, 없으면 생성 모드
   const [form, setForm] = useState({
     title: '',
     description: '',        // 목적(한 줄) -> backend purpose
@@ -28,6 +31,35 @@ function CompetitionCreate() {
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // ✅ 수정 모드일 때 기존 데이터 불러오기
+  useEffect(() => {
+    if (!isEdit) return;
+
+    (async () => {
+      try {
+        const res = await api.get(`/api/competitions/${id}`);
+        const c = res.data;
+
+        setForm({
+          title: c.title ?? '',
+          // 백엔드 DTO에서는 purpose로 내려오므로 여기서 description으로 매핑
+          description: c.purpose ?? '',
+          detail: c.detail ?? '',
+          // LocalDateTime → datetime-local 인풋 포맷으로 변환
+          startAt: c.startAt ? String(c.startAt).replace(' ', 'T').slice(0, 16) : '',
+          endAt: c.endAt ? String(c.endAt).replace(' ', 'T').slice(0, 16) : '',
+          evaluationMetric: c.evaluationMetric ?? 'ACCURACY',
+          prizeTotal: c.prizeTotal ?? '',
+          status: c.status ?? 'UPCOMING',
+        });
+      } catch (e) {
+        console.error(e);
+        alert('대회 정보를 불러오지 못했습니다.');
+        navigate('/competitions');
+      }
+    })();
+  }, [isEdit, id, navigate]);
+
   const onChange = (e) => {
     const { name, value } = e.target;
     setForm(f => ({ ...f, [name]: value }));
@@ -41,9 +73,11 @@ function CompetitionCreate() {
     if (!form.startAt || !form.endAt) return '시작일과 종료일을 입력해주세요.';
     if (form.endAt < form.startAt) return '종료일은 시작일 이후여야 합니다.';
     if (form.prizeTotal && Number.isNaN(Number(form.prizeTotal))) return '상금은 숫자만 입력해주세요.';
-    // 파일 업로드 검증
-    if (!trainFile) return 'train.csv 파일을 업로드해주세요.';
-    if (!testFile) return 'test.csv 파일을 업로드해주세요.'; 
+    // 🔥 생성 모드일 때만 CSV 필수
+    if (!isEdit) {
+      if (!trainFile) return 'train.csv 파일을 업로드해주세요.';
+      if (!testFile) return 'test.csv 파일을 업로드해주세요.';
+    }
     return null;
   };
 
@@ -60,33 +94,37 @@ function CompetitionCreate() {
         title: form.title.trim(),
         description: form.description?.trim() || null,
         detail: form.detail?.trim() || null,               // ✅ 상세 설명
-        status: 'UPCOMING',                                 // 숨김 기본값
+        status: form.status || 'UPCOMING',
         startAt: normDT(form.startAt),
         endAt: normDT(form.endAt),
         evaluationMetric: form.evaluationMetric || 'ACCURACY',  // ✅
         prizeTotal: form.prizeTotal ? Number(form.prizeTotal) : null // ✅ 숫자로
       };
-      // 파일 보내기 위한 폼데이터 생성
-      const fd = new FormData();
 
-      // JSON을 Blob으로 감싸서 request 파트로 전송
-      fd.append(
-        "request",
-        new Blob([JSON.stringify(payload)], { type: "application/json" })
-      );
-
-      // 파일 전송
-      fd.append("trainFile", trainFile);
-      fd.append("testFile", testFile);
-
-      // baseURL이 /api를 포함한다면 아래 경로는 '/competitions'로 바꿔주세요.
-      const { data: created } = await api.post('/api/competitions', fd, {
-        // headers: { 'Content-Type': 'application/json' },
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-
-      alert(`대회가 등록되었습니다! (ID: ${created.id})`);
-      navigate(`/competitions/${created.id}`, { replace: true });
+      if (isEdit) {
+        // 🔥 수정 모드: JSON + PUT /api/competitions/{id}
+        await api.put(`/api/competitions/${id}`, payload, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        alert('대회 정보가 수정되었습니다.');
+        navigate(`/competitions/${id}`, { replace: true });
+      } else {
+        // 🔥 생성 모드: multipart/form-data + POST /api/competitions
+        const fd = new FormData();
+        fd.append(
+          "request",
+          new Blob([JSON.stringify(payload)], { type: "application/json" })
+        );
+        fd.append("trainFile", trainFile);
+        fd.append("testFile", testFile);
+ 
+        const { data: created } = await api.post('/api/competitions', fd, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+ 
+        alert(`대회가 등록되었습니다! (ID: ${created.id})`);
+        navigate(`/competitions/${created.id}`, { replace: true });
+      }
     } catch (err) {
       console.error(err);
       if (err.code === 'ERR_NETWORK') return setErrorMsg('서버에 연결할 수 없습니다. (네트워크 오류)');
@@ -98,10 +136,11 @@ function CompetitionCreate() {
     }
   };
 
+
   return (
     <div className="container comp-create">
       <Link className="back" to="/competitions/List">← 목록으로</Link>
-      <h1>대회 생성</h1>
+      <h1>{isEdit ? '대회 수정' : '대회 생성'}</h1>
 
       <form onSubmit={onSubmit} noValidate>
         <label>
@@ -149,22 +188,23 @@ function CompetitionCreate() {
         {/* CSV 파일 업로드 */}
         <label>
           Train CSV 업로드
-          <input type="file" accept=".csv" onChange={(e) => setTrainFile(e.target.files[0])}/>
+          <input type="file" accept=".csv" onChange={(e) => setTrainFile(e.target.files[0])} />
         </label>
         <label>
           Test CSV 업로드
-          <input type="file" accept=".csv" onChange={(e) => setTestFile(e.target.files[0])}/>
+          <input type="file" accept=".csv" onChange={(e) => setTestFile(e.target.files[0])} />
         </label>
 
         {errorMsg && <div className="error">{errorMsg}</div>}
 
         <div className="actions">
           <button type="submit" className="primary" disabled={saving}>
-            {saving ? '저장 중...' : '저장'}
+            {saving ? '저장 중...' : (isEdit ? '수정' : '저장')}
           </button>
           <button type="button" onClick={() => navigate('/competitions')} disabled={saving}>
             취소
           </button>
+          <AutoCompetitionButton />
         </div>
       </form>
     </div>

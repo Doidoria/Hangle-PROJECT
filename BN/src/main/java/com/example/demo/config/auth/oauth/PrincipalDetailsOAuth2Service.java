@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService {
@@ -94,7 +95,7 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService {
             userid = provider + "_" + providerId; // 이메일 미제공 대비 안전한 fallback
         }
 
-        String password = passwordEncoder.encode("1234");
+        String password = passwordEncoder.encode(UUID.randomUUID().toString());
         User user = userRepository.findByUserid(userid);
         if(user == null){
             //최초 로그인(Dto , Entity)

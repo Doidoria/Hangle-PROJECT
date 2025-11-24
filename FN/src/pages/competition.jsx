@@ -43,6 +43,39 @@ const Competition = () => {
     fetchCompetitions();
   }, []);
 
+  const fmtDate = (value) => {
+    if (!value) return "-";
+
+    // 배열 형태 [yyyy, mm, dd]
+    if (Array.isArray(value)) {
+      const [y, m, d] = value;
+      return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    }
+
+    const str = String(value);
+
+    // yyyyMMdd 또는 yyyyMMddHHmm
+    if (/^\d{8,}/.test(str)) {
+      const y = str.slice(0, 4);
+      const m = str.slice(4, 6);
+      const d = str.slice(6, 8);
+      return `${y}-${m}-${d}`;
+    }
+
+    // ISO "2025-11-18T00:00:00"
+    if (str.includes("-")) {
+      const date = new Date(str);
+      if (!isNaN(date)) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+    }
+
+    return "-";
+  };
+
   const handleFileChange = (competitionId, e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -116,8 +149,12 @@ const Competition = () => {
         }
       );
 
-
       alert(`"${file.name}" 제출 완료! 점수 계산 중입니다.`);
+
+      // window.location.reload(); // 페이지 새로고침 (제출 시 참가자 바로 반영을 위해 사용)
+
+      // 제출 성공 시 리더보드 페이지로 이동
+      navigate("/leaderboard");
 
       // 제출 후 해당 대회 파일 선택 상태 초기화 (선택사항)
       setFiles((prev) => ({
@@ -126,7 +163,35 @@ const Competition = () => {
       }));
     } catch (e) {
       console.error("[제출 실패]", e);
-      alert("제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+
+      const msg = e.response?.data;
+
+      // 통신 실패 (서버 꺼짐 등)
+      if (!e.response) {
+        alert("서버와 연결할 수 없습니다. 잠시 후 다시 시도해주세요.");
+        return;
+      }
+
+      // 중복 제출
+      if (msg === "횟수를 모두 소진") {
+        alert("오늘 제출 가능 횟수를 모두 소진하였습니다.(일 n회) 내일 다시 시도 또는 관리자에게 문의해주세요.");
+        return;
+      }
+
+      // 사용자 오류
+      if (msg === "INVALID_USER") {
+        alert("로그인 정보가 유효하지 않습니다.");
+        return;
+      }
+
+      // 대회 오류
+      if (msg === "INVALID_COMPETITION") {
+        alert("대회 정보를 찾을 수 없습니다.");
+        return;
+      }
+
+      // 기타
+      alert(msg || "제출 중 오류가 발생했습니다.");
     }
   };
 
@@ -207,7 +272,7 @@ const Competition = () => {
                         상태: <code>{status}</code>
                       </li>
                       <li>
-                        기간: {startAt} ~ {endAt}
+                        기간: {fmtDate(startAt)} ~ {fmtDate(endAt)}
                       </li>
                       <li>
                         참가자 수: {participantCount ?? 0}명
@@ -288,7 +353,7 @@ const Competition = () => {
                   <span className="file-name muted" style={{ marginRight: "auto" }}>
                     {selectedFile
                       ? `선택된 파일: ${selectedFile.name}`
-                      : "선택된 파일 없음"}
+                      : '제출 CSV 컬럼명은 반드시 ( label )해주세요.'}
                   </span>
 
                   {/* 제출 버튼 */}

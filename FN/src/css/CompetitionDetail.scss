@@ -9,7 +9,7 @@
 
   /* 상단바 */
   .top-bar {
-    position: relative;
+    position: relative; /* 드랍다운 위치 계산용 */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -64,12 +64,8 @@
 
   /* 제출 드롭다운 */
   .submit-dropdown {
-    position: absolute;
-    top: 125px;
-    /* 제출하기 버튼 바로 아래 */
-    right: 230px;
-    /* 버튼 기준 우측 정렬 */
-
+    position: fixed; 
+    /* top, left는 JS(getBoundingClientRect)에서 설정됨 */
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -80,8 +76,7 @@
     min-width: 380px;
     max-width: 600px;
 
-    z-index: 1000;
-    /* 카드보다 위에 보이도록 */
+    z-index: 99999; /* 카드 위로 */
   }
 
   .submit-row {

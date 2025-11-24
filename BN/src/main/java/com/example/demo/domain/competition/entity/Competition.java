@@ -71,4 +71,7 @@ public class Competition {
 
     @Column
     private String testFilePath;
+
+    @Column
+    private String customScorePath; //추가
 }

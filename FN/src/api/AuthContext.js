@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
   // 공통으로 쓸 "유저 정보 세팅" 함수
   const applyUser = ({ username, userid, role, profileImageUrl, theme }) => {
     const validProfile = normalizeProfile(
-      profileImageUrl ? "http://localhost:8090" + profileImageUrl : null
+      profileImageUrl ? process.env.REACT_APP_API_BASE_URL + profileImageUrl : null
     );
     setUsername(username || "");
     setUserid(userid ?? null);

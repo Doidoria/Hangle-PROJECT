@@ -1,0 +1,236 @@
+===== score_custom.py =====
+
+import sys
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, "helpers"))
+
+import pandas as pd
+
+gt_path = sys.argv[1]
+pred_path = sys.argv[2]
+
+# 원하는 방식으로 자유롭게 구현
+gt = pd.read_csv(gt_path)
+pred = pd.read_csv(pred_path)
+
+# 일단 accuracy 방식 예시
+correct = (gt["label"] == pred["label"]).sum()
+score = correct / len(gt)
+
+print(score)
+
+
+
+===== score_f1.py =====
+
+import sys
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, "helpers"))
+
+from sklearn.metrics import f1_score
+from helpers.common import load_csv, find_label_column, validate_same_rows
+
+gt = load_csv(sys.argv[1])
+pred = load_csv(sys.argv[2])
+
+gt_col = find_label_column(gt)
+pred_col = find_label_column(pred)
+
+if gt_col is None or pred_col is None:
+    print(-1)
+    exit(0)
+
+if not validate_same_rows(gt, pred):
+    print(-1)
+    exit(0)
+
+score = f1_score(gt[gt_col], pred[pred_col], average="macro")
+print(score)
+
+
+===== score_mae.py =====
+import sys
+import os
+import numpy as np
+
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, "helpers"))
+
+from helpers.common import load_csv, find_label_column, validate_same_rows
+
+gt = load_csv(sys.argv[1])
+pred = load_csv(sys.argv[2])
+
+gt_col = find_label_column(gt)
+pred_col = find_label_column(pred)
+
+if gt_col is None or pred_col is None:
+    print(-1)
+    exit(0)
+
+if not validate_same_rows(gt, pred):
+    print(-1)
+    exit(0)
+
+mae = np.abs(gt[gt_col] - pred[pred_col]).mean()
+print(mae)
+
+
+===== score_rmse.py =====
+
+import sys
+import numpy as np
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, "helpers"))
+
+from helpers.common import load_csv, find_label_column, validate_same_rows
+
+gt = load_csv(sys.argv[1])
+pred = load_csv(sys.argv[2])
+
+gt_col = find_label_column(gt)
+pred_col = find_label_column(pred)
+
+if gt_col is None or pred_col is None:
+    print(-1)
+    exit(0)
+
+if not validate_same_rows(gt, pred):
+    print(-1)
+    exit(0)
+
+rmse = np.sqrt(((gt[gt_col] - pred[pred_col]) ** 2).mean())
+print(rmse)
+
+
+
+===== score_accuracy.py =====
+
+import sys
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, "helpers"))
+
+from helpers.common import load_csv, find_label_column, validate_same_rows
+
+gt = load_csv(sys.argv[1])
+pred = load_csv(sys.argv[2])
+
+gt_col = find_label_column(gt)
+pred_col = find_label_column(pred)
+
+if gt_col is None or pred_col is None:
+    print(-1)
+    exit(0)
+
+if not validate_same_rows(gt, pred):
+    print(-1)
+    exit(0)
+
+correct = (gt[gt_col] == pred[pred_col]).sum()
+score = correct / len(gt)
+
+print(score)
+
+
+
+===== score_auc.py =====
+
+import os
+import sys
+import pandas as pd
+
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, "helpers"))
+
+from sklearn.metrics import roc_auc_score
+from helpers.common import load_csv, find_label_column, validate_same_rows
+
+# Load csv
+gt = load_csv(sys.argv[1])
+pred = load_csv(sys.argv[2])
+
+# Find label columns
+gt_col = find_label_column(gt)
+pred_col = find_label_column(pred)
+
+if gt_col is None or pred_col is None:
+    print(-1)
+    exit(0)
+
+# Row count must be same
+if not validate_same_rows(gt, pred):
+    print(-1)
+    exit(0)
+
+try:
+    # --- Robust cleaning ---
+    # Strip whitespace (ex: "1 ", "0\t", etc.)
+    pred[pred_col] = pred[pred_col].astype(str).str.strip()
+    gt[gt_col] = gt[gt_col].astype(str).str.strip()
+
+    # Remove empty rows (CSV trailing newline issues)
+    pred = pred[pred[pred_col] != ""]
+    gt = gt[gt[gt_col] != ""]
+
+    # Must still match row count
+    if len(pred) != len(gt):
+        print(-1)
+        exit(0)
+
+    # Convert to float (handles "1", "1.0", "0 ", etc.)
+    y_true = gt[gt_col].astype(float)
+    y_score = pred[pred_col].astype(float)
+
+    # --- Calculate AUC ---
+    score = roc_auc_score(y_true, y_score)
+    print(score)
+
+except Exception as e:
+    # Debugging (optional):
+    # print("ERROR:", e)
+    print(-1)
+
+
+
+#/helpers/common.py
+===== common.py =====
+
+import pandas as pd
+
+def load_csv(path):
+    return pd.read_csv(path)
+
+def find_label_column(df):
+    """
+    label 컬럼 자동 탐지:
+    - label
+    - target
+    - y
+    - answer
+    - gt
+    등 다양한 이름 자동 지원
+    """
+    candidates = ["label", "target", "y", "answer", "gt", "class", "output"]
+
+    lower_cols = [c.lower() for c in df.columns]
+
+    for cand in candidates:
+        if cand in lower_cols:
+            return df.columns[lower_cols.index(cand)]
+
+    return None  # 못 찾으면 None
+
+def validate_same_rows(df1, df2):
+    return len(df1) == len(df2)
+
+#/helpers/__init__.py
+===== __init__.py =====
+내용없음
+
+#/helpers/__pycache__/common.cpython-39.pyc

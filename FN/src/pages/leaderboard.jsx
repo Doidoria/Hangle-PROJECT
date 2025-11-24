@@ -194,7 +194,7 @@ const Leaderboard = () => {
                                             <tr key={entry.leaderBoardId}>
                                                 <td>{entry.comprank}</td>
                                                 <td>{entry.username}</td>
-                                                <td>{entry.score}</td>
+                                                <td>{(entry.score * 100).toFixed(2)} 점</td>
                                                 <td>{entry.attempt}</td>
                                                 <td>
                                                     {new Date(entry.submittedAt).toLocaleString("ko-KR", {
@@ -237,8 +237,6 @@ const Leaderboard = () => {
                     <span>Page {page + 1} / {Math.max(data.totalPages, 1)}</span>
                     <button disabled={page + 1 >= data.totalPages} onClick={() => movePage(page + 1)}>다음</button>
                 </div>
-
-
 
                 {/* 데이터 받아오는 거 확인 (기본)*/}
                 {/* <div style={{ marginTop: "1rem", background: "#f9f9f9", padding: "1rem" }}>

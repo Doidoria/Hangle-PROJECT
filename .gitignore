@@ -1,4 +1,1 @@
 FN/node_modules
-BN/src/main/resources/application-dev.properties
-BN/uploads/*
-!BN/uploads/.gitkeep

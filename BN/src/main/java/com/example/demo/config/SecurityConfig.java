@@ -13,6 +13,7 @@ import com.example.demo.domain.user.repository.UserRepository;
 import com.example.demo.global.exceptionHandler.CustomAccessDeniedHandler;
 import com.example.demo.global.exceptionHandler.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -49,6 +50,9 @@ public class SecurityConfig {
     private final PrincipalDetailsOAuth2Service principalDetailsOAuth2Service;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
@@ -93,7 +97,7 @@ public class SecurityConfig {
             auth.requestMatchers(HttpMethod.PUT,  "/api/inquiry/admin/*/answer").hasAnyRole("ADMIN","MANAGER");
             auth.requestMatchers(HttpMethod.DELETE, "/api/inquiry/admin/*").hasRole("ADMIN");
 
-            auth.requestMatchers(HttpMethod.POST, "/api/competitions/{competitionId}/submit").hasRole("USER");
+            auth.requestMatchers(HttpMethod.POST, "/api/competitions/{competitionId}/submit").hasAnyRole("USER","ADMIN","MANAGER");
             // 관리자 대회 권한 설정
             auth.requestMatchers(HttpMethod.PUT, "/api/competitions/**").hasAnyRole("ADMIN", "MANAGER");
             auth.requestMatchers(HttpMethod.DELETE, "/api/competitions/**").hasRole("ADMIN");
@@ -115,19 +119,13 @@ public class SecurityConfig {
 			logout.logoutSuccessHandler(customLogoutSuccessHandler);
 		});
 
-		//예외처리
-		http.exceptionHandling((ex)->{
-			ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
-			ex.accessDeniedHandler(new CustomAccessDeniedHandler());
-		});
-
 		//OAUTH2-CLIENT
 		http.oauth2Login(oauth -> oauth
                 .loginPage("/login") // 커스텀 로그인 페이지 유지
                 .userInfoEndpoint(userInfo -> userInfo.userService(principalDetailsOAuth2Service))
-                .defaultSuccessUrl("http://localhost:3000/", true) // 로그인 성공 후 React 메인 페이지로 리다이렉트
+                .defaultSuccessUrl(allowedOrigins, true) // 로그인 성공 후 React 메인 페이지로 리다이렉트
                 .successHandler(oAuth2LoginSuccessHandler())
-                .failureUrl("http://localhost:3000/login?error=true") // 실패 시 React 로그인 페이지로
+                .failureUrl(allowedOrigins+"/login?error=true") // 실패 시 React 로그인 페이지로
         );
 
 		//SESSION INVALIDATED
@@ -156,7 +154,7 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
         // React 개발 서버 주소만 허용
-        config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000")); //"http://localhost:5173"
+        config.setAllowedOriginPatterns(Collections.singletonList(allowedOrigins)); //"http://localhost:5173"
         // 모든 헤더와 메서드 허용
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -220,7 +218,7 @@ public class SecurityConfig {
                     .build();
 
             // React로 username과 함께 리다이렉트
-            String redirectUrl = "http://localhost:3000/oauth-success?username="
+            String redirectUrl = allowedOrigins+"/oauth-success?username="
                     + java.net.URLEncoder.encode(username, java.nio.charset.StandardCharsets.UTF_8)
                     + "&userid=" + java.net.URLEncoder.encode(userid, java.nio.charset.StandardCharsets.UTF_8);
 
