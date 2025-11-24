@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
+import AutoCompetitionButton from '../components/CreateAllCompetitions';
 
 // CompetitionCreate.jsx
 import "../css/Competition.scss";
@@ -43,7 +44,7 @@ function CompetitionCreate() {
     if (form.prizeTotal && Number.isNaN(Number(form.prizeTotal))) return '상금은 숫자만 입력해주세요.';
     // 파일 업로드 검증
     if (!trainFile) return 'train.csv 파일을 업로드해주세요.';
-    if (!testFile) return 'test.csv 파일을 업로드해주세요.'; 
+    if (!testFile) return 'test.csv 파일을 업로드해주세요.';
     return null;
   };
 
@@ -149,11 +150,11 @@ function CompetitionCreate() {
         {/* CSV 파일 업로드 */}
         <label>
           Train CSV 업로드
-          <input type="file" accept=".csv" onChange={(e) => setTrainFile(e.target.files[0])}/>
+          <input type="file" accept=".csv" onChange={(e) => setTrainFile(e.target.files[0])} />
         </label>
         <label>
           Test CSV 업로드
-          <input type="file" accept=".csv" onChange={(e) => setTestFile(e.target.files[0])}/>
+          <input type="file" accept=".csv" onChange={(e) => setTestFile(e.target.files[0])} />
         </label>
 
         {errorMsg && <div className="error">{errorMsg}</div>}
@@ -165,6 +166,7 @@ function CompetitionCreate() {
           <button type="button" onClick={() => navigate('/competitions')} disabled={saving}>
             취소
           </button>
+          <AutoCompetitionButton />
         </div>
       </form>
     </div>

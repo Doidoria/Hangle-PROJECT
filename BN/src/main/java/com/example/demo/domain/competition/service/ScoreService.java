@@ -3,11 +3,13 @@ package com.example.demo.domain.competition.service;
 import com.example.demo.domain.competition.entity.Competition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -15,36 +17,69 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class ScoreService {
 
-    // 3. 반환 타입을 double -> CompletableFuture<Double>로 변경
-    public CompletableFuture<Double> runScore(Competition competition, String answerPath, String submitPath) {
+    @Value("${ml.script-dir}")
+    private String scriptDir;
 
+    public double runScore(Competition competition, String answerPath, String submitPath) {
+
+        String script;
+
+        // 1) 커스텀 스크립트가 있으면 그것을 실행
         if (competition.getCustomScorePath() != null) {
-            return runPython(competition.getCustomScorePath(), answerPath, submitPath);
+            script = competition.getCustomScorePath();
+        }
+        // 2) 평가 지표별 스크립트 선택
+        else {
+            script = switch (competition.getEvaluationMetric()) {
+                case "F1" -> "score_f1.py";
+                case "AUC" -> "score_auc.py";
+                case "RMSE" -> "score_rmse.py";
+                case "MAE" -> "score_mae.py";
+                default -> "score_accuracy.py";
+            };
+        }
+        String scriptPath = Paths.get(scriptDir, script).toAbsolutePath().toString();
+
+        // 1) Python 실행 → 원본 점수(rawScore)
+        double rawScore = runPython(scriptPath, answerPath, submitPath);
+
+        // Python -1 반환 = 채점 실패
+        if (rawScore < 0) return -1;
+
+        // 2) 100점 환산 계산
+        double finalScore;
+
+        switch (competition.getEvaluationMetric()) {
+            case "MAE":
+            case "RMSE":
+                // 낮을수록 좋은 지표 → 역수 기반 점수화
+                finalScore = (1.0 / (1.0 + rawScore)) * 100.0;
+                break;
+
+            default:
+                // F1, AUC, ACC → rawScore가 0~1 범위 → 100점 환산
+                finalScore = rawScore * 100.0;
+                break;
         }
 
-        String metric = competition.getEvaluationMetric();
+        log.info("RAW SCORE = {}", rawScore);
+        log.info("FINAL NORMALIZED SCORE (100점 환산) = {}", finalScore);
 
-        String script = switch (metric) {
-            case "F1" -> "ml/score_f1.py";
-            case "RMSE" -> "ml/score_rmse.py";
-            case "MAE" -> "ml/score_mae.py";
-            default     -> "ml/score_accuracy.py";
-        };
-
-        return runPython(script, answerPath, submitPath);
+        return finalScore;
     }
 
-
-    // 4. @Async 어노테이션 추가
-    @Async
-    private CompletableFuture<Double> runPython(String script, String answerPath, String submitPath) {
+    private double runPython(String script, String answerPath, String submitPath) {
         try {
+            String scriptPath = Paths.get(script).toAbsolutePath().toString();
+            log.error("SCRIPT PATH = {}", scriptPath);
+
             ProcessBuilder pb = new ProcessBuilder(
-                    "python",
-                    script,
+                    "python", //배포 시 오류나면 python3
+                    scriptPath,
                     answerPath,
                     submitPath
             );
+
             pb.redirectErrorStream(true);
             Process process = pb.start();
 
@@ -52,23 +87,35 @@ public class ScoreService {
                     new InputStreamReader(process.getInputStream())
             );
 
-            String line = br.readLine();
-            int exit = process.waitFor(); // 이 부분은 백그라운드 스레드에서 대기
+            StringBuilder output = new StringBuilder();
+            String line;
+            String lastLine = null;
 
-            if (exit != 0 || line == null) {
-                log.error("채점 스크립트 실행 오류 또는 결과 없음. Exit Code: {}", exit);
-                // 5. 실패 시 -1.0을 완료된 CompletableFuture에 담아 반환
-                return CompletableFuture.completedFuture(-1.0);
+            // Python 출력 전체 읽기 + 마지막 줄 저장
+            while ((line = br.readLine()) != null) {
+                output.append(line).append("\n");
+                lastLine = line;
             }
 
-            double score = Double.parseDouble(line);
-            // 6. 성공 시 결과를 완료된 CompletableFuture에 담아 반환
-            return CompletableFuture.completedFuture(score);
+            int exit = process.waitFor();
+
+            if (exit != 0) {
+                log.error("Python 채점 실패(exit={}):\n{}", exit, output);
+                return -1;
+            }
+
+            if (lastLine == null) {
+                log.error("Python 출력이 없습니다.");
+                return -1;
+            }
+
+            log.info("Python 출력(last line) = {}", lastLine);
+
+            return Double.parseDouble(lastLine.trim());
 
         } catch (Exception e) {
-            log.error("파이썬 프로세스 실행 중 예외 발생: {}", e.getMessage(), e);
-            // 7. 예외 발생 시 -1.0을 완료된 CompletableFuture에 담아 반환
-            return CompletableFuture.completedFuture(-1.0);
+            log.error("채점 중 예외 발생: {}", e.getMessage(), e);
+            return -1;
         }
     }
 }

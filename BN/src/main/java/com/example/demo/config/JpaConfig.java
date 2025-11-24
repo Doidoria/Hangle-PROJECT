@@ -48,8 +48,8 @@ public class JpaConfig {
         Map<String, Object> properties = new HashMap<>();
         properties.put("hibernate.hbm2ddl.auto", "update");                         // 필요에 따라 'create', 'validate' 등으로 변경
         properties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect"); // 사용 중인 DB에 맞게 변경
-        properties.put("hibernate.show_sql", true);
-        properties.put("hibernate.format_sql", true);
+//        properties.put("hibernate.show_sql", true);
+//        properties.put("hibernate.format_sql", true);
         properties.put("hibernate.hibernate.jdbc.batch_size", 1000);
         properties.put("hibernate.hibernate.order_inserts", true);
         properties.put("hibernate.order_updates", true);

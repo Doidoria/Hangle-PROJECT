@@ -17,7 +17,7 @@ const Login = () => {
   useEffect(() => {
     const validateToken = async () => {
       try {
-        const resp = await axios.get('http://localhost:8090/validate', {
+        const resp = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/validate`, {
           withCredentials: true,
         })
         console.log('토큰 검증 성공:', resp)
@@ -70,7 +70,7 @@ const Login = () => {
 
   // 로그인 API(카카오, 네이버, 구글)
   const handleSocialLogin = (provider) => {
-    window.location.href = `http://localhost:8090/oauth2/authorization/${provider}`;
+    window.location.href = `${process.env.REACT_APP_API_BASE_URL}/oauth2/authorization/${provider}`;
   };
 
 

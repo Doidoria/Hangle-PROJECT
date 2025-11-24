@@ -46,7 +46,7 @@ const Join = () => {
 
     try {
       const resp = await axios.post(
-        'http://localhost:8090/join',
+        `${process.env.REACT_APP_API_BASE_URL}/join`,
         { username, userid, password, repassword, phone: fullPhoneNumber },
         { headers: { 'Content-Type': 'application/json' } }
       );

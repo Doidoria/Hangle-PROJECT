@@ -1,0 +1,231 @@
+// src/main/java/com/example/demo/domain/competition/repository/CompetitionRepository.java
+package com.example.demo.domain.competition.repository;
+
+import com.example.demo.domain.competition.entity.Competition;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+public interface CompetitionRepository
+        extends JpaRepository<Competition, Long>, JpaSpecificationExecutor<Competition> {
+}
+
+// com.example.demo.domain.competition.dtos.CompetitionMapper
+package com.example.demo.domain.competition.dtos;
+
+import com.example.demo.domain.competition.entity.Competition;
+
+public final class CompetitionMapper {
+    private CompetitionMapper() {
+    }
+
+    public static CompetitionDto toDto(Competition c) {
+        return new CompetitionDto(
+                c.getId(),
+                c.getTitle(),
+                c.getPurpose(),
+                c.getDetail(),
+                c.getStatus(),
+                c.getStartAt(),
+                c.getEndAt(),
+                c.getEvaluationMetric(),
+                c.getPrizeTotal(),
+                c.getParticipantCount(),
+                c.getCreatedAt(),
+                c.getTrainFilePath(),
+                c.getTestFilePath(),
+                c.getTrainDatasetSaveId(),
+                c.getTestDatasetSaveId()
+        );
+    }
+}
+
+
+package com.example.demo.domain.competition.repository;
+
+import com.example.demo.domain.competition.entity.CompetitionCSVSave;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CompetitionCSVSaveRepository extends JpaRepository<CompetitionCSVSave, Long> {
+    boolean existsByCompetitionIdAndUserid(Long competitionId, String userid);
+}
+
+package com.example.demo.domain.competition.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Data
+@Entity
+@Getter @Setter
+@Table(name = "competitions")
+public class Competition {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
+    @Column(nullable = false, length = 200)
+    private String title; // 대회명
+
+    @Column(columnDefinition = "TEXT")
+    private String purpose; // 대회 목적 (DTO의 description과 매핑)
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Status status = Status.UPCOMING; // 진행 상태 (UPCOMING, OPEN, CLOSED)
+
+    private LocalDateTime startAt; // 시작일
+    private LocalDateTime endAt;   // 종료일
+
+    @Column(columnDefinition = "TEXT")
+    private String detail;
+
+    @Column(length = 40)
+    private String evaluationMetric = "ACCURACY"; // 평가 지표 (기본값)
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal prizeTotal; // 총 상금 (null 가능)
+
+    @Column(nullable = false)
+    private Integer participantCount = 0; // 참가자 수 (기본 0)
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt; // 생성일
+
+    @Column
+    private LocalDateTime updatedAt; // 수정일
+
+    @PreUpdate
+    void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Column
+    private Long trainDatasetSaveId;
+
+    @Column
+    private Long testDatasetSaveId;
+
+    @Column
+    private String trainFilePath;
+
+    @Column
+    private String testFilePath;
+
+    @Column
+    private String customScorePath; //추가
+}
+
+// com.example.demo.domain.competition.dtos.CompetitionCreateRequest
+package com.example.demo.domain.competition.dtos;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record CompetitionCreateRequest(
+        @NotBlank String title,
+        String description,              // 목적(=엔티티 purpose)
+        String detail,                   // ✅ 상세 설명
+        @NotNull String status,          // UPCOMING/OPEN/CLOSED (프론트에 안 보이더라도 기본값으로 전송)
+        LocalDateTime startAt,
+        LocalDateTime endAt,
+        String evaluationMetric,         // ✅ 평가 지표 (예: ACCURACY/F1/AUC/RMSE/MAE)
+        BigDecimal prizeTotal            // ✅ 상금
+) {}
+
+// com.example.demo.domain.competition.dtos.CompetitionUpdateRequest
+package com.example.demo.domain.competition.dtos;
+
+import jakarta.validation.constraints.NotBlank;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record CompetitionUpdateRequest(
+        @NotBlank String title,
+        String description,
+        String detail,                  // ✅ 상세 설명
+        @NotBlank String status,        // 문자열로 들어와서 서비스에서 valueOf
+        LocalDateTime startAt,
+        LocalDateTime endAt,
+        String evaluationMetric,        // ✅ 평가 지표
+        BigDecimal prizeTotal           // ✅ 상금
+) {}
+
+package com.example.demo.domain.competition.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "competitioncsvsave")
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CompetitionCSVSave {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long competitionId;
+
+    private String userid;  // 제출자
+
+    private String fileName;
+
+    private String filePath;
+
+    private LocalDateTime submittedAt;
+
+    private Double score;
+}
+
+// com.example.demo.domain.competition.dtos.CompetitionDto
+package com.example.demo.domain.competition.dtos;
+
+import com.example.demo.domain.competition.entity.Status;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record CompetitionDto(
+        Long id,
+        String title,
+        String purpose,           // 목적(한 줄)
+        String detail,            // ✅ 상세 설명
+        Status status,
+        LocalDateTime startAt,
+        LocalDateTime endAt,
+        String evaluationMetric,
+        BigDecimal prizeTotal,
+        Integer participantCount,
+        LocalDateTime createdAt,
+        String trainFilePath,
+        String testFilePath,
+        Long trainDatasetSaveId,
+        Long testDatasetSaveId
+) {}
+
+package com.example.demo.domain.competition.entity;
+
+public enum Status {
+    OPEN, CLOSED, UPCOMING
+}

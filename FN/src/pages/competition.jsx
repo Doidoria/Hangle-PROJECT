@@ -116,8 +116,9 @@ const Competition = () => {
         }
       );
 
-
       alert(`"${file.name}" 제출 완료! 점수 계산 중입니다.`);
+
+      window.location.reload(); // 페이지 새로고침 (제출 시 참가자 바로 반영을 위해 사용)
 
       // 제출 후 해당 대회 파일 선택 상태 초기화 (선택사항)
       setFiles((prev) => ({
@@ -288,7 +289,7 @@ const Competition = () => {
                   <span className="file-name muted" style={{ marginRight: "auto" }}>
                     {selectedFile
                       ? `선택된 파일: ${selectedFile.name}`
-                      : "선택된 파일 없음"}
+                      : '제출 CSV 컬럼명은 반드시 ( label )해주세요.'}
                   </span>
 
                   {/* 제출 버튼 */}
