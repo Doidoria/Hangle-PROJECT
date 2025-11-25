@@ -3,47 +3,111 @@
     padding: 25px 70px;
 }
 
-.card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px 35px;
-    box-shadow: var(--shadow);
+.leaderboard-section {
+    padding: 0 60px;
+    max-width: 1500px;
+
+    .leaderboardHeader {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        margin-bottom: 30px;
+
+        div {
+            h1 {
+                font-size: 35px;
+
+                span {
+                    font-size: 33px;
+                }
+            }
+
+            p {
+                font-size: 20px;
+            }
+        }
+
+        img {
+            width: 170px;
+            height: 170px;
+        }
+    }
 }
+
+@media (max-width:1060px) {
+    .leaderboard-section {
+        img {
+            display: none;
+        }
+    }
+}
+
 
 .leaderboard {
-    height: auto;
+    height: 100%;
 
-    thead {
-        height: auto;
-        border-bottom:  1px solid var(--border);
-
-        tr{
-            height: 30px;
-
-            th {
-                text-align: center;
-            }
-        }
+    h3 {
+        font-size: 18px;
     }
 
-    .leaderboardBody {
-        tr {
 
-            margin: 10px 0;
-            height: 30px;
 
-            td {
-                text-align: center;
+    .leaderboardcard {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px 35px;
+        box-shadow: var(--shadow);
+
+
+        table {
+            height: auto;
+
+            thead {
+                height: auto;
+                border-bottom: 1px solid var(--border);
+
+                tr {
+                    height: 30px;
+
+                    th {
+                        text-align: center;
+                    }
+                }
+            }
+
+            .leaderboardBody {
+                tr {
+
+                    margin: 10px 0;
+                    height: 40px;
+
+                    td {
+                        text-align: center;
+
+                        .btn5 {
+                            padding: 4px 8px;
+                            font-size: 12px;
+                            background: var(--primary);
+                            color: var(--nav);
+                            border-radius: 5px;
+                            border: 1px solid var(--border);
+                        }
+                    }
+                }
             }
         }
+
     }
 }
 
-.search {
+.leaderboardsearch {
     display: flex;
+    justify-content: space-between;
     gap: 8px;
     margin-bottom: 16px;
+    height: 40px;
+
 
     input {
         width: 100%;
@@ -61,7 +125,7 @@
     }
 
     /* @extend 대신 직접 스타일 복사하거나, 위 .filters .btn을 공통 클래스로 빼도 OK */
-    button {
+    .btn3 {
         width: 30%;
         display: inline-flex;
         align-items: center;
@@ -74,5 +138,30 @@
         cursor: pointer;
         transition: .15s;
         box-shadow: var(--shadow);
+
+
+        &:hover {
+            background: var(--primary);
+            color: var(--nav);
+        }
+    }
+}
+
+
+.pagebtn4 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 12px;
+    gap: 8px;
+
+    .btn6 {
+        border-radius: 10px;
+        background: var(--nav);
+        color: var(--text);
+        transition: .15s;
+        box-shadow: var(--shadow);
+        white-space: nowrap;
+        padding: 5px 10px;
     }
 }

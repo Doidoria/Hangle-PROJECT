@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/leaderboard")
@@ -40,27 +41,33 @@ public class LeaderboardController {
             keyword = "";
         }
         else {
-            //검색 결과
             resultList = leaderboardService.searchLeaderboard(keyword);
 
         }
 
-        // 변경
+        
         List<CompItem> compItem = resultList.stream()
                 .map(dto ->new CompItem(dto.getCompetitionId(),dto.getCompetitionTitle()))
                 .distinct()
                 .toList();
         System.out.println("compItem"+ compItem);
 
-        //변경
         resultList = resultList.stream()
                 .sorted(Comparator
                         .comparing(LeaderboardEntryDto::getCompetitionId, Comparator.nullsLast(Long::compareTo))
                         .thenComparing(LeaderboardEntryDto::getComprank, Comparator.nullsLast(Integer::compareTo)))
                 .toList();
 
-        System.out.println("leaderboard"+resultList);
-        //react에서 여러 데이터 받기
+
+        //상위 5개만 출력 //추가
+         resultList = resultList.stream()
+                 .collect(Collectors.groupingBy(LeaderboardEntryDto::getCompetitionId)) 
+                 .values().stream()
+                 .map(list -> list.stream().limit(5).toList()) 
+                 .flatMap(List::stream) 
+                 .toList();
+
+       
         Map<String, Object> response = new HashMap<>();
         response.put("leaderboard", resultList);
         response.put("compItem", compItem);
