@@ -134,7 +134,7 @@ a:hover {
   padding: 10px 14px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: linear-gradient(180deg, #ffffff, #f3f4f6);
+  background: var(--bg-textarea);
   color: var(--text);
   font-weight: 600;
   cursor: pointer;
@@ -142,7 +142,7 @@ a:hover {
   box-shadow: var(--shadow);
 
   &:hover {
-    background: var(--bg-hover-light, #ebebeb);
+    background: var(--bg-hover-light);
   }
 }
 
@@ -202,7 +202,7 @@ textarea {
   /* 타이틀 + 그리드 레이아웃 */
   .competition-title {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 12px;
@@ -277,7 +277,7 @@ textarea {
       padding: 0;
       margin: 0;
       display: inline;
-      background-color: #fff;
+      background:none;
       
 
       &:hover {
