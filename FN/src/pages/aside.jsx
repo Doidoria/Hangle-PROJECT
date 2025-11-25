@@ -17,7 +17,7 @@ const Aside = () => {
             </Link>
 
             <nav className="nav-group">
-                <Link to="/mydata" className="nav-item">
+                <Link to="/myprofile" className="nav-item">
                     <span className="material-symbols-outlined">dataset</span>
                     <span>마이데이터</span>
                 </Link>
