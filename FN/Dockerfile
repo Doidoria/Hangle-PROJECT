@@ -17,7 +17,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # 빌드된 정적 파일을 Nginx 웹 루트로 복사
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # (선택) 커스텀 Nginx 설정 파일이 있을 경우 복사
 COPY nginx.conf /etc/nginx/nginx.conf
