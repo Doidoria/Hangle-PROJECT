@@ -21,6 +21,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
 }
 
 // Spring AI BOM 버전 (필요하면 나중에 1.0.1, 1.0.2로 올리면 됨)
@@ -84,7 +85,7 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
 
     // ChatModel, Message 같은 코어 API 직접 쓸 거면 있어도 되고, 아니어도 됨
-    implementation 'org.springframework.ai:spring-ai-core'
+    implementation 'org.springframework.ai:spring-ai-core:0.8.1'
 
     // apache commons-text: 텍스트 처리 유틸리티
     implementation 'org.apache.commons:commons-text:1.11.0'
