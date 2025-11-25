@@ -93,6 +93,29 @@ public class CSVSaveServiceImpl implements CSVSaveService {
                                       User user,
                                       Competition competition) {
 
+        // ========== 하루 제출 횟수 제한 로직 ==========
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startOfDay = now.toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
+
+        long todayCount = csvSaveRepository.countByUseridAndCompetitionIdAndSubmittedAtBetween(
+                user.getUserid(),           // 1) userid (String)
+                competition.getId(),        // 2) competitionId (Long)
+                startOfDay,                 // 3) LocalDateTime start
+                endOfDay                    // 4) LocalDateTime end
+        );
+// 하루 n회 제한
+        if (todayCount >= 10) {
+            throw new RuntimeException("SUBMIT_LIMIT_EXCEEDED");
+        }
+
+
+        // 제출 전 중복 검사
+//        if (csvSaveRepository.existsByCompetitionIdAndUserid(
+//                competition.getId(), user.getUserid())) {
+//            throw new RuntimeException("해당 대회는 이미 제출하셨습니다.");
+//        }
+
         // 업로드 경로 = /uploads/submission/{competitionId}/
         Path rootPath = Paths.get(submissionUploadDir).toAbsolutePath().normalize();
         Path targetDir = rootPath
@@ -125,9 +148,8 @@ public class CSVSaveServiceImpl implements CSVSaveService {
                 .score(0.0)
                 .build();
 
-        // 첫 제출인지 확인
-        boolean isFirstSubmission =
-                !csvSaveRepository.existsByCompetitionIdAndUserid(competition.getId(), user.getUserid());
+        // 첫 제출 여부 확인 = 오늘 제출 기록이 없는 경우
+        boolean isFirstSubmission = (todayCount == 0);
 
         save = csvSaveRepository.save(save);
 
@@ -156,5 +178,31 @@ public class CSVSaveServiceImpl implements CSVSaveService {
 
         return save;
     }
+    // 디테일 페이지 csv 다운 경로
+    @Override
+    public String getDatasetFilePath(Long competitionId, String type) {
+
+        // train/test 구분
+        String fileName = type.equalsIgnoreCase("train") ? "train.csv" : "test.csv";
+
+        // 기본 Dataset 경로 (application.properties의 dataset.upload-dir 기반)
+        Path rootPath = Paths.get(datasetUploadDir)
+                .toAbsolutePath()
+                .normalize();
+
+        // /dataset/{competitionId}/{train.csv or test.csv}
+        Path filePath = rootPath
+                .resolve(String.valueOf(competitionId))
+                .resolve(fileName);
+
+        File file = filePath.toFile();
+
+        if (!file.exists()) {
+            throw new RuntimeException("DATASET_FILE_NOT_FOUND");
+        }
+
+        return file.getAbsolutePath();
+    }
+
 
 }

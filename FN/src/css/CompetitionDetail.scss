@@ -1,71 +1,33 @@
 /* src/css/CompetitionDetail.scss */
 
 .comp-detail {
+  padding: 0 40px;
+
   .back {
-    display: inline-block;
-    margin-bottom: 10px;
     color: var(--muted);
   }
 
-  .hero {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    box-shadow: var(--shadow-md);
-    padding: 24px;
-    margin-bottom: 24px;
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: 26px;
-    }
-
-    .meta {
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .prize {
-      margin-bottom: 8px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .links {
-      display: flex;
-      gap: 12px;
-    }
-
-    .links .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-weight: 800;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      transition: .15s;
-      box-shadow: var(--shadow-md);
-    }
-
-    .links .btn:hover {
-      box-shadow: 0 0 0 3px var(--ring);
-    }
+  /* 상단바 */
+  .top-bar {
+    position: relative; /* 드랍다운 위치 계산용 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
   }
 
-  .desc {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
+  .top-bar .submit-toggle-btn {
+    padding: 8px 16px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
     box-shadow: var(--shadow-md);
-    padding: 24px;
-    line-height: 1.75;
-    white-space: pre-wrap;
   }
 
+  /* 카드 영역 */
   .detail-cards {
     display: flex;
     flex-direction: column;
@@ -98,5 +60,53 @@
         font-size: 15px;
       }
     }
+  }
+
+  /* 제출 드롭다운 */
+  .submit-dropdown {
+    position: fixed; 
+    /* top, left는 JS(getBoundingClientRect)에서 설정됨 */
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--shadow-md);
+
+    width: fit-content;
+    min-width: 380px;
+    max-width: 600px;
+
+    z-index: 99999; /* 카드 위로 */
+  }
+
+  .submit-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .file-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .selected-file {
+    flex: 1;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  button.btn {
+    padding: 8px 14px;
+    background: var(--primary);
+    color: white;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
   }
 }

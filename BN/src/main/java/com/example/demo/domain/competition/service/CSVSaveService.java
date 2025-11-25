@@ -9,4 +9,6 @@ public interface CSVSaveService {
     CompetitionCSVSave saveDatasetFile(MultipartFile file, Competition competition, String type);
 
     CompetitionCSVSave saveCSV(MultipartFile file, User user, Competition competition);
+
+    String getDatasetFilePath(Long competitionId, String type);
 }
