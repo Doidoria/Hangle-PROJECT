@@ -20,7 +20,7 @@ function CompetitionCreate() {
     endAt: '',
     evaluationMetric: 'ACCURACY', // ✅ 기본값
     prizeTotal: '',         // ✅ 숫자 입력
-    // 화면엔 안 보여도 전송은 해야 함(백엔드 @NotNull): 
+    // 화면엔 안 보여도 전송은 해야 함(백엔드 @NotNull):
     status: 'UPCOMING',
   });
 
