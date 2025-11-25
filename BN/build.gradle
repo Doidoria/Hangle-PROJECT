@@ -85,7 +85,7 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
 
     // ChatModel, Message 같은 코어 API 직접 쓸 거면 있어도 되고, 아니어도 됨
-    implementation 'org.springframework.ai:spring-ai-core:0.8.1'
+//    implementation 'org.springframework.ai:spring-ai-core:0.8.1'
 
     // apache commons-text: 텍스트 처리 유틸리티
     implementation 'org.apache.commons:commons-text:1.11.0'
