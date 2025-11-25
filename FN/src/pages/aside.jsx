@@ -15,18 +15,21 @@ const Aside = () => {
                 <img src="/image/+.png" alt="참여" style={{ width: 14 }} />
                 대회 참여
             </Link>
+
             <nav className="nav-group">
-                <Link to="/myprofile" className="nav-item">
+                <Link to="/mydata" className="nav-item">
                     <span className="material-symbols-outlined">dataset</span>
                     <span>마이데이터</span>
                 </Link>
             </nav>
+
             <nav className="nav-group">
                 <Link to="/leaderboard" className="nav-item">
                     <span className="material-symbols-outlined">trophy</span>
                     <span>리더보드</span>
                 </Link>
             </nav>
+
             <nav className="nav-group">
                 <Link to="/FaqPage" className="nav-item">
                     <span className="material-symbols-outlined">support_agent</span>
@@ -110,6 +113,7 @@ const Aside = () => {
                 <span className="dot" aria-hidden="true" />
                 <span className="name">Hangle</span>
             </Link>
+
             {/* 권한별로 완전히 분리 출력 */}
             {{
                 'ROLE_ADMIN': <AdminMenu />,

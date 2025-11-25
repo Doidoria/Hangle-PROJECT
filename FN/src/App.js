@@ -35,6 +35,7 @@ function App() {
             <Route path="/admin/inquiries" element={<ProtectedRoute><InquiryManagement /></ProtectedRoute>} />
             <Route path="/competitions/user" element={<Competition />} />
             <Route path="/competitions/:id" element={<CompetitionDetail />} />
+            <Route path="/competitions/:id/edit" element={<CompetitionCreate />} />
             <Route path="/competitions/list" element={<ProtectedRoute><CompetitionList /></ProtectedRoute>} />
             <Route path="/competitions/new" element={<ProtectedRoute><CompetitionCreate /></ProtectedRoute>} />
             <Route path="/leaderboard" element={<Leaderboard />} />

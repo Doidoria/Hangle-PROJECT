@@ -21,6 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -121,6 +122,7 @@ public class CompetitionController {
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         String userid = principalDetails.getUser().getUserid();
+
         // 1) 유저 조회
         User user = appUserService.findByUserid(userid);
         if (user == null) {
@@ -133,12 +135,23 @@ public class CompetitionController {
             return ResponseEntity.badRequest().body("INVALID_COMPETITION");
         }
 
-        // 3) CSV 저장 + 점수 계산 + 리더보드 반영 (모두 saveCSV 안에서 처리)
-        CompetitionCSVSave save = csvSaveService.saveCSV(file, user, competition);
+        try {
+            // 3) CSV 저장 + 점수 계산
+            CompetitionCSVSave save = csvSaveService.saveCSV(file, user, competition);
+            // 성공 응답
+            return ResponseEntity.ok("SUBMISSION_OK");
 
-        // 성공 응답
-        return ResponseEntity.ok("SUBMISSION_OK");
+        } catch (RuntimeException e) {
+            // 응답 실패 시 프론트가 받을 메시지 전달됨
+            // ====== 🔥 하루 제출 제한 에러 처리 ======
+            if ("SUBMIT_LIMIT_EXCEEDED".equals(e.getMessage())) {
+                return ResponseEntity.status(429).body("오늘 제출 가능 횟수를 모두 소진했습니다.");
+            }
+
+            return ResponseEntity.internalServerError().body("SUBMISSION_FAILED");
+        }
     }
+
 
     @GetMapping("/csv/{saveId}/download")
     public ResponseEntity<?> downloadCSV(@PathVariable Long saveId) {
@@ -200,6 +213,31 @@ public class CompetitionController {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/{competitionId}/download/{type}")
+    public ResponseEntity<Resource> downloadDataset(
+            @PathVariable Long competitionId,
+            @PathVariable String type
+    ) {
+        try {
+            String filePath = csvSaveService.getDatasetFilePath(competitionId, type);
+
+            FileSystemResource resource = new FileSystemResource(filePath);
+            if (!resource.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .contentLength(resource.getFile().length())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
         }
     }
 }

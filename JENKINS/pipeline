@@ -18,7 +18,7 @@ pipeline {
                         chmod 600 \${SSH_KEY}
                         ssh -i \${SSH_KEY} -o StrictHostKeyChecking=no \${EC2_USER}@\${EC2_HOST} "
                             # 기존 디렉토리 정리
-                            rm -rf Docker && \\
+                            rm -rf Hangle-PROJECT && \\
                             
                             # GitHub 저장소 클론
                             git clone \${GITHUB_REPO} && \\

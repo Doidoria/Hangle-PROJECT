@@ -267,12 +267,18 @@ textarea {
       }
     }
 
-    a.link {
+    button.link {
       align-self: flex-start;
       color: var(--primary);
       text-decoration: none;
       font-weight: 700;
       font-size: 14px;
+      border: none;
+      padding: 0;
+      margin: 0;
+      display: inline;
+      background-color: #fff;
+      
 
       &:hover {
         text-decoration: underline;
