@@ -430,14 +430,14 @@ textarea {
    5) 다크 모드 파일 선택 버튼
    ============================ */
 
-html.theme-dark input[type="file"] {
+html input[type="file"] {
   background: var(--surface);
   color: var(--text);
   border: 1px solid var(--border);
 }
 
 /* Chromium 계열 */
-html.theme-dark input[type="file"]::-webkit-file-upload-button {
+html input[type="file"]::-webkit-file-upload-button {
   background: var(--primary);
   color: #fff;
   border: none;
@@ -447,12 +447,12 @@ html.theme-dark input[type="file"]::-webkit-file-upload-button {
   transition: 0.15s ease-out;
 }
 
-html.theme-dark input[type="file"]::-webkit-file-upload-button:hover {
+html input[type="file"]::-webkit-file-upload-button:hover {
   background: var(--primary-hover);
 }
 
 /* 표준 셀렉터 */
-html.theme-dark input[type="file"]::file-selector-button {
+html input[type="file"]::file-selector-button {
   background: var(--primary);
   color: #fff;
   border: none;
@@ -462,6 +462,6 @@ html.theme-dark input[type="file"]::file-selector-button {
   transition: 0.15s ease-out;
 }
 
-html.theme-dark input[type="file"]::file-selector-button:hover {
+html input[type="file"]::file-selector-button:hover {
   background: var(--primary-hover);
 }

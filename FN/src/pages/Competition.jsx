@@ -290,18 +290,6 @@ const Competition = () => {
                       Train / Test 파일을 내려받아 모델을 학습하세요.
                     </p>
                     <div className="download-links">
-                      {/* <a
-                        href={`${API_BASE_URL}/api/competitions/${id}/dataset/train`}
-                        className="link"
-                      >
-                        train.csv 다운로드
-                      </a>
-                      <a
-                        href={`${API_BASE_URL}/api/competitions/${id}/dataset/test`}
-                        className="link"
-                      >
-                        test.csv 다운로드
-                      </a> */}
                       <button
                         className="link"
                         onClick={() => downloadFile(trainId, "train.csv")}

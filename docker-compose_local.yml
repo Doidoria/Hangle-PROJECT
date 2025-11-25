@@ -26,9 +26,9 @@ services:
     ports:
       - "8090:8090"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db-container:3306/hangledb
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hangledb
       SPRING_DATASOURCE_USERNAME: master
-      SPRING_DATASOURCE_PASSWORD: Hangle1234!
+      SPRING_DATASOURCE_PASSWORD: hangle1234!
       SPRING_REDIS_HOST: redis
       SERVER_PORT: 8090
     depends_on:
@@ -36,6 +36,23 @@ services:
         condition: service_healthy
     networks:
       - custom-network
+  
+  chatbot:
+    image: chatbot
+    build:
+      context: ./CHATBOT
+      dockerfile: Dockerfile
+    container_name: ollama-server
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    environment:
+      OLLAMA_KEEP_ALIVE: 20m
+      OLLAMA_NUM_PARALLEL: 1
+    networks:
+      - custom-network
+    restart: unless-stopped
 
   db:
     image: db
@@ -57,10 +74,10 @@ services:
       # - ./DB/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db-data:/var/lib/mysql   # 
     environment:
-      MYSQL_ROOT_PASSWORD: Hangle1234!
+      MYSQL_ROOT_PASSWORD: hangle1234!
       MYSQL_DATABASE: hangledb
       MYSQL_USER: master
-      MYSQL_PASSWORD: Hangle1234!
+      MYSQL_PASSWORD: hangle1234!
       MYSQL_ROOT_HOST: '%'
     deploy:
       resources:
@@ -94,3 +111,5 @@ services:
 volumes:
   db-data:
   jenkins-data:
+  ollama-models:
+    name: ollama-model-cache

@@ -37,12 +37,15 @@
       }
 
       input[type='text'],
+      input[type='email'],
       input[type='password'] {
         width: 100%;
         padding: 12px;
         font-size: 16px;
         border: 1px solid #dadce0;
         border-radius: 4px;
+        background-color: #f8f8f8;
+        color: #000;
       }
     }
 
