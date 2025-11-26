@@ -74,7 +74,7 @@ public class ScoreService {
             log.error("SCRIPT PATH = {}", scriptPath);
 
             ProcessBuilder pb = new ProcessBuilder(
-                    "python", //배포 시 오류나면 python3
+                    "python3", //배포 시 오류나면 python3, py
                     scriptPath,
                     answerPath,
                     submitPath

@@ -35,7 +35,6 @@ public class LeaderboardController {
         List<LeaderboardEntryDto> allList = leaderboardService.getAllLeaderboard();
         List<LeaderboardEntryDto> resultList;
 
-
         if(keyword == null || keyword.trim().isEmpty()) {
             resultList = allList;
             keyword = "";
@@ -44,7 +43,6 @@ public class LeaderboardController {
             resultList = leaderboardService.searchLeaderboard(keyword);
 
         }
-
         
         List<CompItem> compItem = resultList.stream()
                 .map(dto ->new CompItem(dto.getCompetitionId(),dto.getCompetitionTitle()))
