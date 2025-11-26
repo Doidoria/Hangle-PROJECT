@@ -98,4 +98,3 @@ volumes:
   db-data:
   ollama-models:
     name: ollama-model-cache
-  

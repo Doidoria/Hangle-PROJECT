@@ -3,43 +3,56 @@ pipeline {
     
     environment {
         GITHUB_REPO = 'https://github.com/Doidoria/Hangle-PROJECT.git'
-        EC2_HOST = '52.78.83.206'  // EC2 인스턴스의 퍼블릭 IP나 DNS
-        EC2_USER = 'ec2-user'       // EC2 사용자 이름 (Amazon Linux의 경우 'ec2-user', Ubuntu의 경우 'ubuntu')
+        EC2_HOST = '52.78.83.206'
+        EC2_USER = 'ec2-user'
 
-        REACT_APP_SERVER='http://${EC2_HOST}:8090'
-        REACT_APP_API_BASE_URL='http://${EC2_HOST}:8090'
+        REACT_APP_SERVER = "http://${EC2_HOST}:8090"
+        REACT_APP_API_BASE_URL = "http://${EC2_HOST}:8090"
     }
     
     stages {
         stage('Clone and Deploy on EC2') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+
                     sh """
-                        chmod 600 \${SSH_KEY}
-                        ssh -i \${SSH_KEY} -o StrictHostKeyChecking=no \${EC2_USER}@\${EC2_HOST} "
-                            # 기존 디렉토리 정리
-                            rm -rf Hangle-PROJECT && \\
-                            
-                            # GitHub 저장소 클론
-                            git clone \${GITHUB_REPO} && \\
-                            
-                            # 작업 디렉토리로 이동
-                            cd Hangle-PROJECT && \\
-                            
-                            # Docker 명령어 실행 (sudo 사용)
-                            sudo docker-compose down || true && \\
-                            sudo docker rm -f \$(sudo docker ps -aq) 2>/dev/null || true && \\
-                            sudo docker rmi -f \$(sudo docker images -q) 2>/dev/null || true && \\
-                            
-                            # 이미지 강제 재빌드 및 컨테이너 시작
-                            sudo docker-compose build --no-cache && \\
+                        chmod 600 ${SSH_KEY}
+
+                        ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+
+                            # 작업 디렉토리 이동
+                            cd ~
+
+                            # Hangle-PROJECT 폴더 존재하면 git pull, 없으면 clone
+                            if [ -d Hangle-PROJECT ]; then
+                                echo "[INFO] 기존 프로젝트 발견 → git pull"
+                                cd Hangle-PROJECT
+                                git reset --hard
+                                git pull
+                            else
+                                echo "[INFO] 프로젝트가 없어 git clone 수행"
+                                git clone ${GITHUB_REPO}
+                                cd Hangle-PROJECT
+                            fi
+
+                            echo "[INFO] Docker 정리"
+                            sudo docker-compose down || true
+                            sudo docker container prune -f || true
+                            sudo docker image prune -af || true
+
+                            echo "[INFO] Docker 이미지 다시 빌드"
+                            sudo docker-compose build --no-cache
+
+                            echo "[INFO] Docker 컨테이너 재시작"
                             sudo docker-compose up -d
-                        "
+
+                        EOF
                     """
                 }
             }
         }
     }
+
     post {
         success {
             echo 'Deployment to EC2 completed successfully![O]'
@@ -48,5 +61,4 @@ pipeline {
             echo 'Deployment to EC2 failed![X]'
         }
     }
-
-}    
+}
