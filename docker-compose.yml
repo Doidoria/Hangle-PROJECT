@@ -1,0 +1,101 @@
+version: '3.8'
+
+networks:
+  custom-network:
+    driver: bridge
+
+
+services:
+  fn:
+    image: fn
+    build:
+      context: ./FN
+    container_name: fn-container
+    ports:
+      - "3000:80"
+    depends_on:
+      - bn
+    networks:
+      - custom-network
+
+  bn:
+    image: bn
+    build:
+      context: ./BN
+    container_name: bn-container
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hangledb
+      SPRING_DATASOURCE_USERNAME: master
+      SPRING_DATASOURCE_PASSWORD: hangle1234!
+      SPRING_REDIS_HOST: redis
+      SERVER_PORT: 8090
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - custom-network
+
+  chatbot:
+    image: chatbot
+    build:
+      context: ./CHATBOT
+      dockerfile: Dockerfile
+    container_name: ollama-server
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    environment:
+      OLLAMA_KEEP_ALIVE: 20m
+      OLLAMA_NUM_PARALLEL: 1
+    networks:
+      - custom-network
+    restart: unless-stopped
+
+  db:
+    image: db
+    build:
+      context: ./DB
+      dockerfile: Dockerfile
+    container_name: db-container
+    networks:
+      custom-network:
+        # ipv4_address: 192.168.1.30
+    ports:
+      - "3330:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      # - ./DB/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db-data:/var/lib/mysql   # 
+    environment:
+      MYSQL_ROOT_PASSWORD: hangle1234!
+      MYSQL_DATABASE: hangledb
+      MYSQL_USER: master
+      MYSQL_PASSWORD: hangle1234!
+      MYSQL_ROOT_HOST: '%'
+    deploy:
+      resources:
+        limits:
+          memory: 1024M  # 1GB
+
+  redis:
+    image: redis
+    build:
+      context: ./REDIS
+    container_name: redis-container
+    ports:
+      - "6379:6379"
+    networks:
+      - custom-network
+
+volumes:
+  db-data:
+  ollama-models:
+    name: ollama-model-cache
+  
