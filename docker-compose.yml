@@ -66,8 +66,8 @@ services:
     build:
       context: ./BN
     container_name: bn-container
-    # ports:
-    #   - "8090:8090"
+    ports:
+      - "8090:8090"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hangledb
       SPRING_DATASOURCE_USERNAME: master
