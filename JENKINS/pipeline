@@ -5,7 +5,7 @@ pipeline {
         GITHUB_REPO = 'https://github.com/Doidoria/Hangle-PROJECT.git'
         EC2_HOST = 'www.hangle.store'
         EC2_USER = 'ec2-user'
-        GIT_BRANCH = 'main'
+        GIT_BRANCH = 'main' 
     }
     
     stages {
@@ -16,34 +16,46 @@ pipeline {
                     sh """
 chmod 600 ${SSH_KEY}
 
+# SSH 접속 (EC2 서버에서 실행)
 ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
 
+# 1. 프로젝트 폴더로 이동 또는 클론
 cd ~
 
 if [ -d Hangle-PROJECT ]; then
-    echo "[INFO] 기존 프로젝트 발견 → git pull"
+    echo "[FIX] Setting ownership to ec2-user to fix Git permissions"
+    # ec2-user에게 프로젝트 폴더 소유권을 부여하여 'Permission denied' 에러 해결
+    sudo chown -R ec2-user:ec2-user Hangle-PROJECT
+
+    echo "[INFO] 기존 프로젝트 발견 → 강제 업데이트"
     cd Hangle-PROJECT
-    git reset --hard
-    git pull origin \${GIT_BRANCH}
+    
+    # Git Ownership 경고 해결 (필수): Jenkins 실행 사용자와 디렉토리 소유자가 다를 때 발생하는 문제 해결
+    git config --global --add safe.directory /home/ec2-user/Hangle-PROJECT
+
+    # Git 상태 초기화 및 최신 코드 강제 가져오기
+    git fetch origin \${GIT_BRANCH}
+    git reset --hard origin/\${GIT_BRANCH}
+    # 혹시 모를 로컬 파일까지 완전 삭제
+    git clean -fd
+
 else
     echo "[INFO] 프로젝트가 없어 git clone 수행"
     git clone ${GITHUB_REPO}
     cd Hangle-PROJECT
 fi
 
-# 🚨🚨🚨 디버깅을 위한 Dockerfile 내용 출력 🚨🚨🚨
-# 이 명령의 출력 결과를 다음 Jenkins 빌드 로그에서 확인해 주십시오. 
-# Python 설치 라인이 없는지 확인해야 합니다.
-echo "[DEBUG] BN/Dockerfile 내용 확인:"
-cat BN/Dockerfile
-echo "[DEBUG] -------------------------------"
-
-echo "[INFO] Docker 정리"
+echo "[INFO] Docker 정리 및 캐시 초기화"
+# 기존 컨테이너 중지 및 제거 (성공/실패 여부와 관계없이)
 sudo docker-compose down || true
+
+# 모든 Docker 캐시 및 잔여물 완전 삭제
 sudo docker container prune -f || true
 sudo docker image prune -af || true
 
-echo "[INFO] Docker 이미지 다시 빌드"
+
+echo "[INFO] Docker 이미지 다시 빌드 (no-cache 적용)"
+# --no-cache를 사용하여 이전 빌드 실패 레이어 무시 및 재빌드 강제
 sudo docker-compose build --no-cache
 
 echo "[INFO] Docker 컨테이너 재시작"
