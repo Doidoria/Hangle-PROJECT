@@ -6,6 +6,34 @@ networks:
 
 
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx-reverse-proxy
+    restart: always
+    
+    # 외부 포트 노출: HTTP(80)와 HTTPS(443)만 노출합니다.
+    ports:
+      - "80:80"
+      - "443:443" 
+
+    volumes:
+      # [경로 수정됨]: Nginx 설정 파일 마운트 (./FN/nginx.conf로 변경)
+      - ./FN/nginx.conf:/etc/nginx/nginx.conf:ro
+      
+      # 2. React 빌드 결과물 마운트 (Nginx의 정적 파일 경로)
+      # React build가 './FN/build'에 있다고 가정합니다. 경로를 확인하세요.
+      - ./FN/build:/usr/share/nginx/html:ro
+      
+      # 3. Certbot SSL 인증서 경로 마운트 (필수)
+      # 호스트의 /etc/letsencrypt/ 경로를 컨테이너에 연결합니다.
+      - /etc/letsencrypt/:/etc/letsencrypt/:ro
+      
+    depends_on:
+      - fn
+      - bn
+    networks:
+      - custom-network
+
   fn:
     image: fn
     build:

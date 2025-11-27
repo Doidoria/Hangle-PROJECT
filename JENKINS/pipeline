@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         GITHUB_REPO = 'https://github.com/Doidoria/Hangle-PROJECT.git'
-        EC2_HOST = '52.78.83.206'
+        EC2_HOST = 'www.hangle.store'
         EC2_USER = 'ec2-user'
     }
     

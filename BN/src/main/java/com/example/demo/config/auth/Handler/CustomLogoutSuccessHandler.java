@@ -115,7 +115,10 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         cookie.setHttpOnly(true);     // 생성 시 동일
         cookie.setSecure(false);      // 로컬환경은 false
         cookie.setMaxAge(0);          // 즉시 만료
-        response.addHeader("Set-Cookie", name + "=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
+        response.addHeader(
+                "Set-Cookie",
+                name + "=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=None"
+        );
         response.addCookie(cookie);
     }
 
