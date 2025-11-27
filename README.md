@@ -62,27 +62,46 @@ JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서
 
 ```
  MyPlanner
-├──  backend
-│ ├──  src/main/java/com/example/myplanner
-│ │ ├── controller/
-│ │ ├── service/
-│ │ ├── repository/
-│ │ ├── entity/
-│ │ └── MyPlannerApplication.java
-│ └──  src/main/resources
-│ ├── application.yml
-│ └── static/
-│
-├──  frontend
-│ ├── src/
-│ │ ├── components/
-│ │ ├── pages/
-│ │ ├── api/
-│ │ ├── App.js
-│ │ └── index.js
-│ └── package.json
-│
-└── docker-compose.yml
+├── BN
+│   ├── Dockerfile
+│   ├── build.gradle
+│   ├── gradle
+│   ├── gradlew
+│   ├── gradlew.bat
+│   ├── settings.gradle
+│   └── src
+├── CHATBOT
+│   ├── Dockerfile
+│   └── start.sh
+├── CMD.txt
+├── DB
+│   └── Dockerfile
+├── FN
+│   ├── Dockerfile
+│   ├── build
+│   ├── nginx.conf
+│   ├── node_modules
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   └── src
+├── JENKINS
+│   ├── Dockerfile
+│   ├── INFO
+│   └── pipeline
+├── ML_Scripts
+│   ├── helpers
+│   ├── score_accuracy.py
+│   ├── score_auc.py
+│   ├── score_custom.py
+│   ├── score_f1.py
+│   ├── score_mae.py
+│   └── score_rmse.py
+├── README.md
+├── REDIS
+│   └── Dockerfile
+├── docker-compose.yml
+└── docker-compose_local.yml
 ```
 
 ## 6. 설치 및 실행 (Installation & Run)
