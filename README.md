@@ -61,7 +61,7 @@ JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서
 ## 5. 프로젝트 구조 (Project Structure)
 
 ```
- MyPlanner
+ Hangle-Project
 ├── BN
 │   ├── Dockerfile
 │   ├── build.gradle
