@@ -39,8 +39,8 @@ services:
     build:
       context: ./FN
     container_name: fn-container
-    ports:
-      - "3000:80"
+    # ports:
+    #   - "3000:80"
     depends_on:
       - bn
     networks:
@@ -51,8 +51,8 @@ services:
     build:
       context: ./BN
     container_name: bn-container
-    ports:
-      - "8090:8090"
+    # ports:
+    #   - "8090:8090"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hangledb
       SPRING_DATASOURCE_USERNAME: master
