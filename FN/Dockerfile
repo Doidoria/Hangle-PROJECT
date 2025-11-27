@@ -19,6 +19,10 @@ FROM nginx:alpine
 # 빌드된 정적 파일을 Nginx 웹 루트로 복사
 COPY --from=build /app/build /usr/share/nginx/html
 
+# 🚨 403 Forbidden 최종 해결: Nginx 사용자에게 파일 소유권을 명시적으로 부여 🚨
+# 이 명령이 Nginx가 웹 루트(/usr/share/nginx/html)의 모든 파일에 접근할 수 있도록 보장합니다.
+RUN chown -R nginx:nginx /usr/share/nginx/html
+
 # (선택) 커스텀 Nginx 설정 파일이 있을 경우 복사
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
