@@ -5,7 +5,10 @@ pipeline {
         GITHUB_REPO = 'https://github.com/Doidoria/Hangle-PROJECT.git'
         EC2_HOST = 'www.hangle.store'
         EC2_USER = 'ec2-user'
+        // 브랜치 이름이 main임을 확정합니다.
         GIT_BRANCH = 'main' 
+        // 프로젝트 디렉토리 변수를 환경 블록에 추가
+        PROJECT_DIR = 'Hangle-PROJECT' 
     }
     
     stages {
@@ -13,56 +16,76 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
 
+                    // 1. SSH 키 권한 설정
+                    sh "chmod 600 ${SSH_KEY}"
+
+                    // 2. SSH 접속 (EC2 서버에서 실행)
                     sh """
-chmod 600 ${SSH_KEY}
+                        ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
+                            # SSH 세션 내부의 쉘 명령 시작
+                            set -e # 에러 발생 시 즉시 종료 (안전장치)
 
-# SSH 접속 (EC2 서버에서 실행)
-ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+                            # 쉘 변수 정의: Jenkins 환경 변수 값을 작은 따옴표로 감싸 안전하게 주입
+                            BRANCH_NAME="${GIT_BRANCH}"
+                            PROJECT_DIR_VAR="${PROJECT_DIR}"
+                            REPO_URL="${GITHUB_REPO}"
 
-# 1. 프로젝트 폴더로 이동 또는 클론
-cd ~
+                            echo "--- SSH 세션 시작 ---"
 
-if [ -d Hangle-PROJECT ]; then
-    echo "[FIX] Setting ownership to ec2-user to fix Git permissions"
-    # ec2-user에게 프로젝트 폴더 소유권을 부여하여 'Permission denied' 에러 해결
-    sudo chown -R ec2-user:ec2-user Hangle-PROJECT
+                            # 1. 프로젝트 폴더로 이동 또는 클론
+                            cd ~
 
-    echo "[INFO] 기존 프로젝트 발견 → 강제 업데이트"
-    cd Hangle-PROJECT
-    
-    # Git Ownership 경고 해결 (필수): Jenkins 실행 사용자와 디렉토리 소유자가 다를 때 발생하는 문제 해결
-    git config --global --add safe.directory /home/ec2-user/Hangle-PROJECT
+                            # 원격 쉘 변수 사용 시: \$PROJECT_DIR_VAR
+                            if [ -d \$PROJECT_DIR_VAR ]; then
+                                echo "[FIX] Setting ownership to ec2-user to fix Git permissions"
+                                # ec2-user에게 프로젝트 폴더 소유권을 부여하여 "Permission denied" 에러 해결
+                                sudo chown -R ec2-user:ec2-user \$PROJECT_DIR_VAR
 
-    # Git 상태 초기화 및 최신 코드 강제 가져오기
-    git fetch origin \${GIT_BRANCH}
-    git reset --hard origin/\${GIT_BRANCH}
-    # 혹시 모를 로컬 파일까지 완전 삭제
-    git clean -fd
+                                echo "[INFO] 기존 프로젝트 발견 → 강제 업데이트"
+                                cd \$PROJECT_DIR_VAR
+                                
+                                # Git Ownership 경고 해결 (필수)
+                                git config --global --add safe.directory /home/ec2-user/\$PROJECT_DIR_VAR
 
-else
-    echo "[INFO] 프로젝트가 없어 git clone 수행"
-    git clone ${GITHUB_REPO}
-    cd Hangle-PROJECT
-fi
+                                # Git 상태 초기화 및 최신 코드 강제 가져오기
+                                git fetch origin \$BRANCH_NAME
+                                
+                                # Git 리셋 (브랜치 변수 사용)
+                                git reset --hard origin/\$BRANCH_NAME
+                                
+                                # 혹시 모를 로컬 파일까지 완전 삭제
+                                git clean -fd
 
-echo "[INFO] Docker 정리 및 캐시 초기화"
-# 기존 컨테이너 중지 및 제거 (성공/실패 여부와 관계없이)
-sudo docker-compose down || true
+                            else
+                                echo "[INFO] 프로젝트가 없어 git clone 수행"
+                                git clone \$REPO_URL
+                                cd \$PROJECT_DIR_VAR
+                            fi
+                            
+                            # --- [추가된 부분] Nginx 파일 접근 권한 확보 ---
+                            # 프론트엔드 빌드 폴더(./Hangle-PROJECT/build)에 대해 모든 사용자(Nginx)가 읽을 권한 부여
+                            echo "[FIX] Setting 755 permissions recursively on front-end build directory"
+                            sudo chmod -R 755 ./build
 
-# 모든 Docker 캐시 및 잔여물 완전 삭제
-sudo docker container prune -f || true
-sudo docker image prune -af || true
+                            echo "[INFO] Docker 정리 및 캐시 초기화"
+                            # 기존 컨테이너 중지 및 제거 (성공/실패 여부와 관계없이)
+                            sudo docker-compose down || true
+
+                            # 모든 Docker 캐시 및 잔여물 완전 삭제
+                            sudo docker container prune -f || true
+                            sudo docker image prune -af || true
 
 
-echo "[INFO] Docker 이미지 다시 빌드 (no-cache 적용)"
-# --no-cache를 사용하여 이전 빌드 실패 레이어 무시 및 재빌드 강제
-sudo docker-compose build --no-cache
+                            echo "[INFO] Docker 이미지 다시 빌드 (no-cache 적용)"
+                            # --no-cache를 사용하여 이전 빌드 실패 레이어 무시 및 재빌드 강제
+                            sudo docker-compose build --no-cache
 
-echo "[INFO] Docker 컨테이너 재시작"
-sudo docker-compose up -d
+                            echo "[INFO] Docker 컨테이너 재시작"
+                            sudo docker-compose up -d
 
-EOF
-"""
+                            echo "--- SSH 세션 종료 ---"
+                        '
+                    """
                 }
             }
         }
