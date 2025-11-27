@@ -12,6 +12,7 @@ function CompetitionCreate() {
   const navigate = useNavigate();
   const { id } = useParams();          // /competitions/:id/edit 에서 넘어오는 id
   const isEdit = !!id;                 // 있으면 수정 모드, 없으면 생성 모드
+
   const [form, setForm] = useState({
     title: '',
     description: '',        // 목적(한 줄) -> backend purpose
@@ -55,7 +56,7 @@ function CompetitionCreate() {
       } catch (e) {
         console.error(e);
         alert('대회 정보를 불러오지 못했습니다.');
-        navigate('/competitions');
+        navigate('/competitions/List');
       }
     })();
   }, [isEdit, id, navigate]);
@@ -117,11 +118,11 @@ function CompetitionCreate() {
         );
         fd.append("trainFile", trainFile);
         fd.append("testFile", testFile);
- 
+
         const { data: created } = await api.post('/api/competitions', fd, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
- 
+
         alert(`대회가 등록되었습니다! (ID: ${created.id})`);
         navigate(`/competitions/${created.id}`, { replace: true });
       }
@@ -136,6 +137,17 @@ function CompetitionCreate() {
     }
   };
 
+  // 🔥 취소 버튼 동작: 모드에 따라 분기
+  const handleCancel = () => {
+    if (saving) return;
+    if (isEdit) {
+      // 수정 모드 → 해당 대회 상세
+      navigate(`/competitions/${id}`);
+    } else {
+      // 생성 모드 → 대회 목록
+      navigate('/competitions/List');
+    }
+  };
 
   return (
     <div className="container comp-create">
@@ -145,33 +157,68 @@ function CompetitionCreate() {
       <form onSubmit={onSubmit} noValidate>
         <label>
           제목
-          <input name="title" value={form.title} onChange={onChange} required placeholder="대회 제목" />
+          <input
+            name="title"
+            value={form.title}
+            onChange={onChange}
+            required
+            placeholder="대회 제목"
+          />
         </label>
 
         <label>
           목적(한 줄)
-          <input name="description" value={form.description} onChange={onChange} required placeholder="예) 고양이/강아지 분류 모델 개발" />
+          <input
+            name="description"
+            value={form.description}
+            onChange={onChange}
+            required
+            placeholder="예) 고양이/강아지 분류 모델 개발"
+          />
         </label>
 
         <label>
           상세 설명
-          <textarea name="detail" value={form.detail} onChange={onChange} rows={8} placeholder="대회의 상세 목표/데이터 설명/제출 형식 등" />
+          <textarea
+            name="detail"
+            value={form.detail}
+            onChange={onChange}
+            rows={8}
+            placeholder="대회의 상세 목표/데이터 설명/제출 형식 등"
+          />
         </label>
 
         <div className="row">
           <label>
             시작일
-            <input type="datetime-local" name="startAt" value={form.startAt} onChange={onChange} required />
+            <input
+              type="datetime-local"
+              name="startAt"
+              value={form.startAt}
+              onChange={onChange}
+              required
+            />
           </label>
           <label>
             종료일
-            <input type="datetime-local" name="endAt" value={form.endAt} onChange={onChange} min={form.startAt || undefined} required />
+            <input
+              type="datetime-local"
+              name="endAt"
+              value={form.endAt}
+              onChange={onChange}
+              min={form.startAt || undefined}
+              required
+            />
           </label>
         </div>
 
         <label>
           평가 지표
-          <select name="evaluationMetric" value={form.evaluationMetric} onChange={onChange}>
+          <select
+            name="evaluationMetric"
+            value={form.evaluationMetric}
+            onChange={onChange}
+          >
             <option value="ACCURACY">ACCURACY</option>
             <option value="F1">F1</option>
             <option value="AUC">AUC</option>
@@ -182,17 +229,32 @@ function CompetitionCreate() {
 
         <label>
           상금
-          <input type="number" step="0.01" name="prizeTotal" value={form.prizeTotal} onChange={onChange} placeholder="예: 1000000" />
+          <input
+            type="number"
+            step="0.01"
+            name="prizeTotal"
+            value={form.prizeTotal}
+            onChange={onChange}
+            placeholder="예: 1000000"
+          />
         </label>
 
         {/* CSV 파일 업로드 */}
         <label>
           Train CSV 업로드
-          <input type="file" accept=".csv" onChange={(e) => setTrainFile(e.target.files[0])} />
+          <input
+            type="file"
+            accept=".csv"
+            onChange={(e) => setTrainFile(e.target.files[0])}
+          />
         </label>
         <label>
           Test CSV 업로드
-          <input type="file" accept=".csv" onChange={(e) => setTestFile(e.target.files[0])} />
+          <input
+            type="file"
+            accept=".csv"
+            onChange={(e) => setTestFile(e.target.files[0])}
+          />
         </label>
 
         {errorMsg && <div className="error">{errorMsg}</div>}
@@ -201,7 +263,11 @@ function CompetitionCreate() {
           <button type="submit" className="primary" disabled={saving}>
             {saving ? '저장 중...' : (isEdit ? '수정' : '저장')}
           </button>
-          <button type="button" onClick={() => navigate('/competitions')} disabled={saving}>
+          <button
+            type="button"
+            onClick={handleCancel}
+            disabled={saving}
+          >
             취소
           </button>
           <AutoCompetitionButton />
