@@ -9,6 +9,7 @@ pipeline {
         GIT_BRANCH = 'main' 
         // 프로젝트 디렉토리 변수를 환경 블록에 추가
         PROJECT_DIR = 'Hangle-PROJECT' 
+        PROJECT_DIR_VAR = 'Hangle-PROJECT'
     }
     
     stages {
@@ -21,24 +22,25 @@ pipeline {
 
                     // 2. SSH 접속 (EC2 서버에서 실행)
                     sh """
-ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << "EOF"
+ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
     set -e
+
     BRANCH_NAME="${GIT_BRANCH}"
     PROJECT_DIR_VAR="${PROJECT_DIR}"
     REPO_URL="${GITHUB_REPO}"
 
     cd ~
 
-    if [ -d $PROJECT_DIR_VAR ]; then
-        sudo chown -R ec2-user:ec2-user $PROJECT_DIR_VAR
-        cd $PROJECT_DIR_VAR
-        git config --global --add safe.directory \$HOME/$PROJECT_DIR_VAR
-        git fetch origin $BRANCH_NAME
-        git reset --hard origin/$BRANCH_NAME
+    if [ -d \$PROJECT_DIR_VAR ]; then
+        sudo chown -R ec2-user:ec2-user \$PROJECT_DIR_VAR
+        cd \$PROJECT_DIR_VAR
+        git config --global --add safe.directory \$HOME/\$PROJECT_DIR_VAR
+        git fetch origin \$BRANCH_NAME
+        git reset --hard origin/\$BRANCH_NAME
         git clean -fd
     else
-        git clone $REPO_URL
-        cd $PROJECT_DIR_VAR
+        git clone \$REPO_URL
+        cd \$PROJECT_DIR_VAR
     fi
 
     docker-compose down || true

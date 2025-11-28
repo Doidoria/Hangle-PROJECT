@@ -20,7 +20,7 @@ services:
     
     # [수정된 핵심 설정]: Nginx 설정, React 빌드 파일, SSL 인증서를 모두 마운트합니다.
     volumes:
-      - ./FN/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./FN/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./FN/build:/usr/share/nginx/html:ro
       - /etc/letsencrypt/:/etc/letsencrypt/:ro
       
