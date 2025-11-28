@@ -43,7 +43,7 @@ ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
         cd \$PROJECT_DIR_VAR
     fi
     
-    cd \$PROJECT_DIR_VAR/FN
+    cd FN
     npm install
     npm run build
 
