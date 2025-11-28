@@ -34,8 +34,7 @@ const Login = () => {
     setMessage(null)
 
     try {
-      const resp = await api.post(
-        '/login',
+      const resp = await api.post('/user/login',
         { userid, password },
         {
           headers: { 'Content-Type': 'application/json' },
@@ -89,7 +88,7 @@ const Login = () => {
             <label htmlFor="password">비밀번호</label>
             <input type="password" id="password" name="password" onChange={e => setPassword(e.target.value)} required />
           </div>
-          <button onClick={handleLogin}>로그인</button>
+          <button type="button" onClick={handleLogin}>로그인</button>
         </form>
         {/* 메시지 표시 */}
         {message && (
