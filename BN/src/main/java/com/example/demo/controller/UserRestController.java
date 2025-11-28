@@ -14,10 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -152,8 +149,14 @@ public class UserRestController {
                     .maxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000)
                     .build();
 
-            resp.addHeader("Set-Cookie", accessCookie.toString());
-            resp.addHeader("Set-Cookie", userCookie.toString());
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.SET_COOKIE, accessCookie.toString());
+            headers.add(HttpHeaders.SET_COOKIE, userCookie.toString());
+
+            return ResponseEntity
+                    .ok()
+                    .headers(headers)
+                    .body(response);
 
         }catch(AuthenticationException e){
             System.out.println("인증실패 : " + e.getMessage());
@@ -161,7 +164,6 @@ public class UserRestController {
             response.put("message","아이디 또는 비밀번호가 올바르지 않습니다.");
             return new ResponseEntity(response,HttpStatus.UNAUTHORIZED);
         }
-        return new ResponseEntity(response,HttpStatus.OK);
     }
 
     @PostMapping("/api/user/login")
