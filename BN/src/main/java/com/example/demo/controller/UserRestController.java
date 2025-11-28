@@ -53,6 +53,14 @@ public class UserRestController {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisUtil redisUtil;
 
+    @GetMapping("/api/user/validate")
+    public ResponseEntity<?> validateToken(Authentication auth) {
+        if (auth == null) {
+            return ResponseEntity.status(401).body(Map.of("valid", false));
+        }
+        return ResponseEntity.ok(Map.of("valid", true));
+    }
+
     @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> join_post(@Valid @RequestBody UserDto userDto, BindingResult result) {
         log.info("POST /join..." + userDto);
@@ -156,6 +164,11 @@ public class UserRestController {
             return new ResponseEntity(response,HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity(response,HttpStatus.OK);
+    }
+
+    @PostMapping("/api/user/login")
+    public ResponseEntity<Map<String, Object>> loginApiAlias(@RequestBody UserDto userDto, HttpServletResponse resp) throws IOException {
+        return login(userDto, resp);
     }
 
     @PutMapping("/api/user/introduction")
