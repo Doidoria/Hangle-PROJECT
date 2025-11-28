@@ -63,16 +63,21 @@ public class SecurityConfig {
     @Order(2)
 	protected SecurityFilterChain configure(HttpSecurity http, JwtAuthorizationFilter jwtAuthorizationFilter) throws Exception {
         http.securityMatcher("/**");
-        // CORS 활성화
+        // ----- CORS -----
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-		// CSRF비활성화
-		http.csrf((config)->{config.disable();});
+
+        // ----- CSRF 비활성화 -----
+        http.csrf(csrf -> csrf.disable());
+
+        // ----- 인증/인가 실패 시 JSON 응답 (Mixed Content 방지 핵심) -----
         http.exceptionHandling(ex -> ex
                 .authenticationEntryPoint(customAuthenticationEntryPoint) // 401 JSON
                 .accessDeniedHandler(customAccessDeniedHandler)           // 403 JSON
-        )
-                .formLogin(AbstractHttpConfigurer::disable)  // ★ 로그인 폼 리다이렉트 금지
-                .logout(AbstractHttpConfigurer::disable);    // API 체인에는 불필요
+        );
+
+        // ----- 기본 로그인/기본 인증 완전 비활성화 (mixed content 완전 제거 핵심) -----
+        http.formLogin(AbstractHttpConfigurer::disable); // redirect /login 비활성화
+        http.httpBasic(AbstractHttpConfigurer::disable); // 기본 인증도 비활성화
 
 		//권한체크
         http.authorizeHttpRequests(auth -> {
@@ -136,13 +141,6 @@ public class SecurityConfig {
 
         //JWT FILTER ADD
         http.addFilterBefore(jwtAuthorizationFilter, LogoutFilter.class);
-
-		//-----------------------------------------------
-		//[추가] CORS
-		//-----------------------------------------------
-		http.cors((config)->{
-			config.configurationSource(corsConfigurationSource());
-		});
 
 		return http.build();
 	}
