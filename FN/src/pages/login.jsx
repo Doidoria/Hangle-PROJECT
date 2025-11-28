@@ -34,7 +34,7 @@ const Login = () => {
     setMessage(null)
 
     try {
-      const resp = await api.post('/user/login',
+      const resp = await api.post('/api/user/login',
         { userid, password },
         {
           headers: { 'Content-Type': 'application/json' },
