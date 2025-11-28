@@ -136,26 +136,24 @@ public class UserRestController {
             String accessToken = tokenInfo.getAccessToken();
             String userid = authentication.getName();
             // Access Token Cookie
-            resp.addHeader(
-                    "Set-Cookie",
-                    JwtProperties.ACCESS_TOKEN_COOKIE_NAME + "=" + accessToken
-                            + "; Path=/"
-                            + "; HttpOnly"
-                            + "; Secure"
-                            + "; SameSite=None"
-                            + "; Max-Age=" + (JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000)
-            );
+            ResponseCookie accessCookie = ResponseCookie.from(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, accessToken)
+                    .path("/")
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .maxAge(JwtProperties.ACCESS_TOKEN_EXPIRATION_TIME / 1000)
+                    .build();
 
-            // User ID Cookie
-            resp.addHeader(
-                    "Set-Cookie",
-                    "userid=" + userid
-                            + "; Path=/"
-                            + "; HttpOnly"
-                            + "; Secure"
-                            + "; SameSite=None"
-                            + "; Max-Age=" + (JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000)
-            );
+            ResponseCookie userCookie = ResponseCookie.from("userid", userid)
+                    .path("/")
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .maxAge(JwtProperties.REFRESH_TOKEN_EXPIRATION_TIME / 1000)
+                    .build();
+
+            resp.addHeader("Set-Cookie", accessCookie.toString());
+            resp.addHeader("Set-Cookie", userCookie.toString());
 
         }catch(AuthenticationException e){
             System.out.println("인증실패 : " + e.getMessage());
