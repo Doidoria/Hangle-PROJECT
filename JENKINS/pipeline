@@ -45,7 +45,7 @@ pipeline {
                                 cd \$PROJECT_DIR_VAR
                                 
                                 # Git Ownership 경고 해결 (필수)
-                                git config --global --add safe.directory /home/ec2-user/\$PROJECT_DIR_VAR
+                                git config --global --add safe.directory $HOME/$PROJECT_DIR_VAR
 
                                 # Git 상태 초기화 및 최신 코드 강제 가져오기
                                 git fetch origin \$BRANCH_NAME
@@ -64,19 +64,19 @@ pipeline {
 
                             echo "[INFO] Docker 정리 및 캐시 초기화"
                             # 기존 컨테이너 중지 및 제거 (성공/실패 여부와 관계없이)
-                            sudo docker-compose down || true
+                            docker-compose down || true
 
                             # 모든 Docker 캐시 및 잔여물 완전 삭제
-                            sudo docker container prune -f || true
-                            sudo docker image prune -af || true
+                            docker container prune -f || true
+                            docker image prune -af || true
 
 
                             echo "[INFO] Docker 이미지 다시 빌드 (no-cache 적용)"
                             # --no-cache를 사용하여 이전 빌드 실패 레이어 무시 및 재빌드 강제
-                            sudo docker-compose build --no-cache
+                            docker-compose build --no-cache
 
                             echo "[INFO] Docker 컨테이너 재시작"
-                            sudo docker-compose up -d
+                            docker-compose up -d
 
                             echo "--- SSH 세션 종료 ---"
                         '
