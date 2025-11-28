@@ -366,6 +366,10 @@ public class UserRestController {
 
     @GetMapping("/api/user/me")
     public ResponseEntity<?> getUserInfo(Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            return ResponseEntity.status(401)
+                    .body(Map.of("isLogin", false));
+        }
         // 사용자 식별 (JWT에서 userid 가져오기)
         String userid = authentication.getName();
         User user = userRepository.findByUserid(userid);
