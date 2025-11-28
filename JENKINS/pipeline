@@ -21,66 +21,33 @@ pipeline {
 
                     // 2. SSH 접속 (EC2 서버에서 실행)
                     sh """
-                        ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
-                            # SSH 세션 내부의 쉘 명령 시작
-                            set -e # 에러 발생 시 즉시 종료 (안전장치)
+ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << "EOF"
+    set -e
+    BRANCH_NAME="${GIT_BRANCH}"
+    PROJECT_DIR_VAR="${PROJECT_DIR}"
+    REPO_URL="${GITHUB_REPO}"
 
-                            # 쉘 변수 정의: Jenkins 환경 변수 값을 작은 따옴표로 감싸 안전하게 주입
-                            BRANCH_NAME="${GIT_BRANCH}"
-                            PROJECT_DIR_VAR="${PROJECT_DIR}"
-                            REPO_URL="${GITHUB_REPO}"
+    cd ~
 
-                            echo "--- SSH 세션 시작 ---"
+    if [ -d $PROJECT_DIR_VAR ]; then
+        sudo chown -R ec2-user:ec2-user $PROJECT_DIR_VAR
+        cd $PROJECT_DIR_VAR
+        git config --global --add safe.directory \$HOME/$PROJECT_DIR_VAR
+        git fetch origin $BRANCH_NAME
+        git reset --hard origin/$BRANCH_NAME
+        git clean -fd
+    else
+        git clone $REPO_URL
+        cd $PROJECT_DIR_VAR
+    fi
 
-                            # 1. 프로젝트 폴더로 이동 또는 클론
-                            cd ~
-
-                            # 원격 쉘 변수 사용 시: \$PROJECT_DIR_VAR
-                            if [ -d \$PROJECT_DIR_VAR ]; then
-                                echo "[FIX] Setting ownership to ec2-user to fix Git permissions"
-                                # ec2-user에게 프로젝트 폴더 소유권을 부여하여 "Permission denied" 에러 해결
-                                sudo chown -R ec2-user:ec2-user \$PROJECT_DIR_VAR
-
-                                echo "[INFO] 기존 프로젝트 발견 → 강제 업데이트"
-                                cd \$PROJECT_DIR_VAR
-                                
-                                # Git Ownership 경고 해결 (필수)
-                                git config --global --add safe.directory $HOME/$PROJECT_DIR_VAR
-
-                                # Git 상태 초기화 및 최신 코드 강제 가져오기
-                                git fetch origin \$BRANCH_NAME
-                                
-                                # Git 리셋 (브랜치 변수 사용)
-                                git reset --hard origin/\$BRANCH_NAME
-                                
-                                # 혹시 모를 로컬 파일까지 완전 삭제
-                                git clean -fd
-
-                            else
-                                echo "[INFO] 프로젝트가 없어 git clone 수행"
-                                git clone \$REPO_URL
-                                cd \$PROJECT_DIR_VAR
-                            fi
-
-                            echo "[INFO] Docker 정리 및 캐시 초기화"
-                            # 기존 컨테이너 중지 및 제거 (성공/실패 여부와 관계없이)
-                            docker-compose down || true
-
-                            # 모든 Docker 캐시 및 잔여물 완전 삭제
-                            docker container prune -f || true
-                            docker image prune -af || true
-
-
-                            echo "[INFO] Docker 이미지 다시 빌드 (no-cache 적용)"
-                            # --no-cache를 사용하여 이전 빌드 실패 레이어 무시 및 재빌드 강제
-                            docker-compose build --no-cache
-
-                            echo "[INFO] Docker 컨테이너 재시작"
-                            docker-compose up -d
-
-                            echo "--- SSH 세션 종료 ---"
-                        '
-                    """
+    docker-compose down || true
+    docker container prune -f || true
+    docker image prune -f || true
+    docker-compose build --no-cache
+    docker-compose up -d
+EOF
+"""
                 }
             }
         }
