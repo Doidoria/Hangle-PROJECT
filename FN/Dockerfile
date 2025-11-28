@@ -6,7 +6,6 @@ WORKDIR /app
 
 # 환경 변수 파일 명시적으로 COPY (중요!!)
 COPY .env.production ./
-COPY .env ./
 
 # 의존성 설치
 COPY package*.json ./
