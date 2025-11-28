@@ -42,6 +42,10 @@ ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
         git clone \$REPO_URL
         cd \$PROJECT_DIR_VAR
     fi
+    
+    cd \$PROJECT_DIR_VAR/FN
+    npm install
+    npm run build
 
     docker-compose down || true
     docker container prune -f || true
