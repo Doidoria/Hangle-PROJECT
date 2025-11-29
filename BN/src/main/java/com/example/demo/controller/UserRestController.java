@@ -191,40 +191,53 @@ public class UserRestController {
 
     @PutMapping("/api/user/update-info")
     public ResponseEntity<?> updateUserInfo(@RequestBody Map<String, String> req, Authentication authentication, HttpServletResponse resp) {
-        System.out.println("현재 인증된 ID = " + authentication.getName());
+        // 현재 인증된 사용자 아이디 가져오기 (절대 req에서 받지 않음!)
         String currentUserid = authentication.getName();
-        String userid = authentication.getName();
-        User user = userRepository.findByUserid(userid);
+
+        // DB 조회
+        User user = userRepository.findByUserid(currentUserid);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "사용자를 찾을 수 없습니다."));
         }
+
+        // ===== 사용자명 변경 =====
         String newUsername = req.get("username");
-        String newUserid = req.get("userid");
         if (newUsername != null && !newUsername.isBlank()) {
             user.setUsername(newUsername);
         }
-        if (newUserid != null && !newUserid.isBlank() && !newUserid.equals(userid)) {
 
+        // ===== 이메일(userid) 변경 =====
+        String newUserid = req.get("userid");
+
+        if (newUserid != null && !newUserid.isBlank() && !newUserid.equals(currentUserid)) {
+            // 소셜 로그인은 이메일 변경 불가
             if (user.getProvider() != null) {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "소셜 로그인 사용자는 이메일을 변경할 수 없습니다."));
             }
-            // 아이디 중복 확인
+            // 중복 체크
             if (userRepository.findByUserid(newUserid) != null) {
-                return ResponseEntity.badRequest().body(Map.of("error", "이미 존재하는 아이디입니다."));
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "이미 존재하는 아이디입니다."));
             }
+            // 이메일 변경 저장
             user.setUserid(newUserid);
             userRepository.save(user);
-            handleLogoutCleanup(currentUserid, resp);
 
+            // JWT + userid 쿠키 삭제 (강제 로그아웃)
+            handleLogoutCleanup(currentUserid, resp);
             return ResponseEntity.ok(Map.of(
                     "message", "이메일이 변경되어 로그아웃되었습니다. 다시 로그인해주세요.",
                     "username", user.getUsername(),
                     "userid", user.getUserid()
             ));
         }
+
+        // - 이메일 변경 없는 경우 -
+        // 유저 정보 저장
         userRepository.save(user);
+
         return ResponseEntity.ok(Map.of(
                 "message", "회원 정보가 성공적으로 수정되었습니다.",
                 "username", user.getUsername(),
