@@ -4,6 +4,7 @@ import com.example.demo.config.auth.jwt.JwtProperties;
 import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import com.example.demo.config.auth.jwt.TokenInfo;
 import com.example.demo.config.auth.redis.RedisUtil;
+import com.example.demo.config.auth.service.PrincipalDetails;
 import com.example.demo.domain.user.dto.UserDto;
 import com.example.demo.domain.user.repository.UserRepository;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -173,7 +174,7 @@ public class UserRestController {
 
     @PutMapping("/api/user/introduction")
     public ResponseEntity<?> updateIntroduction(@RequestBody Map<String, String> req, Authentication authentication) {
-        String userid = authentication.getName();
+        String userid = getCurrentUserid(authentication);
         User user = userRepository.findByUserid(userid);
 
         if (user == null) {
@@ -192,7 +193,11 @@ public class UserRestController {
     @PutMapping("/api/user/update-info")
     public ResponseEntity<?> updateUserInfo(@RequestBody Map<String, String> req, Authentication authentication, HttpServletResponse resp) {
         // 현재 인증된 사용자 아이디 가져오기 (절대 req에서 받지 않음!)
-        String currentUserid = authentication.getName();
+        String currentUserid = getCurrentUserid(authentication);
+        if (currentUserid == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "로그인이 필요합니다."));
+        }
 
         // DB 조회
         User user = userRepository.findByUserid(currentUserid);
@@ -251,7 +256,7 @@ public class UserRestController {
             Authentication authentication,
             HttpServletResponse response
     ) {
-        String userid = authentication.getName();
+        String userid = getCurrentUserid(authentication);
         User user = userRepository.findByUserid(userid);
 
         if (user == null) {
@@ -322,7 +327,7 @@ public class UserRestController {
                 return ResponseEntity.badRequest().body(Map.of("error", "파일이 비어 있습니다."));
             }
             // 로그인 사용자 조회
-            String userid = authentication.getName();
+            String userid = getCurrentUserid(authentication);
             User user = userRepository.findByUserid(userid);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -359,7 +364,7 @@ public class UserRestController {
 
     @PutMapping("/api/user/theme")
     public ResponseEntity<?> updateTheme(@RequestBody Map<String, String> req, Authentication authentication) {
-        String userid = authentication.getName();
+        String userid = getCurrentUserid(authentication);
         User user = userRepository.findByUserid(userid);
 
         if (user == null) {
@@ -379,19 +384,24 @@ public class UserRestController {
 
     @GetMapping("/api/user/me")
     public ResponseEntity<?> getUserInfo(Authentication authentication) {
-        if (authentication == null || authentication.getName() == null) {
-            return ResponseEntity.status(401)
+        // 1차 방어선
+        String userid = getCurrentUserid(authentication);
+        if (userid == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("isLogin", false));
         }
-        // 사용자 식별 (JWT에서 userid 가져오기)
-        String userid = authentication.getName();
+        // 2차 방어선: DB 조회
         User user = userRepository.findByUserid(userid);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "사용자를 찾을 수 없습니다."));
+                    .body(Map.of(
+                            "isLogin", false,
+                            "error", "사용자를 찾을 수 없습니다."
+                    ));
         }
         // JSON 응답 데이터 구성
         Map<String, Object> data = new HashMap<>();
+        data.put("isLogin", true);
         data.put("username", user.getUsername());
         data.put("userid", user.getUserid());
         data.put("role", user.getRole());
@@ -406,7 +416,7 @@ public class UserRestController {
 
     @DeleteMapping("/api/user/delete")
     public ResponseEntity<?> deleteUser(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
-        String userid = authentication.getName();
+        String userid = getCurrentUserid(authentication);
         System.out.println("[회원 탈퇴 요청] 현재 로그인된 사용자: " + userid);
 
         User user = userRepository.findByUserid(userid);
@@ -462,6 +472,29 @@ public class UserRestController {
 
         System.out.println("미인증된 상태입니다.");
         return new ResponseEntity<>("",HttpStatus.UNAUTHORIZED);
+    }
+
+    // 쿠키 방어 코드
+    private String getCurrentUserid(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof PrincipalDetails pd) {
+            return pd.getUser().getUserid();
+        }
+        // 일부 Spring 기본 User 타입
+        if (principal instanceof org.springframework.security.core.userdetails.User u) {
+            return u.getUsername();
+        }
+        // JWT Filter가 문자열 principal을 넣는 경우
+        if (principal instanceof String s) {
+            if (!"anonymousUser".equals(s)) return s;
+            return null;
+        }
+
+        return null;
     }
 
     private void clearCookie(HttpServletResponse response, String name) {
