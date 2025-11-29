@@ -36,6 +36,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        System.out.println(">>> [JWT FILTER TRIGGERED] path=" + request.getRequestURI());
 
         String uri = request.getRequestURI();
         if (uri.startsWith("/uploads")

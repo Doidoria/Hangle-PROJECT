@@ -28,6 +28,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.context.NullSecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
@@ -140,7 +141,8 @@ public class SecurityConfig {
 		});
 
         //JWT FILTER ADD
-        http.addFilterBefore(jwtAuthorizationFilter, LogoutFilter.class);
+//        http.addFilterBefore(jwtAuthorizationFilter, LogoutFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
