@@ -89,7 +89,7 @@ const MyProfile = () => {
         const fetchProfileData = async () => {
             try {
                 console.log("[MyProfile] 사용자 정보 요청 시작...");
-                const res = await api.get('/api/user/me', { withCredentials: true });
+                const res = await api.get('/user/me', { withCredentials: true });
                 console.log("[MyProfile] 응답 수신:", res);
 
                 if (res.status === 200 && res.data) {
