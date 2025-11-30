@@ -22,8 +22,8 @@ services:
     volumes:
       - ./FN/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./FN/default.conf:/etc/nginx/conf.d/default.conf:ro
-      # - ./FN/build:/usr/share/nginx/html:ro
       - /etc/letsencrypt/:/etc/letsencrypt/:ro
+      - /home/ec2-user/Hangle-PROJECT/Uploads:/usr/share/nginx/html/uploads
       
     depends_on:
       - bn
