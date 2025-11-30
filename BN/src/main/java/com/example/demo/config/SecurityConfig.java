@@ -107,6 +107,7 @@ public class SecurityConfig {
             // 관리자 대회 권한 설정
             auth.requestMatchers(HttpMethod.PUT, "/api/competitions/**").hasAnyRole("ADMIN", "MANAGER");
             auth.requestMatchers(HttpMethod.DELETE, "/api/competitions/**").hasRole("ADMIN");
+            auth.requestMatchers(HttpMethod.POST, "/api/user/logout").permitAll();
             auth.requestMatchers("/api/**").authenticated();
             auth.anyRequest().permitAll();
         });

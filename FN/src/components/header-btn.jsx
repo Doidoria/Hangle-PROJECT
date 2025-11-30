@@ -76,11 +76,7 @@ function HeaderButtons() {
     try {
       const resp = await api.post("/api/user/logout", {}, { withCredentials: true });
       console.log("로그아웃 응답:", resp.data);
-      localStorage.removeItem('username');
-      localStorage.removeItem('userid');
-      setUsername(''); // username 상태 초기화
-      setIsLogin(false);
-      navigate("/login", { replace: true });
+      // navigate("/login", { replace: true });
     } catch (error) {
       console.error("로그아웃 실패:", error);
     } finally { // 항상 로컬 스토리지와 상태 초기화
@@ -88,7 +84,6 @@ function HeaderButtons() {
       localStorage.removeItem('userid');
       setUsername('');
       setIsLogin(false);
-      // navigate("/login", { replace: true });
     }
   }
 

@@ -39,6 +39,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         System.out.println(">>> [JWT FILTER TRIGGERED] path=" + request.getRequestURI());
 
         String uri = request.getRequestURI();
+        // 로그아웃은 JWT 검사 없이 통과
+        if ("/api/user/logout".equals(uri)) {
+            chain.doFilter(request, response);
+            return;
+        }
         if (uri.startsWith("/uploads")
                 || uri.startsWith("/swagger")
                 || uri.startsWith("/v3/api-docs")) {
