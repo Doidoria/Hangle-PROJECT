@@ -51,14 +51,6 @@ public class UserRestController {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisUtil redisUtil;
 
-    @GetMapping("/api/user/validate")
-    public ResponseEntity<?> validateToken(Authentication auth) {
-        if (auth == null) {
-            return ResponseEntity.status(401).body(Map.of("valid", false));
-        }
-        return ResponseEntity.ok(Map.of("valid", true));
-    }
-
     @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> join_post(@Valid @RequestBody UserDto userDto, BindingResult result) {
         log.info("POST /join..." + userDto);
@@ -449,6 +441,13 @@ public class UserRestController {
         SecurityContextHolder.clearContext();
     }
 
+    @GetMapping("/api/user/validate")
+    public ResponseEntity<?> validateToken(Authentication auth) {
+        if (auth == null) {
+            return ResponseEntity.status(401).body(Map.of("valid", false));
+        }
+        return ResponseEntity.ok(Map.of("valid", true));
+    }
 
     @GetMapping("/validate")
     public ResponseEntity<String> validateToken() {

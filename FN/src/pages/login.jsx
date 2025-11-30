@@ -17,7 +17,7 @@ const Login = () => {
   useEffect(() => {
     const validateToken = async () => {
       try {
-        const resp = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/validate`, {
+        const resp = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/validate`, {
           withCredentials: true,
         })
         console.log('토큰 검증 성공:', resp)
@@ -34,7 +34,7 @@ const Login = () => {
     setMessage(null)
 
     try {
-      const resp = await api.post('/user/login',
+      const resp = await api.post('/api/user/login',
         { userid, password },
         {
           headers: { 'Content-Type': 'application/json' },

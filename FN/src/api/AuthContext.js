@@ -70,7 +70,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await api.get("/user/me", { withCredentials: true });
+        const res = await api.get("/api/user/validate", { withCredentials: true });
         applyUser(res.data);
       } catch (err) {
         // 401/403 등으로 실패하면 "로그인 안 된 상태"로 처리
