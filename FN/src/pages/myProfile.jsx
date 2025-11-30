@@ -54,7 +54,7 @@ const MyProfile = () => {
 
             const imageUrl = res.data.profileImageUrl;
             if (imageUrl && imageUrl !== 'null') {
-                const fullUrl = process.env.REACT_APP_API_BASE_URL + imageUrl + '?t=' + Date.now();
+                const fullUrl = process.env.REACT_APP_API_BASE_URL + imageUrl;
                 setProfileImage(fullUrl);
                 localStorage.setItem('profileImage', fullUrl);
             } else {
