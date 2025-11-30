@@ -74,7 +74,7 @@ function HeaderButtons() {
   const handleLogout = async () => {
 
     try {
-      const resp = await api.post("/logout", {}, { withCredentials: true });
+      const resp = await api.post("/api/user/logout", {}, { withCredentials: true });
       console.log("로그아웃 응답:", resp.data);
       localStorage.removeItem('username');
       localStorage.removeItem('userid');

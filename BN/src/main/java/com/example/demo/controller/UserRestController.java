@@ -164,6 +164,34 @@ public class UserRestController {
         return login(userDto, resp);
     }
 
+    @PostMapping("/api/user/logout")
+    public ResponseEntity<?> logout(HttpServletResponse resp) {
+        ResponseCookie clearAccess = ResponseCookie.from("access-token", "")
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .maxAge(0)
+                .build();
+
+        ResponseCookie clearUserid = ResponseCookie.from("userid", "")
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .maxAge(0)
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, clearAccess.toString());
+        headers.add(HttpHeaders.SET_COOKIE, clearUserid.toString());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(Map.of("message", "logout success"));
+    }
+
+
     @PutMapping("/api/user/introduction")
     public ResponseEntity<?> updateIntroduction(@RequestBody Map<String, String> req, Authentication authentication) {
         String userid = getCurrentUserid(authentication);
