@@ -12,19 +12,18 @@
 | **6. 설치 및 실행 방법(Installation & Run)** | 클론부터 실행까지 단계별 명령어 | ```bash<br>git clone https://github.com/username/project.git<br>cd project<br>npm install && npm start<br>``` |
 | **7. 화면 구성(UI Preview)** | 주요 화면 캡처 이미지 또는 GIF | `![메인화면](./images/main.png)` |
 | **8. API 문서(API Docs)** | 주요 REST API 엔드포인트 및 설명 | \```bash<br>GET /api/users — 사용자 조회<br>POST /api/login — 로그인<br>\``` |
-| **9. 팀 구성(Contributors)** | 팀 프로젝트라면 역할 명시 | - FE: 홍길동 (UI/UX, React)<br> - BE: 김철수 (API, DB 설계) |
-| **10. 개발 일정 및 관리(Timeline/Management)** | 진행 일정, 사용한 협업툴 등 | - Notion으로 일정 관리<br> - GitHub Projects로 이슈 트래킹 |
-| **11. 배포 주소 및 시연 링크(Demo / Deployment)** | 실제 서비스 링크 또는 영상 | [https://www.hangle.store(https://www.hangle.store) |
+| **9. 팀 구성(Contributors)** | 팀 프로젝트라면 역할 명시 | - FE: 조원 전체 할당 (UI/UX, React)<br> - BE: 조원 전체 할당 (API, DB 설계) |
+| **10. 개발 일정 및 관리(Timeline/Management)** | 진행 일정, 사용한 협업툴 등 | - Notion으로 일정 관리<br> - GitHub Projects로 이슈 트래킹, Jira를 통한 개발 기록 및 피드백 |
+| **11. 배포 주소 및 시연 링크(Demo / Deployment)** | 실제 서비스 링크 또는 영상 | https://www.hangle.store |
 | **12. 라이선스(License)** | 오픈소스 라이선스 표시 | `MIT License` |
-| **13. 회고(Feedback / Retrospective)** | 프로젝트를 통해 배운 점, 개선할 점 | “Git Flow 전략을 적용하면서 협업의 중요성을 배움.” |
 
 ## 시트 2
 
 # MyPlanner - 일정 관리 웹 애플리케이션
 
 ## 1. 프로젝트 소개 (Overview)
-MyPlanner는 **Spring Boot 백엔드**와 **React 프론트엔드**를 기반으로 한 일정 관리 웹 애플리케이션입니다.  
-사용자는 일정을 등록, 수정, 삭제할 수 있으며, 달력 형태로 한눈에 일정 현황을 확인할 수 있습니다.  
+Hangle 는 **Spring Boot 백엔드**와 **React 프론트엔드**를 기반으로 한 머신러닝 대회 웹 애플리케이션입니다.
+사용자는 각 머신러닝 대회에 참여해 최종 CSV 파일을 제출해 리더보드에서 순위를 확인할 수 있습니다.
 JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서버 간 데이터를 주고받습니다.
 
 ---
@@ -39,22 +38,28 @@ JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서
 ## 3. 기술 스택 (Tech Stack)
 | 구분 | 사용 기술 |
 |------|------------|
-| Frontend | React 18, Axios, React Router, MUI |
-| Backend | Spring Boot 3.x, JPA, Lombok, Spring Security, JWT |
-| Database | MySQL 8.x |
-| DevOps | Docker, Docker Compose, Nginx, AWS EC2 |
-| Tools | IntelliJ, VSCode, GitHub, Postman |
+| **Frontend**     | React, React Router, Axios, SASS/SCSS, SweetAlert2, Jest |
+| **Backend**      | Spring Boot, Spring Security, JWT, Swagger, Thymeleaf    |
+| **Database**     | MySQL, Redis                                             |
+| **DevOps**       | Docker, Docker Compose, Jenkins, Git                     |
+| **Tools** | Python, JUnit, IntelliJ IDEA                                   |
+
+
 
 ---
 
 ## 4. 주요 기능 (Features)
 | 기능 구분 | 설명 |
 |------------|------|
-| 회원 관리 | 회원가입, 로그인, 비밀번호 재설정 (JWT 기반 인증) |
-| 일정 관리 | 일정 등록, 수정, 삭제, 조회 |
-| 캘린더 보기 | React-Calendar를 통한 월별 일정 시각화 |
-| 관리자 기능 | 전체 사용자 일정 관리 및 통계 조회 |
-| 배포 환경 | Docker Compose로 Frontend, Backend, DB 통합 실행 |
+| **회원 관리**   | JWT 기반 AccessToken 발급 및 검증, 회원 정보 수정       |
+| **인증/보안**   | Spring Security 6 인증, OAuth2 로그인, Redis 세션 관리   |
+| **대회 관리**   | 대회 데이터 생성, 상태 관리, 파일 업로드/다운로드 처리  |
+| **리더보드 관리**| 리더보드 데이터 생성, 상태 관리                        |
+| **제출/채점(Ml)**| Python 스크립트로 MAE/AUC/F1/ACCURACY/RMSE 지표 계산                 |
+| **고객센터(1:1 문의)** | 1:1 문의 생성/상태 관리, 관리자 기능                   |
+| **챗봇 / AI 도우미** | Spring AI + Olama 모델 기반 질의 응답                   |
+| **배포/운영 환경** | Docker 기반 배포, Jenkins 자동배포화, Nginx 웹 서버, MySQL DB 사용           |
+
 
 ---
 
