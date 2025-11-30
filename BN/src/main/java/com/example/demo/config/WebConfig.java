@@ -28,6 +28,6 @@ public class WebConfig implements WebMvcConfigurer {
 
         // /uploads/** 로 들어오는 요청을 실제 폴더로 연결
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(uploadPath);
+                .addResourceLocations("file:/app/uploads/");
     }
 }
