@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,21 +56,39 @@ public class UserRestController {
     public ResponseEntity<Map<String, String>> join_post(@Valid @RequestBody UserDto userDto, BindingResult result) {
         log.info("POST /join..." + userDto);
 
+        // 검증 결과 처리
         if (result.hasErrors()) {
             String errorMessage = result.getFieldError().getDefaultMessage();
             return ResponseEntity.badRequest().body(Map.of("error", errorMessage));
         }
-
+        // 이메일 중복 체크
         User existingUser = userRepository.findByUserid(userDto.getUserid());
         if (existingUser != null) {
             return ResponseEntity.badRequest().body(Map.of("error", "이미 존재하는 사용자입니다."));
         }
+        // 전화번호 유효성 검사 (길이 체크, 숫자만 포함)
+        if (!userDto.getPhone().matches("^[0-9]{10,11}$")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "유효한 전화번호를 입력해주세요."));
+        }
 
-        User user = userDto.toEntity();
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        try {
+            // 사용자 엔티티로 변환 및 비밀번호 인코딩
+            User user = userDto.toEntity();
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        return ResponseEntity.ok(Map.of("message", "회원가입이 완료되었습니다."));
+            // 사용자 저장
+            userRepository.save(user);
+            log.info("회원가입 성공: " + user);
+            return ResponseEntity.ok(Map.of("message", "회원가입이 완료되었습니다."));
+        } catch (DataIntegrityViolationException e) {
+            // DB 제약 위반 처리 (예: 이메일 중복)
+            log.error("회원가입 실패 (데이터베이스 제약 위반): " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "데이터베이스 오류: " + e.getMessage()));
+        } catch (Exception e) {
+            // 그 외 예외 처리
+            log.error("회원가입 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "서버 오류 발생: " + e.getMessage()));
+        }
     }
 
     @PostMapping(value = "/login" , consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
