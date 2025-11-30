@@ -359,7 +359,8 @@ public class UserRestController {
             if (!profileDir.exists()) {
                 profileDir.mkdirs();
             }
-            String filename = user.getUserid() + "_" + System.currentTimeMillis() + ".png";
+            String safeUserid = user.getUserid().replaceAll("[^a-zA-Z0-9]", "_");
+            String filename = safeUserid + "_" + System.currentTimeMillis() + ".png";
             File destination = new File(profileDir, filename);
             file.transferTo(destination);
 
