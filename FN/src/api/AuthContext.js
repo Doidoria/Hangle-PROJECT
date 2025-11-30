@@ -72,7 +72,6 @@ export function AuthProvider({ children }) {
       try {
         const res = await api.get("/api/user/validate", { withCredentials: true });
         applyUser(res.data);
-        setIsLogin(true);
       } catch (err) {
         // 401/403 등으로 실패하면 "로그인 안 된 상태"로 처리
         console.warn("초기 인증 체크 실패:", err?.response?.status);
