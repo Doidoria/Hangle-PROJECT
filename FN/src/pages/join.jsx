@@ -36,20 +36,6 @@ const Join = () => {
       return;
     }
 
-    // 아이디 중복 체크 (백엔드와 통신)
-    try {
-      const checkResp = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/check-email`, { userid });
-      if (checkResp.data.exists) {
-        setIsError(true);
-        setMessage("이미 존재하는 이메일입니다.");
-        return;
-      }
-    } catch (err) {
-      setIsError(true);
-      setMessage("이메일 중복 체크 실패.");
-      return;
-    }
-
     const fullPhoneNumber = `${phone1}${phone2}${phone3}`;
     
     if (fullPhoneNumber.length < 10) {

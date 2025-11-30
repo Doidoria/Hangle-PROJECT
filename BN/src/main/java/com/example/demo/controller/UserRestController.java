@@ -67,7 +67,7 @@ public class UserRestController {
             return ResponseEntity.badRequest().body(Map.of("error", "이미 존재하는 사용자입니다."));
         }
         // 전화번호 유효성 검사 (길이 체크, 숫자만 포함)
-        if (!userDto.getPhone().matches("^[0-9]{10,11}$")) {
+        if (userDto.getPhone() == null || !userDto.getPhone().matches("^[0-9]{10,11}$")) {
             return ResponseEntity.badRequest().body(Map.of("error", "유효한 전화번호를 입력해주세요."));
         }
 
