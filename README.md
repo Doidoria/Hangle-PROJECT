@@ -19,7 +19,7 @@
 
 ## 시트 2
 
-# MyPlanner - 일정 관리 웹 애플리케이션
+# Hangle - 머신러닝 데이터 대회 플랫폼
 
 ## 1. 프로젝트 소개 (Overview)
 Hangle 는 **Spring Boot 백엔드**와 **React 프론트엔드**를 기반으로 한 머신러닝 대회 웹 애플리케이션입니다.
