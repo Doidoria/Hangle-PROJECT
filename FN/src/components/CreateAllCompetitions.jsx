@@ -1,5 +1,16 @@
 import React, { useState } from "react";
 
+// 날짜를 'YYYY-MM-DDTHH:mm' 형식의 문자열로 변환하는 함수
+function getFormattedDate(date) {
+  const pad = (n) => String(n).padStart(2, '0');
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 async function createFile(url, fileName) {
   const res = await fetch(url);
   const blob = await res.blob();
@@ -40,6 +51,16 @@ export default function AutoCompetitionButton() {
     setLoading(true);
     alert("자동 대회 생성 시작!");
 
+    // 현재 시간 기준으로 시작/종료일 동적 생성
+    const now = new Date();
+    // 시작일: 현재 시간보다 1분 전 (즉시 OPEN 되도록 안전하게 과거로 설정)
+    const startDate = new Date(now.getTime() - 60 * 1000); 
+    // 종료일: 예) 7일 후
+    const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    const startStr = getFormattedDate(startDate);
+    const endStr = getFormattedDate(endDate);
+
     const competitions = [
       {
         name: "Accuracy 대회",
@@ -47,9 +68,9 @@ export default function AutoCompetitionButton() {
           title: "감정 분류 - Accuracy 대회",
           description: "텍스트 기반 감정 분류 모델 정확도 평가",
           detail: null,
-          status: "UPCOMING",
-          startAt: "2025-01-01T00:00",
-          endAt: "2025-12-31T23:59",
+          status: "OPEN",
+          startAt: startStr,
+          endAt: endStr,
           evaluationMetric: "ACCURACY",
           prizeTotal: null
         },
@@ -62,9 +83,9 @@ export default function AutoCompetitionButton() {
           title: "뉴스 토픽 분류 - F1 대회",
           description: "뉴스 텍스트 기반 분류 모델",
           detail: null,
-          status: "UPCOMING",
-          startAt: "2025-01-01T00:00",
-          endAt: "2025-12-31T23:59",
+          status: "OPEN",
+          startAt: startStr,
+          endAt: endStr,
           evaluationMetric: "F1",
           prizeTotal: null
         },
@@ -77,9 +98,9 @@ export default function AutoCompetitionButton() {
           title: "이탈 고객 예측 - AUC 대회",
           description: "고객 이탈 예측 모델 ROC-AUC 평가",
           detail: null,
-          status: "UPCOMING",
-          startAt: "2025-01-01T00:00",
-          endAt: "2025-12-31T23:59",
+          status: "OPEN",
+          startAt: startStr,
+          endAt: endStr,
           evaluationMetric: "AUC",
           prizeTotal: null
         },
@@ -92,9 +113,9 @@ export default function AutoCompetitionButton() {
           title: "주택 가격 예측 - RMSE 대회",
           description: "회귀 RMSE 평가",
           detail: null,
-          status: "UPCOMING",
-          startAt: "2025-01-01T00:00",
-          endAt: "2025-12-31T23:59",
+          status: "OPEN",
+          startAt: startStr,
+          endAt: endStr,
           evaluationMetric: "RMSE",
           prizeTotal: null
         },
@@ -107,9 +128,9 @@ export default function AutoCompetitionButton() {
           title: "배달 소요시간 예측 - MAE 대회",
           description: "배달 시간 예측 회귀 MAE 평가",
           detail: null,
-          status: "UPCOMING",
-          startAt: "2025-01-01T00:00",
-          endAt: "2025-12-31T23:59",
+          status: "OPEN",
+          startAt: startStr,
+          endAt: endStr,
           evaluationMetric: "MAE",
           prizeTotal: null
         },
