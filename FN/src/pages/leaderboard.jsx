@@ -229,7 +229,7 @@ const Leaderboard = () => {
                                                 <tr key={entry.leaderBoardId}>
                                                     <td>{entry.comprank}</td>
                                                     <td>{entry.username}</td>
-                                                    <td>{(entry.score * 100).toFixed(2)} 점</td>
+                                                    <td>{Number(entry.score).toFixed(2)} 점</td>
                                                     <td>{entry.attempt}</td>
                                                     <td>
                                                         {formatDate(entry.submittedAt)}

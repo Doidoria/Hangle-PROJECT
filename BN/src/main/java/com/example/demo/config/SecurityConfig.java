@@ -84,13 +84,11 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers(
                     "/", "/index.html",
-                    "/css/**", "/js/**", "/images/**",
-                    "/favicon.ico",
+                    "/css/**", "/js/**", "/images/**", "/favicon.ico",
                     "/login", "/join", "/validate/**",
-                    "/api/user/login",
                     "/swagger-ui/**", "/v3/api-docs/**",
-                    "/oauth2/**",
-                    "/error"
+                    "/oauth2/**", "/error",
+                    "/api/user/login", "/api/user/validate"
             ).permitAll();
             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
             auth.requestMatchers(HttpMethod.POST, "/logout").permitAll();
@@ -103,7 +101,7 @@ public class SecurityConfig {
             auth.requestMatchers(HttpMethod.POST, "/api/inquiry/admin/*/answer").hasAnyRole("ADMIN","MANAGER");
             auth.requestMatchers(HttpMethod.PUT,  "/api/inquiry/admin/*/answer").hasAnyRole("ADMIN","MANAGER");
             auth.requestMatchers(HttpMethod.DELETE, "/api/inquiry/admin/*").hasRole("ADMIN");
-
+            // 유저 기능 (제출 등)
             auth.requestMatchers(HttpMethod.POST, "/api/competitions/{competitionId}/submit").hasAnyRole("USER","ADMIN","MANAGER");
             // 관리자 대회 권한 설정
             auth.requestMatchers(HttpMethod.PUT, "/api/competitions/**").hasAnyRole("ADMIN", "MANAGER");
