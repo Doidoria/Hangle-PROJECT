@@ -9,16 +9,17 @@ import "../css/CompetitionList.scss";
 function fmtDT(v) {
   if (!v) return '-';
 
-  const str = String(v);
-
-  // "2025-12-01T18:00:00" → "2025-12-01"
-  if (str.includes('T')) {
-    return str.split('T')[0];
+  if (Array.isArray(v)) {
+    const [year, month, day, hour = 0, minute = 0] = v; // 시, 분이 없을 경우 0 처리
+    const p = (n) => String(n).padStart(2, '0'); // 0 채우기 (1 -> 01)
+    return `${year}.${p(month)}.${p(day)} - ${p(hour)}:${p(minute)}`;
   }
 
-  // "2025-12-01 18:00:00" → "2025-12-01"
-  if (str.includes(' ')) {
-    return str.split(' ')[0];
+  const str = String(v);
+  if (str.includes('T')) {
+    const d = new Date(str);
+    const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}.${p(d.getMonth() + 1)}.${p(d.getDate())} - ${p(d.getHours())}:${p(d.getMinutes())}`;
   }
 
   // 혹시 다른 포맷이면 Date 파싱 시도
