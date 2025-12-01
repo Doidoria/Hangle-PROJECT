@@ -50,6 +50,8 @@ services:
       SERVER_PORT: 8090
       # 자바가 메모리를 최대 384MB까지만 쓰도록 제한
       JAVA_TOOL_OPTIONS: "-Xmx384m"
+      ML_SCRIPT_DIR: /app/ML_Scripts
+      FILE_UPLOAD_ROOT: /app/uploads
     depends_on:
       db:
         condition: service_healthy
