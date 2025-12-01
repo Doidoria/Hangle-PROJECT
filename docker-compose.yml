@@ -40,6 +40,8 @@ services:
       - "8090:8090"
     volumes:
       - /home/ec2-user/Hangle-PROJECT/Uploads:/app/uploads
+      # 호스트의 스크립트 폴더를 컨테이너 내부 /app/ML_Scripts 로 연결
+      - /home/ec2-user/Hangle-PROJECT/ML_Scripts:/app/ML_Scripts
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hangledb
       SPRING_DATASOURCE_USERNAME: master

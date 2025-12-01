@@ -149,6 +149,14 @@ function InquiryManagement() {
         setAnswerInput(inq.answerContent || '');
     };
 
+    const formatDate = (dateValue) => {
+        if (!dateValue) return '-';
+        if (Array.isArray(dateValue)) {
+            return new Date(dateValue[0], dateValue[1] - 1, dateValue[2]).toLocaleDateString();
+        }
+        return new Date(dateValue).toLocaleDateString();
+    };
+
     return (
         <div className="my-inquiries-container">
             <button className="go-faq-btn" onClick={() => navigate("/")}>
@@ -225,11 +233,11 @@ function InquiryManagement() {
                                 <td>{index + 1}</td>
                                 <td className="title">{inq.title}</td>
                                 <td>{maskName(inq.username)}</td>
-                                <td>{new Date(inq.createdAt).toLocaleDateString()}</td>
+                                <td>{formatDate(inq.answerDate)}</td>
                                 <td className={inq.status === 'ANSWERED' ? 'status done' : 'status pending'}>
                                     {getStatusText(inq.status)}
                                 </td>
-                                <td>{inq.answerDate ? new Date(inq.answerDate).toLocaleDateString() : '-'}</td>
+                                <td>{inq.answerDate ? formatDate(inq.answerDate) : '-'}</td>
                                 <td>
                                     <button
                                         className="delete-btn"
@@ -250,7 +258,7 @@ function InquiryManagement() {
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
 
                         <p className="modal-date">
-                            작성일: {new Date(modalData.createdAt).toLocaleDateString()}
+                            작성일: {new Date(modalData.answerDate).toLocaleDateString()}
                         </p>
 
                         <h3>{modalData.title}</h3>
