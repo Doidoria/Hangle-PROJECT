@@ -134,9 +134,13 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             lb.setAttempt(lb.getAttempt() + 1);
             lb.setSubmittedAt(LocalDateTime.now());
 
-            if(oldScore < newScore) {
-                lb.getCompetitionCSVSave().setScore(newScore);
-            }
+//            if(oldScore < newScore) {
+//                lb.getCompetitionCSVSave().setScore(newScore);
+//            }
+
+            // 점수 비교 없이, 무조건 방금 제출한 파일 정보로 교체 (보여주기 식)
+            // (점수가 낮아지더라도 현재 제출한 파일의 점수가 리더보드에 뜹니다)
+            lb.setCompetitionCSVSave(competitionCSVSave);
         }
 
         computeRanksPerComp(competition.getId()); //rank 업데이트
