@@ -450,6 +450,7 @@ public class UserRestController {
         data.put("introduction", user.getIntroduction());
         data.put("profileImageUrl", user.getProfileImageUrl());
         data.put("theme", user.getTheme());
+        data.put("isCertified", user.getIsCertified()); // 본인 인증 여부
 
         return ResponseEntity.ok(data);
     }

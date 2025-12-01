@@ -281,13 +281,6 @@ const Leaderboard = () => {
 export default Leaderboard;
 
 
-
-
-
-
-
-
-
 // //상위 5개만 출력
 
 //         resultList = resultList.stream()

@@ -17,9 +17,10 @@ export function AuthProvider({ children }) {
   const [role, setRole] = useState("");
   const [profileImage, setProfileImage] = useState(DEFAULT_AVATAR);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCertified, setIsCertified] = useState(false);
 
   // 공통으로 쓸 "유저 정보 세팅" 함수
-  const applyUser = ({ username, userid, role, profileImageUrl, theme }) => {
+  const applyUser = ({ username, userid, role, profileImageUrl, theme, isCertified }) => {
     const validProfile = normalizeProfile(
       profileImageUrl ? process.env.REACT_APP_API_BASE_URL + profileImageUrl : null
     );
@@ -27,11 +28,15 @@ export function AuthProvider({ children }) {
     setUserid(userid ?? null);
     setRole(role || "");
     setProfileImage(validProfile);
+
+    const certifiedStatus = !!isCertified; 
+    setIsCertified(certifiedStatus);
     setIsLogin(true);
 
     localStorage.setItem("username", username || "");
     localStorage.setItem("role", role || "");
     localStorage.setItem("profileImage", validProfile);
+    localStorage.setItem("isCertified", certifiedStatus);
     if (userid) {
       localStorage.setItem("userid", userid);
     } else {
@@ -49,11 +54,13 @@ export function AuthProvider({ children }) {
     setUserid("");
     setRole("");
     setProfileImage(DEFAULT_AVATAR);
+    setIsCertified(false);
 
     localStorage.removeItem("username");
     localStorage.removeItem("userid");
     localStorage.removeItem("role");
     localStorage.removeItem("profileImage");
+    localStorage.removeItem("isCertified");
   };
 
   const login = (data) => {
@@ -98,11 +105,13 @@ export function AuthProvider({ children }) {
       const storedUsername = localStorage.getItem("username");
       const storedRole = localStorage.getItem("role");
       const storedProfile = localStorage.getItem("profileImage");
+      const storedIsCertified = localStorage.getItem("isCertified") === "true";
 
       setUsername(storedUsername || "");
       setUserid(storedUserid || null);
       setRole(storedRole || "");
       setProfileImage(normalizeProfile(storedProfile));
+      setIsCertified(storedIsCertified);
       setIsLogin(true);
       setIsLoading(false);
     };
@@ -126,6 +135,8 @@ export function AuthProvider({ children }) {
         login,
         profileImage,
         setProfileImage,
+        isCertified,
+        setIsCertified,
         isLoading,
       }}
     >

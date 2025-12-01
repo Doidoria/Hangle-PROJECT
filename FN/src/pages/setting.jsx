@@ -11,7 +11,7 @@ const PORTONE_CHANNEL_KEY = 'channel-key-7e34fb1c-d765-46d6-9f5e-f76dfbffd370';
 
 const Setting = () => {
   const [activeTab, setActiveTab] = useState('account');
-  const { username: currentUsername, userid, setUserid, isLoading } = useAuth();
+  const { username: currentUsername, setUsername, userid, setUserid, isLoading, isCertified, setIsCertified } = useAuth();
   const [currentEmail, setCurrentEmail] = useState(userid || '');
   const [newEmail, setNewEmail] = useState('');
   const [isEditingEmail, setIsEditingEmail] = useState(false);
@@ -19,12 +19,12 @@ const Setting = () => {
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const { theme, setTheme } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
   const handleTabClick = (tab) => setActiveTab(tab);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [currentPw, setCurrentPw] = useState('');
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
+  const isVerified = isCertified;
 
   useEffect(() => {
     if (userid) setCurrentEmail(userid);
@@ -53,6 +53,10 @@ const Setting = () => {
 
     try {
       const resp = await api.put('/api/user/update-info', { username: newUsername });
+      // AuthContext 상태 업데이트 (헤더 등 즉시 반영)
+      setUsername(newUsername);
+      // 로컬 스토리지 업데이트 (새로고침 시 유지)
+      localStorage.setItem("username", newUsername);
       Swal.fire({
         icon: 'success', title: '이름 변경 완료', text: '이름이 성공적으로 변경되었습니다.',
         confirmButtonColor: '#10B981',
@@ -106,8 +110,8 @@ const Setting = () => {
           confirmButtonColor: '#10B981',
         });
         setCurrentEmail(newEmail);
-        setUserid(newEmail);
-        localStorage.setItem("userid", newEmail);
+        setUserid(newEmail); // Context 업데이트
+        localStorage.setItem("userid", newEmail); // 로컬 스토리지 업데이트
         setNewEmail('');
         setIsEditingEmail(false);
       }
@@ -184,19 +188,19 @@ const Setting = () => {
           try {
             // 백엔드 검증 API 호출
             const serverResponse = await api.get(`/portOne/certifications/${imp_uid}`);
-
             if (serverResponse.data.isVerified) {
               Swal.fire({
                 icon: 'success', title: '인증 완료',
                 text: "본인 인증 및 휴대폰 번호 확인이 완료되었습니다. 회원정보를 변경할 수 있습니다.",
               });
-              setIsVerified(true);
+              setIsCertified(true);
+              localStorage.setItem("isCertified", "true");
             } else {
               Swal.fire({
                 icon: 'error', title: '인증 실패',
                 text: serverResponse.data.message,
               });
-              setIsVerified(false);
+              setIsCertified(false);
             }
 
           } catch (error) {
@@ -417,7 +421,7 @@ const Setting = () => {
                   )}
                   {isVerified && (
                     <button className="action-button verify-button verified" disabled>
-                      인증 완료됨
+                      인증 완료
                     </button>
                   )}
                 </div>
