@@ -6,9 +6,8 @@ function getFormattedDate(date) {
   const year = date.getFullYear();
   const month = pad(date.getMonth() + 1);
   const day = pad(date.getDate());
-  const hours = pad(date.getHours());
-  const minutes = pad(date.getMinutes());
-  return `${year}-${month}-${day}T${hours}:${minutes}`;
+  
+  return `${year}-${month}-${day}`;
 }
 
 async function createFile(url, fileName) {
@@ -49,15 +48,22 @@ export default function AutoCompetitionButton() {
     if (loading) return;
 
     setLoading(true);
-    alert("자동 대회 생성 시작!");
+    if (!window.confirm("자동 대회 생성을 시작하시겠습니까?")) {
+        return;
+    }
 
-    // 현재 시간 기준으로 시작/종료일 동적 생성
+    // 시간 설정 로직 간소화
     const now = new Date();
-    // 시작일: 현재 시간보다 24시간 전 (즉시 OPEN 되도록 안전하게 과거로 설정)
-    const startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    // 종료일: 예) 7일 후
-    const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    
+    // 시작일: 어제 날짜 (시간 무관, 날짜만 사용됨)
+    const startDate = new Date(now);
+    startDate.setDate(startDate.getDate() - 1); 
 
+    // 종료일: 7일 후 날짜
+    const endDate = new Date(now);
+    endDate.setDate(endDate.getDate() + 7);
+
+    // 함수가 이제 'YYYY-MM-DD' 문자열만 반환함
     const startStr = getFormattedDate(startDate);
     const endStr = getFormattedDate(endDate);
 
@@ -157,6 +163,7 @@ export default function AutoCompetitionButton() {
 
     if (failCount === 0) {
       alert(`🎉 모든 대회 자동 생성 성공! (${successCount}개)`);
+      window.location.href = '/competitions/list';
     } else {
       alert(
         `⚠ 일부 대회 생성 실패!\n성공: ${successCount}, 실패: ${failCount}\n실패 목록:\n• ${failList.join(

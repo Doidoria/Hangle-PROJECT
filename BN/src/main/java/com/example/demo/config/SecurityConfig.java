@@ -87,6 +87,7 @@ public class SecurityConfig {
                     "/css/**", "/js/**", "/images/**",
                     "/favicon.ico",
                     "/login", "/join", "/validate/**",
+                    "/api/user/login",
                     "/swagger-ui/**", "/v3/api-docs/**",
                     "/oauth2/**",
                     "/error"
