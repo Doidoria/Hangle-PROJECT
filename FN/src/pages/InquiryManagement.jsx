@@ -233,7 +233,7 @@ function InquiryManagement() {
                                 <td>{index + 1}</td>
                                 <td className="title">{inq.title}</td>
                                 <td>{maskName(inq.username)}</td>
-                                <td>{formatDate(inq.answerDate)}</td>
+                                <td>{formatDate(inq.createdAt)}</td>
                                 <td className={inq.status === 'ANSWERED' ? 'status done' : 'status pending'}>
                                     {getStatusText(inq.status)}
                                 </td>
@@ -258,7 +258,7 @@ function InquiryManagement() {
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
 
                         <p className="modal-date">
-                            작성일: {new Date(modalData.answerDate).toLocaleDateString()}
+                            작성일: {formatDate(modalData.createdAt)}
                         </p>
 
                         <h3>{modalData.title}</h3>
@@ -286,7 +286,7 @@ function InquiryManagement() {
 
                             {modalData.answerDate && (
                                 <p className="answer-date">
-                                    답변일: {new Date(modalData.answerDate).toLocaleDateString()}
+                                    답변일: {formatDate(modalData.answerDate)}
                                 </p>
                             )}
                         </div>

@@ -162,68 +162,68 @@ const Setting = () => {
   };
 
   // 휴대폰 인증
-  // const handlePhoneVerification = () => {
-  //   const IMP = window.IMP;
+  const handlePhoneVerification = () => {
+    const IMP = window.IMP;
 
-  //   if (!IMP) {
-  //     alert("PortOne SDK 초기화 실패. index.html 확인 필요.");
-  //     return;
-  //   }
-  //   const merchant_uid = `cert_${new Date().getTime()}`;
+    if (!IMP) {
+      alert("PortOne SDK 초기화 실패. index.html 확인 필요.");
+      return;
+    }
+    const merchant_uid = `cert_${new Date().getTime()}`;
 
-  //   IMP.certification(
-  //     {
-  //       channelKey: PORTONE_CHANNEL_KEY,
-  //       merchant_uid: merchant_uid,
-  //       popup: false,
-  //     },
-  //     async (resp) => {
-  //       if (resp.success) {
-  //         const imp_uid = resp.imp_uid;
+    IMP.certification(
+      {
+        channelKey: PORTONE_CHANNEL_KEY,
+        merchant_uid: merchant_uid,
+        popup: false,
+      },
+      async (resp) => {
+        if (resp.success) {
+          const imp_uid = resp.imp_uid;
 
-  //         try {
-  //           // 백엔드 검증 API 호출
-  //           const serverResponse = await api.get(`/portOne/certifications/${imp_uid}`);
+          try {
+            // 백엔드 검증 API 호출
+            const serverResponse = await api.get(`/portOne/certifications/${imp_uid}`);
 
-  //           if (serverResponse.data.isVerified) {
-  //             Swal.fire({
-  //               icon: 'success', title: '인증 완료',
-  //               text: "본인 인증 및 휴대폰 번호 확인이 완료되었습니다. 회원정보를 변경할 수 있습니다.",
-  //             });
-  //             setIsVerified(true);
-  //           } else {
-  //             Swal.fire({
-  //               icon: 'error', title: '인증 실패',
-  //               text: serverResponse.data.message,
-  //             });
-  //             setIsVerified(false);
-  //           }
+            if (serverResponse.data.isVerified) {
+              Swal.fire({
+                icon: 'success', title: '인증 완료',
+                text: "본인 인증 및 휴대폰 번호 확인이 완료되었습니다. 회원정보를 변경할 수 있습니다.",
+              });
+              setIsVerified(true);
+            } else {
+              Swal.fire({
+                icon: 'error', title: '인증 실패',
+                text: serverResponse.data.message,
+              });
+              setIsVerified(false);
+            }
 
-  //         } catch (error) {
-  //           console.error("백엔드 검증 중 오류 발생:", error);
-  //           alert("서버 통신 오류가 발생했습니다.");
-  //         }
+          } catch (error) {
+            console.error("백엔드 검증 중 오류 발생:", error);
+            alert("서버 통신 오류가 발생했습니다.");
+          }
 
-  //       } else {
-  //         Swal.fire({
-  //           icon: 'warning', title: '인증 취소/실패',
-  //           text: resp.error_msg,
-  //         });
-  //       }
-  //     }
-  //   );
-  // };
+        } else {
+          Swal.fire({
+            icon: 'warning', title: '인증 취소/실패',
+            text: resp.error_msg,
+          });
+        }
+      }
+    );
+  };
 
   // 개발용 휴대폰 인증 처리
-  const handlePhoneVerification = () => {
-    setIsVerified(true);
-    Swal.fire({
-      icon: "success",
-      title: "개발 모드",
-      text: "본인 인증이 완료되었습니다.",
-      confirmButtonColor: "#10B981",
-    });
-  };
+  // const handlePhoneVerification = () => {
+  //   setIsVerified(true);
+  //   Swal.fire({
+  //     icon: "success",
+  //     title: "개발 모드",
+  //     text: "본인 인증이 완료되었습니다.",
+  //     confirmButtonColor: "#10B981",
+  //   });
+  // };
 
 
   // 계정 삭제
