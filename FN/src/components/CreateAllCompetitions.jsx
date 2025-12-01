@@ -53,8 +53,8 @@ export default function AutoCompetitionButton() {
 
     // 현재 시간 기준으로 시작/종료일 동적 생성
     const now = new Date();
-    // 시작일: 현재 시간보다 1분 전 (즉시 OPEN 되도록 안전하게 과거로 설정)
-    const startDate = new Date(now.getTime() - 60 * 1000); 
+    // 시작일: 현재 시간보다 1시간(60분) 전 (즉시 OPEN 되도록 안전하게 과거로 설정)
+    const startDate = new Date(now.getTime() - 60 * 60 * 1000);
     // 종료일: 예) 7일 후
     const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
