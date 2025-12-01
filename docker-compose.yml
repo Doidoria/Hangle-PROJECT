@@ -46,6 +46,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: hangle1234!
       SPRING_REDIS_HOST: redis
       SERVER_PORT: 8090
+      # 자바가 메모리를 최대 384MB까지만 쓰도록 제한
+      JAVA_TOOL_OPTIONS: "-Xmx384m"
     depends_on:
       db:
         condition: service_healthy
@@ -75,6 +77,8 @@ services:
       context: ./DB
       dockerfile: Dockerfile
     container_name: db-container
+    # 버퍼 풀 사이즈를 128MB~256MB로 제한하고, 동시 연결 수를 줄임 (MySQL 메모리 최적화 명령어)
+    command: --innodb-buffer-pool-size=256M --table-open-cache=250 --max-connections=50
     networks:
       custom-network:
         # ipv4_address: 192.168.1.30
