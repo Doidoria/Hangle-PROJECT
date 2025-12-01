@@ -163,6 +163,16 @@ const Leaderboard = () => {
 
     }, [keyword, originalLeaderboard]);
 
+    // 날짜 변환 함수 추가
+    const formatDate = (dateValue) => {
+        if (!dateValue) return '-';
+        // 배열로 들어오는 경우: [2025, 11, 30, ...]
+        if (Array.isArray(dateValue)) {
+            return new Date(dateValue[0], dateValue[1] - 1, dateValue[2]).toLocaleDateString();
+        }
+        return new Date(dateValue).toLocaleDateString();
+    };
+
 
 
     // 대회별 그룹핑
@@ -222,13 +232,7 @@ const Leaderboard = () => {
                                                     <td>{(entry.score * 100).toFixed(2)} 점</td>
                                                     <td>{entry.attempt}</td>
                                                     <td>
-                                                        {new Date(entry.submittedAt).toLocaleString("ko-KR", {
-                                                            year: "numeric",
-                                                            month: "2-digit",
-                                                            day: "2-digit",
-                                                            hour: "2-digit",
-                                                            minute: "2-digit",
-                                                        })}
+                                                        {formatDate(entry.submittedAt)}
                                                     </td>
                                                     <td>
                                                         <button

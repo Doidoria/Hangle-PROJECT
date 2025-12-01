@@ -11,16 +11,9 @@ WORKDIR /app
 # 빌드한 JAR 복사
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# # ===== Python & ML 패키지 설치 =====
-# RUN apk update && apk add --no-cache \
-#     python3 \
-#     py3-pip \
-#     && pip3 install --no-cache-dir pandas numpy scikit-learn
-
-# # (필요 시) Python 기본 명령어 심볼릭 링크 생성
-# RUN ln -s /usr/bin/python3 /usr/bin/python
-
-# ==================================
+# Python3 및 데이터 분석 라이브러리(pandas, scikit-learn) 설치
+# Alpine Linux 패키지 매니저(apk)를 사용합니다.
+RUN apk add --no-cache python3 py3-pip py3-pandas py3-scikit-learn
 
 # 필요 lib 설치
 RUN apk add --no-cache curl

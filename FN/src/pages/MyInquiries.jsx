@@ -110,6 +110,20 @@ function MyInquiries() {
         setSearch(''); // 상태 필터 시 검색 초기화
     };
 
+    // [추가] 컴포넌트 내부(또는 상단)에 날짜 변환 함수 추가
+    const formatDate = (dateValue) => {
+        if (!dateValue) return '-';
+        
+        // 배열로 들어오는 경우: [2025, 11, 30, 14, 30] -> Date 객체로 변환
+        if (Array.isArray(dateValue)) {
+            // new Date(년, 월-1, 일, 시, 분) *월은 0부터 시작하므로 -1
+            return new Date(dateValue[0], dateValue[1] - 1, dateValue[2]).toLocaleDateString();
+        }
+        
+        // 문자열로 들어오는 경우
+        return new Date(dateValue).toLocaleDateString();
+    };
+
 
     return (
         <div className="my-inquiries-container">
@@ -188,16 +202,15 @@ function MyInquiries() {
                                 <td className="title">
                                     {inq.title}
                                 </td>
-                                <td>{new Date(inq.createdAt).toLocaleDateString()}</td>
+                                <td>{formatDate(inq.createdAt)}</td>
                                 <td className={isAnswered(inq) ? 'status done' : 'status pending'}>
                                     {getStatusText(inq)}
                                 </td>
-                                <td>{inq.answerDate ? new Date(inq.answerDate).toLocaleDateString() : '-'}</td>
+                                <td>{inq.answerDate ? formatDate(inq.answerDate) : '-'}</td>
                                 <td>
                                     <button
                                         className="delete-btn"
-                                        onClick={(e) => handleDelete(inq.id, e)}
-                                    >
+                                        onClick={(e) => handleDelete(inq.id, e)}>
                                         삭제
                                     </button>
                                 </td>
@@ -217,11 +230,9 @@ function MyInquiries() {
             {modalData && (
                 <div className="modal-overlay" onClick={() => setModalData(null)}>
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
-
                         <p className="modal-date">
-                            작성일: {new Date(modalData.createdAt).toLocaleDateString()}
+                            작성일: {formatDate(modalData.createdAt)}
                         </p>
-
                         {/* 수정 모드 상태 */}
                         {modalData.editMode ? (
                             <input
@@ -265,7 +276,8 @@ function MyInquiries() {
 
                             {modalData.answerDate && (
                                 <p className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200">
-                                    답변일: {new Date(modalData.answerDate).toLocaleDateString()}
+                                    {/* 기존: 답변일: {new Date(modalData.answerDate).toLocaleDateString()} */}
+                                    답변일: {formatDate(modalData.answerDate)}
                                 </p>
                             )}
                         </div>
@@ -279,8 +291,7 @@ function MyInquiries() {
                                     className="edit-btn"
                                     onClick={() =>
                                         setModalData({ ...modalData, editMode: true })
-                                    }
-                                >
+                                    }>
                                     <span className="material-symbols-outlined faq-modal-icon">edit</span>
                                     수정하기
                                 </button>
