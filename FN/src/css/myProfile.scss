@@ -224,7 +224,7 @@
           border-radius: 8px;
           border: 1px solid var(--border);
           background: var(--surface-light);
-          color: #fff;
+          color: var(--textarea-text);
           cursor: pointer;
           font-weight: 600;
           transition: all 0.25s ease;
@@ -239,7 +239,7 @@
         .primary {
           // 저장 버튼
           background: var(--primary);
-          color: #fff;
+          color: var(--textarea-text);
           border: none;
 
           &:hover {
