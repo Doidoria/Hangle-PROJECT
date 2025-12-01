@@ -29,11 +29,11 @@ public class PortOneController {
     private final RedisUtil redisUtil;
     private final UserRepository userRepository;
 
-    @Value("${portone.api-key}")
-    private String PORTONE_APIKEY;
+//    @Value("${portone.api-key}")
+    private String PORTONE_APIKEY = "7125401617111610";;
 
-    @Value("${portone.api-secret}")
-    private String PORTONE_SECRET;
+//    @Value("${portone.api-secret}")
+    private String PORTONE_SECRET = "HPzom4PG2vUc7KG8WUn1RJSJEkL9QLh0yf6zNanfefU3LwcRGOABGrZ2iNSzPMp367L4HQeXhThdLRVD";
 
     private final String HOSTNAME = "https://api.iamport.kr";
     private final String APIKEY = PORTONE_APIKEY;
