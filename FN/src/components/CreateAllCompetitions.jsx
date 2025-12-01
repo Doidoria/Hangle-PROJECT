@@ -7,7 +7,8 @@ function getFormattedDate(date) {
   const month = pad(date.getMonth() + 1);
   const day = pad(date.getDate());
   
-  return `${year}-${month}-${day}`;
+  // 백엔드 LocalDateTime 포맷에 맞추기 위해 시간(00:00:00)을 강제로 붙임
+  return `${year}-${month}-${day}T00:00:00`;
 }
 
 async function createFile(url, fileName) {
