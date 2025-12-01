@@ -25,7 +25,7 @@ public class UserChatController {
     private String detectPageLink(String userMessage) {
         String msg = userMessage.toLowerCase();
 
-        if (msg.contains("대회") || msg.contains("competition") || msg.contains("참여")) {return "/competitions";}
+        if (msg.contains("대회") || msg.contains("competition") || msg.contains("참여")) {return "/competitions/user";}
         if (msg.contains("문의") || msg.contains("질문") || msg.contains("help")) {return "/inquiry/write";}
         if (msg.contains("리더보드") || msg.contains("leaderboard") || msg.contains("순위")) {return "/leaderboard";}
         if (msg.contains("설정") || msg.contains("비밀번호") || msg.contains("계정") || msg.contains("탈퇴") || 
