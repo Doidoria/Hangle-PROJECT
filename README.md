@@ -70,12 +70,37 @@ JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서
  Hangle-Project
 ├── BN
 │   ├── Dockerfile
+│   ├── build
+│   │   ├── classes
+│   │   │   └── java
+│   │   ├── generated
+│   │   │   └── sources
+│   │   ├── libs
+│   │   │   ├── demo-0.0.1-SNAPSHOT-plain.jar
+│   │   │   └── demo-0.0.1-SNAPSHOT.jar
+│   │   ├── reports
+│   │   │   └── problems
+│   │   ├── resolvedMainClassName
+│   │   ├── resources
+│   │   │   └── main
+│   │   └── tmp
+│   │       ├── bootJar
+│   │       ├── compileJava
+│   │       └── jar
 │   ├── build.gradle
 │   ├── gradle
+│   │   └── wrapper
+│   │       ├── gradle-wrapper.jar
+│   │       └── gradle-wrapper.properties
 │   ├── gradlew
 │   ├── gradlew.bat
 │   ├── settings.gradle
 │   └── src
+│       ├── main
+│       │   ├── java
+│       │   └── resources
+│       └── test
+│           └── java
 ├── CHATBOT
 │   ├── Dockerfile
 │   └── start.sh
@@ -85,18 +110,146 @@ JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서
 ├── FN
 │   ├── Dockerfile
 │   ├── build
+│   │   ├── Competition-datasets
+│   │   │   ├── accuracy_test.csv
+│   │   │   ├── accuracy_train.csv
+│   │   │   ├── auc_test.csv
+│   │   │   ├── auc_train.csv
+│   │   │   ├── f1_test.csv
+│   │   │   ├── f1_train.csv
+│   │   │   ├── mae_test.csv
+│   │   │   ├── mae_train.csv
+│   │   │   ├── rmse_test.csv
+│   │   │   └── rmse_train.csv
+│   │   ├── asset-manifest.json
+│   │   ├── favicon.ico
+│   │   ├── image
+│   │   │   ├── +.png
+│   │   │   ├── comp1img.svg
+│   │   │   ├── default-avatar.png
+│   │   │   ├── icon-ChatBot.png
+│   │   │   ├── icon_Google.png
+│   │   │   ├── icon_Kakao.png
+│   │   │   ├── icon_Naver.png
+│   │   │   ├── icon_moon(black).png
+│   │   │   ├── icon_moon(white).png
+│   │   │   ├── icon_sun(black).png
+│   │   │   └── icon_sun(white).png
+│   │   ├── index.html
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   ├── robots.txt
+│   │   └── static
+│   │       ├── css
+│   │       ├── js
+│   │       └── media
+│   ├── default.conf
 │   ├── nginx.conf
-│   ├── node_modules
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── public
+│   │   ├── Competition-datasets
+│   │   │   ├── accuracy_test.csv
+│   │   │   ├── accuracy_train.csv
+│   │   │   ├── auc_test.csv
+│   │   │   ├── auc_train.csv
+│   │   │   ├── f1_test.csv
+│   │   │   ├── f1_train.csv
+│   │   │   ├── mae_test.csv
+│   │   │   ├── mae_train.csv
+│   │   │   ├── rmse_test.csv
+│   │   │   └── rmse_train.csv
+│   │   ├── favicon.ico
+│   │   ├── image
+│   │   │   ├── +.png
+│   │   │   ├── comp1img.svg
+│   │   │   ├── default-avatar.png
+│   │   │   ├── icon-ChatBot.png
+│   │   │   ├── icon_Google.png
+│   │   │   ├── icon_Kakao.png
+│   │   │   ├── icon_Naver.png
+│   │   │   ├── icon_moon(black).png
+│   │   │   ├── icon_moon(white).png
+│   │   │   ├── icon_sun(black).png
+│   │   │   └── icon_sun(white).png
+│   │   ├── index.html
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   └── robots.txt
 │   └── src
+│       ├── App.css
+│       ├── App.js
+│       ├── App.test.js
+│       ├── api
+│       │   ├── AuthContext.js
+│       │   ├── ThemeContext.js
+│       │   └── axiosConfig.js
+│       ├── components
+│       │   ├── ChatWidget.jsx
+│       │   ├── CreateAllCompetitions.jsx
+│       │   ├── OAuthsuccess.jsx
+│       │   ├── PortOneCert.jsx
+│       │   ├── ProtectedRoute.jsx
+│       │   └── header-btn.jsx
+│       ├── css
+│       │   ├── ChatWidget.scss
+│       │   ├── Competition.scss
+│       │   ├── CompetitionCreate.scss
+│       │   ├── CompetitionDetail.scss
+│       │   ├── CompetitionList.scss
+│       │   ├── FaqPage.scss
+│       │   ├── InquiryManagement.scss
+│       │   ├── InquiryWrite.scss
+│       │   ├── MyInquiries.scss
+│       │   ├── aside.scss
+│       │   ├── footer.scss
+│       │   ├── header.scss
+│       │   ├── join.scss
+│       │   ├── leaderboard.scss
+│       │   ├── login.scss
+│       │   ├── main.scss
+│       │   ├── media.scss
+│       │   ├── myProfile.scss
+│       │   └── setting.scss
+│       ├── index.css
+│       ├── index.js
+│       ├── logo.svg
+│       ├── pages
+│       │   ├── Competition.jsx
+│       │   ├── CompetitionCreate.jsx
+│       │   ├── CompetitionDetail.jsx
+│       │   ├── CompetitionList.jsx
+│       │   ├── FaqPage.jsx
+│       │   ├── InquiryManagement.jsx
+│       │   ├── InquiryWrite.jsx
+│       │   ├── Layout.jsx
+│       │   ├── MyInquiries.jsx
+│       │   ├── aside.jsx
+│       │   ├── footer.jsx
+│       │   ├── header.jsx
+│       │   ├── join.jsx
+│       │   ├── leaderboard.jsx
+│       │   ├── login.jsx
+│       │   ├── main.jsx
+│       │   ├── myProfile.jsx
+│       │   └── setting.jsx
+│       ├── reportWebVitals.js
+│       └── setupTests.js
 ├── JENKINS
 │   ├── Dockerfile
 │   ├── INFO
 │   └── pipeline
 ├── ML_Scripts
 │   ├── helpers
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   ├── __init__.cpython-39.pyc
+│   │   │   ├── common.cpython-312.pyc
+│   │   │   └── common.cpython-39.pyc
+│   │   └── common.py
 │   ├── score_accuracy.py
 │   ├── score_auc.py
 │   ├── score_custom.py
@@ -106,6 +259,7 @@ JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서
 ├── README.md
 ├── REDIS
 │   └── Dockerfile
+├── Uploads
 ├── docker-compose.yml
 └── docker-compose_local.yml
 ```
