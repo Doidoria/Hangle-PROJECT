@@ -1,6 +1,10 @@
-# READMD
+<img width="1920" height="1080" alt="Capture_2025_1202_142403" src="https://github.com/user-attachments/assets/e5c66371-4268-4c62-8c59-5089b0025490" /># Hangle – 머신러닝 데이터 대회 플랫폼
 
-## 시트 1
+사용자의 머신러닝 모델 제출을 자동 채점하고, 실시간 리더보드에서 순위를 확인할 수 있는 ML Competition Platform 입니다.
+Spring Boot + React 기반으로 제작되었으며 파일 업로드·대회 생성·채점·리더보드·고객센터·OAuth 로그인·AI 챗봇 등 실제 서비스형 기능을 제공합니다. 
+#
+
+<p align="center"> <img src="https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=white" /> <img src="https://img.shields.io/badge/Backend-SpringBoot-6DB33F?logo=springboot&logoColor=white" /> <img src="https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql&logoColor=white" /> <img src="https://img.shields.io/badge/Cache-Redis-DC382D?logo=redis&logoColor=white" /> <img src="https://img.shields.io/badge/DevOps-Docker-2496ED?logo=docker&logoColor=white" /> <img src="https://img.shields.io/badge/CI/CD-Jenkins-D33833?logo=jenkins&logoColor=white" /> </p>
 
 | 구분                                       | 설명                               | 예시                                                                                                |
 | ---------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -18,49 +22,37 @@
 | **12. 라이선스 (License)**                   | 사용한 오픈소스 라이선스 표시                 | `MIT License`                                                                                     |
 
 
-## 시트 2
-
 # Hangle - 머신러닝 데이터 대회 플랫폼
 
 ## 1. 프로젝트 소개 (Overview)
-Hangle 는 **Spring Boot 백엔드**와 **React 프론트엔드**를 기반으로 한 머신러닝 대회 웹 애플리케이션입니다.
-사용자는 각 머신러닝 대회에 참여해 최종 CSV 파일을 제출해 리더보드에서 순위를 확인할 수 있습니다.
-JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서버 간 데이터를 주고받습니다.
+Hangle 은 사용자들이 머신러닝 대회에 참여하고 CSV 제출 → 자동 채점 → 리더보드 반영의 전 과정을 경험할 수 있는 웹 플랫폼입니다.
+관리자 페이지에서는 대회 생성/데이터셋 업로드/커스텀 채점 스크립트를 설정할 수 있습니다.
 
 ---
 
 ## 2. 개발 목적
-- 풀스택(Spring Boot + React) 구조 이해 및 실습
-- JWT 인증/인가 및 RESTful API 구현
-- 실시간 일정 관리 시스템 설계 및 배포 경험
+- Spring Boot + React 기반의 풀스택 프로젝트 구축
+- JWT 기반 인증/인가 적용 및 보안 아키텍처 학습
+- 머신러닝 자동 채점 파이프라인 구현
+- Docker + Jenkins로 CI/CD 자동화 구축
+- 협업 중심의 프로젝트 경험 (GitHub / Jira / Notion)
 
 ---
 
 ## 3. 기술 스택 (Tech Stack)
-| 구분 | 사용 기술 |
-|------|------------|
-| **Frontend**     | React, React Router, Axios, SASS/SCSS, SweetAlert2, Jest |
-| **Backend**      | Spring Boot, Spring Security, JWT, Swagger, Thymeleaf    |
-| **Database**     | MySQL, Redis                                             |
-| **DevOps**       | Docker, Docker Compose, Jenkins, Git                     |
-| **Tools** | Python, JUnit, IntelliJ IDEA                                   |
-
-
+<table> <tr> <th colspan="4" align="center">Frontend</th> </tr> <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/react/61DAFB" /><br/>React </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/javascript/F7DF1E" /><br/>JavaScript </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/sass/CC6699" /><br/>SASS / SCSS </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/axios/5A29E4" /><br/>Axios </td> </tr> <tr> <th colspan="4" align="center">Backend</th> </tr> <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/springboot/6DB33F" /><br/>Spring Boot </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/springsecurity/6DB33F" /><br/>Spring Security </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/jsonwebtokens/000000" /><br/>JWT </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/swagger/85EA2D" /><br/>Swagger (OpenAPI) </td> </tr> <tr> <th colspan="4" align="center">Database & Cache</th> </tr> <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/mysql/4479A1" /><br/>MySQL </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/redis/DC382D" /><br/>Redis </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/github/181717" /><br/>GitHub </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/gradle/02303A" /><br/>Gradle </td> </tr> <tr> <th colspan="4" align="center">DevOps</th> </tr> <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/docker/2496ED" /><br/>Docker </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/jenkins/D24939" /><br/>Jenkins </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/nginx/009639" /><br/>Nginx </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/amazonec2/FF9900" /><br/>AWS EC2 </td> </tr> <tr> <th colspan="4" align="center">ML / Python</th> </tr> <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/python/3776AB" /><br/>Python </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/pandas/150458" /><br/>Pandas </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/numpy/013243" /><br/>NumPy </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/scikitlearn/F7931E" /><br/>Scikit-learn </td> </tr> </table>
 
 ---
 
 ## 4. 주요 기능 (Features)
-| 기능 구분 | 설명 |
-|------------|------|
-| **회원 관리**   | JWT 기반 AccessToken 발급 및 검증, 회원 정보 수정       |
-| **인증/보안**   | Spring Security 6 인증, OAuth2 로그인, Redis 세션 관리   |
-| **대회 관리**   | 대회 데이터 생성, 상태 관리, 파일 업로드/다운로드 처리  |
-| **리더보드 관리**| 리더보드 데이터 생성, 상태 관리                        |
-| **제출/채점(Ml)**| Python 스크립트로 MAE/AUC/F1/ACCURACY/RMSE 지표 계산                 |
-| **고객센터(1:1 문의)** | 1:1 문의 생성/상태 관리, 관리자 기능                   |
-| **챗봇 / AI 도우미** | Spring AI + Olama 모델 기반 질의 응답                   |
-| **배포/운영 환경** | Docker 기반 배포, Jenkins 자동배포화, Nginx 웹 서버, MySQL DB 사용           |
-
+| 구분 | 기능 |
+| --------- | ----------------------------------------- |
+| **회원 기능** | JWT 로그인, OAuth2(카카오/네이버/구글), 프로필 설정       |
+| **대회 기능** | 대회 생성/수정/삭제, 상태 관리, 데이터셋 업로드              |
+| **제출/채점** | CSV 제출, Python 자동 채점(F1/MAE/RMSE/AUC/ACC) |
+| **리더보드**  | 상위권 자동 집계, 제출 횟수/점수/날짜 표시                 |
+| **고객센터**  | 1:1 문의 CRUD, 관리자 답변 기능                    |
+| **AI 챗봇** | Spring AI + Ollama, Swagger 기반 API 추천     |
 
 ---
 
@@ -257,14 +249,13 @@ JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서
 ## 6. 설치 및 실행 (Installation & Run)
 ### 1) GitHub 저장소 클론
 ```bash
-git clone [https://github.com/username/MyPlanner.git](https://github.com/Doidoria/Hangle-PROJECT.git)
-cd MyPlanner
+git clone https://github.com/Doidoria/Hangle-PROJECT.git
+cd Hangle-PROJECT
 ```
 
 ### 2) 백엔드 실행
 ```bash
-cd BN
-./mvnw spring-boot:run
+cd BN && ./gradlew bootRun
 ```
 
 ### 3) 프론트엔드 실행
@@ -289,24 +280,25 @@ docker-compose up -d
 ---
 
 ## 8. API 문서 (API Docs)
-| 메서드 | 엔드포인트 | 설명 |
-|--------|-------------|------|
-| `POST` | `/api/auth/login` | 로그인 |
-| `POST` | `/api/auth/signup` | 회원가입 |
-| `GET` | `/api/schedule` | 일정 목록 조회 |
-| `POST` | `/api/schedule` | 일정 등록 |
-| `PUT` | `/api/schedule/{id}` | 일정 수정 |
-| `DELETE` | `/api/schedule/{id}` | 일정 삭제 |
+| Method | Endpoint                      | 설명      |
+| ------ | ----------------------------- | ------- |
+| POST   | /api/user/login               | 로그인     |
+| POST   | /api/competitions             | 대회 생성   |
+| POST   | /api/competitions/{id}/submit | CSV 제출  |
+| GET    | /api/leaderboard              | 리더보드 조회 |
+| POST   | /api/inquiry                  | 문의 작성   |
+
 
 ---
 
 ## 9. 개발 일정 (Timeline)
 | 기간 | 주요 내용 |
 |------|------------|
-| 2025.10 ~ 2025.12 | 프로젝트 기획 및 화면 설계 |
+| 2025.10 ~ 2025.12 | 프로젝트 기획/설계/UI |
 | 2025.11 | Spring Boot + MySQL 백엔드 구축 |
-| 2025.11 | React 프론트엔드 개발 |
-| 2025.11 | Docker 기반 통합 테스트 및 배포 |
+| 2025.11 | React 변환 + 백엔드 기능 구현 |
+| 2025.11 | Docker 기반 배포 + Jenkins CI/CD |
+| 2025.12 | 최종 배포 테스트 |
 
 ---
 
@@ -328,8 +320,11 @@ docker-compose up -d
 ---
 
 ## 11. 배포 주소 (Deployment)
-- Web: [https://www.hangle.store](https://www.hangle.store)  
-- API: [https://api.myplanner.com](https://api.myplanner.com)
+| 항목  | URL                                                  |
+| --- | ---------------------------------------------------- |
+| Web | [https://www.hangle.store](https://www.hangle.store) |
+| API | [https://api.hangle.store](https://api.hangle.store) |
+
 
 ---
 
