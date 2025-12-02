@@ -1,10 +1,13 @@
-<img width="1920" height="1080" alt="Capture_2025_1202_142403" src="https://github.com/user-attachments/assets/e5c66371-4268-4c62-8c59-5089b0025490" /># Hangle – 머신러닝 데이터 대회 플랫폼
+# Hangle – 머신러닝 데이터 대회 플랫폼
 
-사용자의 머신러닝 모델 제출을 자동 채점하고, 실시간 리더보드에서 순위를 확인할 수 있는 ML Competition Platform 입니다.
-Spring Boot + React 기반으로 제작되었으며 파일 업로드·대회 생성·채점·리더보드·고객센터·OAuth 로그인·AI 챗봇 등 실제 서비스형 기능을 제공합니다. 
-#
-
-<p align="center"> <img src="https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=white" /> <img src="https://img.shields.io/badge/Backend-SpringBoot-6DB33F?logo=springboot&logoColor=white" /> <img src="https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql&logoColor=white" /> <img src="https://img.shields.io/badge/Cache-Redis-DC382D?logo=redis&logoColor=white" /> <img src="https://img.shields.io/badge/DevOps-Docker-2496ED?logo=docker&logoColor=white" /> <img src="https://img.shields.io/badge/CI/CD-Jenkins-D33833?logo=jenkins&logoColor=white" /> </p>
+<p align="center"> 
+ <img src="https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=white" /> 
+ <img src="https://img.shields.io/badge/Backend-SpringBoot-6DB33F?logo=springboot&logoColor=white" /> 
+ <img src="https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql&logoColor=white" /> 
+ <img src="https://img.shields.io/badge/Cache-Redis-DC382D?logo=redis&logoColor=white" /> 
+ <img src="https://img.shields.io/badge/DevOps-Docker-2496ED?logo=docker&logoColor=white" /> 
+ <img src="https://img.shields.io/badge/CI/CD-Jenkins-D33833?logo=jenkins&logoColor=white" /> 
+</p>
 
 | 구분                                       | 설명                               | 예시                                                                                                |
 | ---------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -22,9 +25,9 @@ Spring Boot + React 기반으로 제작되었으며 파일 업로드·대회 생
 | **12. 라이선스 (License)**                   | 사용한 오픈소스 라이선스 표시                 | `MIT License`                                                                                     |
 
 
-# Hangle - 머신러닝 데이터 대회 플랫폼
-
 ## 1. 프로젝트 소개 (Overview)
+사용자의 머신러닝 모델 제출을 자동 채점하고, 실시간 리더보드에서 순위를 확인할 수 있는 ML Competition Platform 입니다.
+Spring Boot + React 기반으로 제작되었으며 파일 업로드·대회 생성·채점·리더보드·고객센터·OAuth 로그인·AI 챗봇 등 실제 서비스형 기능을 제공합니다.
 Hangle 은 사용자들이 머신러닝 대회에 참여하고 CSV 제출 → 자동 채점 → 리더보드 반영의 전 과정을 경험할 수 있는 웹 플랫폼입니다.
 관리자 페이지에서는 대회 생성/데이터셋 업로드/커스텀 채점 스크립트를 설정할 수 있습니다.
 
