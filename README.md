@@ -278,7 +278,9 @@ docker-compose up -d
 ## 7. 화면 구성 (UI Preview)
 | 메인 페이지 | 일정 등록 페이지 |
 |--------------|----------------|
-| ![메인](./images/main.png) | ![등록](./images/add_schedule.png) |
+| ![메인] | ![등록](./images/add_schedule.png) |
+
+<img src="./FN/public/image/main.png" width="200">
 
 ---
 
