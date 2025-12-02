@@ -128,13 +128,7 @@ JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서
 │   │   │   ├── comp1img.svg
 │   │   │   ├── default-avatar.png
 │   │   │   ├── icon-ChatBot.png
-│   │   │   ├── icon_Google.png
-│   │   │   ├── icon_Kakao.png
-│   │   │   ├── icon_Naver.png
-│   │   │   ├── icon_moon(black).png
-│   │   │   ├── icon_moon(white).png
-│   │   │   ├── icon_sun(black).png
-│   │   │   └── icon_sun(white).png
+│   │   │   ├── ...
 │   │   ├── index.html
 │   │   ├── logo192.png
 │   │   ├── logo512.png
@@ -168,11 +162,7 @@ JWT 기반 로그인과 권한 관리, REST API를 통해 클라이언트와 서
 │   │   │   ├── icon-ChatBot.png
 │   │   │   ├── icon_Google.png
 │   │   │   ├── icon_Kakao.png
-│   │   │   ├── icon_Naver.png
-│   │   │   ├── icon_moon(black).png
-│   │   │   ├── icon_moon(white).png
-│   │   │   ├── icon_sun(black).png
-│   │   │   └── icon_sun(white).png
+│   │   │   ├── ...
 │   │   ├── index.html
 │   │   ├── logo192.png
 │   │   ├── logo512.png
