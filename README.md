@@ -11,17 +11,17 @@
 
 | 구분                                       | 설명                               | 예시                                                                                                |
 | ---------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------- |
-| **1. 프로젝트 제목 (Project Title)**           | **Hangle Project**               | `# 사용자의 머신러닝 실력 순위를 참고할 수 있는 웹사이트`                                                                |
-| **2. 프로젝트 소개 (Overview)**                | (대회별 리더보드 / 사용자 대상)              | “머신러닝 대회를 제공하고, 사용자가 예측 결과 CSV를 제출하면 서버에서 점수를 계산해 리더보드에 등록하는 플랫폼.”                                |
-| **3. 기술 스택 (Tech Stack)**                | JAVA, 프레임워크, DB, 배포환경 등을 리스트로 표시 | `React`, `Spring Boot`, `MySQL`, `Docker`, `Nginx`, `AWS EC2`                                     |
-| **4. 주요 기능 (Features)**                  | 핵심 기능 나열                         | - 회원가입 및 JWT 로그인<br> - 일정 등록/수정/삭제<br> - 관리자 페이지                                                  |
-| **5. 프로젝트 구조 (Project Structure)**       | 폴더 트리 또는 주요 파일 설명                | `BN/`, `FN/`, `docker-compose.yml`                                                                |
-| **6. 설치 및 실행 방법 (Installation & Run)**   | 클론부터 실행까지 단계별 명령어                | `bash\ngit clone https://github.com/username/project.git\ncd project\nnpm install && npm start\n` |
-| **7. 화면 구성 (UI Preview)**                | 주요 화면 캡처 또는 GIF                  | `![메인화면](./images/main.png)`                                                                      |
-| **8. API 문서 (API Docs)**                 | REST API 엔드포인트 요약                | `bash\nGET /api/users — 사용자 조회\nPOST /api/login — 로그인\n`                                          |
-| **9. 팀 구성 (Contributors)**               | 팀 프로젝트일 경우 역할 명시                 | - FE: 조원 전체 할당 (UI/UX, React)<br> - BE: 조원 전체 할당 (API, DB 설계)                                     |
-| **10. 개발 일정 및 관리 (Timeline/Management)** | 진행 일정, 협업 툴                      | - Notion 일정 관리<br> - GitHub Projects 이슈 관리<br> - Jira 개발 기록 및 피드백                                 |
-| **11. 배포 주소 및 시연 링크 (Demo/Deployment)**  | 실제 서비스 링크                        | [https://www.hangle.store](https://www.hangle.store)                                              |
+| **1. 프로젝트 제목 (Project Title)**           | **Hangle Project – 머신러닝 대회 플랫폼**               | 사용자의 머신러닝 실력 순위를 참고할 수 있는 웹사이트                                                            |
+| **2. 프로젝트 소개 (Overview)**                | (대회별 리더보드 / 사용자 대상)              | 사용자가 머신러닝 대회에 참여하여 CSV 제출 → Python 자동 채점 → 리더보드 반영까지 경험할 수 있는 대회 플랫폼                          |
+| **3. 기술 스택 (Tech Stack)**                | JAVA, 프레임워크, DB, 배포환경 등을 리스트로 표시 | `React, Spring Boot, MySQL, Redis, Docker, Nginx, Jenkins, AWS EC2, Python(Scikit-learn)`                                     |
+| **4. 주요 기능 (Features)**                  | 핵심 기능 나열                         | JWT 로그인 / OAuth2 소셜 로그인, 대회 생성·수정·삭제(관리자),<br> CSV 제출 & Python 자동 채점(MAE, RMSE, F1, ACC, AUC),<br> 실시간 리더보드, 1:1 문의(사용자 & 관리자),<br> Spring AI + Ollama 기반 챗봇 |
+| **5. 프로젝트 구조 (Project Structure)**       | 폴더 트리 또는 주요 파일 설명                | `BN/(백엔드), FN/(프론트엔드)`,<br>`ML_Scripts/(Python 채점 코드)`,<br>`CHATBOT/, JENKINS/, docker-compose.yml`                       |
+| **6. 설치 및 실행 방법 (Installation & Run)**   | 클론부터 실행까지 단계별 명령어                | `bash\ngit clone https://github.com/Doidoria/Hangle-PROJECT.git\ncd FN && npm install && npm start\ncd BN && ./gradlew bootRun bash\ndocker-compose up -d` |
+| **7. 화면 구성 (UI Preview)**                | 주요 화면 캡처 또는 GIF                  | `아래 참조`                                                                      |
+| **8. API 문서 (API Docs)**                 | REST API 엔드포인트 요약                | `아래 참조`                                          |
+| **9. 팀 구성 (Contributors)**               | 팀 프로젝트일 경우 역할 명시                 | - FE: 로그인/프로필, 대회 페이지 UI, 리더보드 UI, 1:1 문의 UI, 챗봇 UI,<br> - BE: JWT 인증·권한, OAuth2, Redis 세션, 대회 API, 제출/채점, 문의 API, 리더보드 로직,<br> - Infra: Docker·Nginx·Jenkins·AWS 배포 |
+| **10. 개발 일정 및 관리 (Timeline/Management)** | 진행 일정, 협업 툴                      | - Notion을 통한 문서 관리<br>- GitHub Projects 기반 이슈 관리<br>- Jira Sprint 계획 & 회고<br>- Docker 기반 통합 테스트 및 배포    |
+| **11. 배포 주소 및 시연 링크 (Demo/Deployment)**  | 실제 서비스 링크                        | [https://www.hangle.store](https://www.hangle.store)<br>[https://api.hangle.store](https://api.hangle.store)    |
 | **12. 라이선스 (License)**                   | 사용한 오픈소스 라이선스 표시                 | `MIT License`                                                                                     |
 
 
