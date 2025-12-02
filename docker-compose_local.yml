@@ -25,12 +25,19 @@ services:
     container_name: bn-container
     ports:
       - "8090:8090"
+    volumes:
+      - ./Uploads:/app/uploads
+      - ./ML_Scripts:/app/ML_Scripts
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hangledb
       SPRING_DATASOURCE_USERNAME: master
       SPRING_DATASOURCE_PASSWORD: hangle1234!
       SPRING_REDIS_HOST: redis
       SERVER_PORT: 8090
+      TZ: Asia/Seoul
+      JAVA_TOOL_OPTIONS: "-Xmx384m -Duser.timezone=Asia/Seoul"
+      ML_SCRIPT_DIR: /app/ML_Scripts
+      FILE_UPLOAD_ROOT: /app/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -94,22 +101,22 @@ services:
     networks:
       - custom-network
 
-  jenkins:
-    image: jenkins
-    build:
-      context: ./JENKINS
-    container_name: jenkins-container
-    ports:
-      - "8080:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins-data:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - custom-network
+  # jenkins:
+  #   image: jenkins
+  #   build:
+  #     context: ./JENKINS
+  #   container_name: jenkins-container
+  #   ports:
+  #     - "8080:8080"
+  #     - "50000:50000"
+  #   volumes:
+  #     - jenkins-data:/var/jenkins_home
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   networks:
+  #     - custom-network
 
 volumes:
   db-data:
-  jenkins-data:
+  # jenkins-data:
   ollama-models:
     name: ollama-model-cache
