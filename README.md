@@ -1,19 +1,12 @@
 # Hangle – 머신러닝 데이터 대회 플랫폼
 
-<p align="center"> 
- <img src="https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=white" /> 
- <img src="https://img.shields.io/badge/Backend-SpringBoot-6DB33F?logo=springboot&logoColor=white" /> 
- <img src="https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql&logoColor=white" /> 
- <img src="https://img.shields.io/badge/Cache-Redis-DC382D?logo=redis&logoColor=white" /> 
- <img src="https://img.shields.io/badge/DevOps-Docker-2496ED?logo=docker&logoColor=white" /> 
- <img src="https://img.shields.io/badge/CI/CD-Jenkins-D33833?logo=jenkins&logoColor=white" /> 
-</p>
+
 
 | 구분                                       | 설명                               | 예시                                                                                                |
 | ---------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------- |
 | **1. 프로젝트 제목 (Project Title)**           | **Hangle Project – 머신러닝 대회 플랫폼**               | 사용자의 머신러닝 실력 순위를 참고할 수 있는 웹사이트                                                            |
 | **2. 프로젝트 소개 (Overview)**                | (대회별 리더보드 / 사용자 대상)              | 사용자가 머신러닝 대회에 참여하여 CSV 제출 → Python 자동 채점 → 리더보드 반영까지 경험할 수 있는 대회 플랫폼                          |
-| **3. 기술 스택 (Tech Stack)**                | JAVA, 프레임워크, DB, 배포환경 등을 리스트로 표시 | `React, Spring Boot, MySQL, Redis, Docker, Nginx, Jenkins, AWS EC2, Python(Scikit-learn)`                                     |
+| **3. 기술 스택 (Tech Stack)**                | JAVA, 프레임워크, DB, 배포환경 등을 리스트로 표시 | <img src="https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=white" /> <img src="https://img.shields.io/badge/Backend-SpringBoot-6DB33F?logo=springboot&logoColor=white" /> <img src="https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql&logoColor=white" /> <img src="https://img.shields.io/badge/Cache-Redis-DC382D?logo=redis&logoColor=white" /> <img src="https://img.shields.io/badge/DevOps-Docker-2496ED?logo=docker&logoColor=white" /> <img src="https://img.shields.io/badge/CI/CD-Jenkins-D33833?logo=jenkins&logoColor=white" /> |
 | **4. 주요 기능 (Features)**                  | 핵심 기능 나열                         | JWT 로그인 / OAuth2 소셜 로그인, 대회 생성·수정·삭제(관리자),<br> CSV 제출 & Python 자동 채점(MAE, RMSE, F1, ACC, AUC),<br> 실시간 리더보드, 1:1 문의(사용자 & 관리자),<br> Spring AI + Ollama 기반 챗봇 |
 | **5. 프로젝트 구조 (Project Structure)**       | 폴더 트리 또는 주요 파일 설명                | `BN/(백엔드), FN/(프론트엔드)`,<br>`ML_Scripts/(Python 채점 코드)`,<br>`CHATBOT/, JENKINS/, docker-compose.yml`                       |
 | **6. 설치 및 실행 방법 (Installation & Run)**   | 클론부터 실행까지 단계별 명령어                | `bash\ngit clone https://github.com/Doidoria/Hangle-PROJECT.git\ncd FN && npm install && npm start\ncd BN && ./gradlew bootRun bash\ndocker-compose up -d` |
@@ -43,7 +36,39 @@ Hangle 은 사용자들이 머신러닝 대회에 참여하고 CSV 제출 → �
 ---
 
 ## 3. 기술 스택 (Tech Stack)
-<table> <tr> <th colspan="4" align="center">Frontend</th> </tr> <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/react/61DAFB" /><br/>React </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/javascript/F7DF1E" /><br/>JavaScript </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/sass/CC6699" /><br/>SASS / SCSS </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/axios/5A29E4" /><br/>Axios </td> </tr> <tr> <th colspan="4" align="center">Backend</th> </tr> <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/springboot/6DB33F" /><br/>Spring Boot </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/springsecurity/6DB33F" /><br/>Spring Security </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/jsonwebtokens/000000" /><br/>JWT </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/swagger/85EA2D" /><br/>Swagger (OpenAPI) </td> </tr> <tr> <th colspan="4" align="center">Database & Cache</th> </tr> <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/mysql/4479A1" /><br/>MySQL </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/redis/DC382D" /><br/>Redis </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/github/181717" /><br/>GitHub </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/gradle/02303A" /><br/>Gradle </td> </tr> <tr> <th colspan="4" align="center">DevOps</th> </tr> <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/docker/2496ED" /><br/>Docker </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/jenkins/D24939" /><br/>Jenkins </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/nginx/009639" /><br/>Nginx </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/amazonec2/FF9900" /><br/>AWS EC2 </td> </tr> <tr> <th colspan="4" align="center">ML / Python</th> </tr> <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/python/3776AB" /><br/>Python </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/pandas/150458" /><br/>Pandas </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/numpy/013243" /><br/>NumPy </td> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/scikitlearn/F7931E" /><br/>Scikit-learn </td> </tr> </table>
+<table> 
+ <tr> 
+  <th colspan="4" align="center">Frontend</th> 
+ </tr> 
+ <tr> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/react/61DAFB" /><br/>React </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/javascript/F7DF1E" /><br/>JavaScript </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/sass/CC6699" /><br/>SASS / SCSS </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/axios/5A29E4" /><br/>Axios </td> 
+ </tr> 
+ <tr> <th colspan="4" align="center">Backend</th> </tr> 
+ <tr> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/springboot/6DB33F" /><br/>Spring Boot </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/springsecurity/6DB33F" /><br/>Spring Security </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/jsonwebtokens/000000" /><br/>JWT </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/swagger/85EA2D" /><br/>Swagger (OpenAPI) </td> 
+ </tr> <tr> <th colspan="4" align="center">Database & Cache</th> </tr> 
+ <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/mysql/4479A1" /><br/>MySQL </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/redis/DC382D" /><br/>Redis </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/github/181717" /><br/>GitHub </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/gradle/02303A" /><br/>Gradle </td> </tr> 
+ <tr> <th colspan="4" align="center">DevOps</th> </tr> 
+ <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/docker/2496ED" /><br/>Docker </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/jenkins/D24939" /><br/>Jenkins </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/nginx/009639" /><br/>Nginx </td> 
+  <td align="center"> <img src="https://img.shields.io/badge/AWS-EC2-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" /><br/>AWS EC2 </td> 
+ </tr> <tr> <th colspan="4" align="center">ML / Python</th> </tr> 
+ <tr> <td align="center"> <img height="32" src="https://cdn.simpleicons.org/python/3776AB" /><br/>Python </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/pandas/150458" /><br/>Pandas </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/numpy/013243" /><br/>NumPy </td> 
+  <td align="center"> <img height="32" src="https://cdn.simpleicons.org/scikitlearn/F7931E" /><br/>Scikit-learn </td> 
+ </tr> 
+</table>
 
 ---
 
