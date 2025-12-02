@@ -291,13 +291,32 @@ docker-compose up -d
 
 ## 8. API 문서 (API Docs)
 | Method | Endpoint                      | 설명      |
-| ------ | ----------------------------- | ------- |
-| POST   | /api/user/login               | 로그인     |
-| POST   | /api/competitions             | 대회 생성   |
-| POST   | /api/competitions/{id}/submit | CSV 제출  |
-| GET    | /api/leaderboard              | 리더보드 조회 |
-| POST   | /api/inquiry                  | 문의 작성   |
-
+| ------ | ------------------------------- | ------------- |
+| POST   | `/api/user/login`               | JWT 로그인       |
+| POST   | `/api/auth/signup`              | 회원가입          |
+| GET    | `/api/user/validate`            | 토큰 검증         |
+| GET    | `/login/oauth2/code/{provider}` | OAuth2 로그인 콜백 |
+| POST   | `/api/auth/logout`              | 로그아웃          |
+| GET    | `/api/competitions`                        | 대회 목록 조회                    |
+| GET    | `/api/competitions/{id}`                   | 대회 상세 조회                    |
+| POST   | `/api/competitions`                        | 대회 생성 (multipart/form-data) |
+| PUT    | `/api/competitions/{id}`                   | 대회 수정                       |
+| POST   | `/api/competitions/{competitionId}/submit` | CSV 제출 및 자동 채점              |
+| GET    | `/api/leaderboard`                         | 전체 리더보드 조회          |
+| GET    | `/api/leaderboard?keyword=`                | 검색/필터링              |
+| GET    | `/api/competitions/csv/{saveId}/download2` | 제출 CSV 다운로드         |
+| GET    | `/api/competitions/{id}/download/{type}`   | Train/Test 데이터 다운로드 |
+| GET    | `/api/leaderboard/top`     | 상위 TOP 제공           |
+| POST   | `/api/inquiry`       | 1:1 문의 등록       |
+| GET    | `/api/inquiry/my`    | 내 문의 목록         |
+| PUT    | `/api/inquiry/{id}`  | 내 문의 수정         |
+| DELETE | `/api/inquiry/{id}`  | 내 문의 삭제         |
+| GET    | `/api/inquiry/admin` | 관리자 전체 문의 목록 조회 |
+| POST   | `/api/v1/chat/dev`            | 개발자용 AI 챗봇              |
+| POST   | `/api/v1/chat/user` *(확장 가능)* | 사용자용 챗봇                 |
+| GET    | `/api/chat/session`           | 챗봇 세션 조회                |
+| DELETE | `/api/chat/session`           | 챗봇 세션 초기화               |
+| GET    | `/api/chat/docs`              | Swagger API 기반 벡터 문서 검색 |
 
 ---
 
