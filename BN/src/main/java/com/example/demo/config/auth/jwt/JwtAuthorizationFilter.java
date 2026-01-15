@@ -73,61 +73,55 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             System.out.println("[JWT] 쿠키 파싱 중 예외: " + e.getMessage());
         }
 
+        // userid 자체가 없으면 인증 시도 안 함
+        if (userid == null) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // 1) AccessToken 이 아예 없는 경우 → 바로 Refresh 시도
+        if (token == null) {
+            if (handleRefresh(userid, response)) {
+                chain.doFilter(request, response);
+            }
+            return;
+        }
+
+        // 2) AccessToken 이 있으면 검증
         try {
-            // userid 자체가 없으면 인증 시도 안 함
-            if (userid == null) {
+            if (jwtTokenProvider.validateToken(token)) {
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                if (authentication != null) {
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
                 chain.doFilter(request, response);
                 return;
             }
-
-            // ✅ 1) AccessToken 이 아예 없는 경우 → 바로 Refresh 시도
-            if (token == null) {
-                if (handleRefresh(userid, response)) {
-                    chain.doFilter(request, response);
-                }
-                return;
+        } catch (ExpiredJwtException e) {
+            System.out.println("[JWT] AccessToken 만료 → RefreshToken 확인 시작");
+            // 3) AccessToken 만료 → Refresh 시도
+            if (handleRefresh(userid, response)) {
+                chain.doFilter(request, response);
             }
-
-            // ✅ 2) AccessToken 이 있으면 검증
-            try {
-                if (jwtTokenProvider.validateToken(token)) {
-                    Authentication authentication = jwtTokenProvider.getAuthentication(token);
-                    if (authentication != null) {
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    }
-                    chain.doFilter(request, response);
-                    return;
-                }
-            } catch (ExpiredJwtException e) {
-                System.out.println("[JWT] AccessToken 만료 → RefreshToken 확인 시작");
-                // ✅ 3) AccessToken 만료 → Refresh 시도
-                if (handleRefresh(userid, response)) {
-                    chain.doFilter(request, response);
-                }
-                return;
-            } catch (Exception e2) {
-                System.out.println("[JWT] 기타 예외 발생: " + e2.getMessage());
-                clearAuthCookies(response);
-                redisUtil.delete("RT:" + userid);
-                SecurityContextHolder.clearContext();
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
-
-            // 여기까지 왔다 = 토큰은 있는데 유효하지 않음
+            return;
+        } catch (Exception e2) {
+            System.out.println("[JWT] 기타 예외 발생: " + e2.getMessage());
             clearAuthCookies(response);
             redisUtil.delete("RT:" + userid);
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-        } finally {
-            // 요청 끝난 뒤 컨텍스트 정리
-            SecurityContextHolder.clearContext();
+            return;
         }
+
+        // 여기까지 왔다 = 토큰은 있는데 유효하지 않음
+        clearAuthCookies(response);
+        redisUtil.delete("RT:" + userid);
+        SecurityContextHolder.clearContext();
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
     /**
-     * ✅ RefreshToken 으로 AccessToken 재발급 시도
+     *  RefreshToken 으로 AccessToken 재발급 시도
      *  - 성공: true 반환 (쿠키/인증 세팅 완료)
      *  - 실패: 401 + 쿠키/RT 삭제 후 false
      */
@@ -166,7 +160,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     .signWith(jwtTokenProvider.getKey(), SignatureAlgorithm.HS256)
                     .compact();
 
-            // 🔁 AccessToken 쿠키 재발급
+            // AccessToken 쿠키 재발급
             Cookie cookie = new Cookie(JwtProperties.ACCESS_TOKEN_COOKIE_NAME, newAccessToken);
             cookie.setHttpOnly(true);
             cookie.setSecure(false); // 로컬 테스트면 false, 배포 시 true + SameSite=None 로 조정
