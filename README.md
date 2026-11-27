@@ -40,14 +40,15 @@
 - 결과: 프론트·백엔드 간 요청 형식 확인이 줄었고, 일정 지연 없이 2025.12 최종 배포를 마쳤습니다.
 
 **2. EC2 한 대에 컨테이너 5개를 올리며 생긴 메모리 부족 (인프라)**
-- 문제: 비용을 줄이려고 AWS EC2 [인스턴스 타입] 한 대에 Nginx+React, Spring Boot, MySQL, Redis, Ollama 챗봇을 Docker Compose로 함께 띄우자 [증상: 컨테이너 강제 종료 / 서버 응답 멈춤 / SSH 접속 불가]이 발생했습니다.
-- 원인: 각 프로세스가 기본 설정대로 메모리를 잡으면서 JVM 힙, MySQL 버퍼 풀, 상주하는 Ollama 모델이 인스턴스 메모리를 넘겼습니다.
-- 해결: 서비스별로 메모리 상한을 정했습니다.
+- 문제: AWS 무료 크레딧 범위에서 운영하려고 소형 EC2(RAM 약 2GB) 한 대에 Nginx+React, Spring Boot, MySQL, Redis, Ollama 챗봇(gemma2:2b)을 Docker Compose로 함께 띄웠습니다. 챗봇 호출이나 배포 빌드가 겹치면 메모리가 한계에 닿아 컨테이너가 반복해서 종료됐습니다.
+- 원인: 각 프로세스가 기본 설정대로 메모리를 잡았고, LLM 모델과 JVM 힙, MySQL 버퍼 풀이 동시에 올라가며 인스턴스 메모리를 넘겼습니다. Jenkins 배포 시 EC2에서 직접 React·Gradle 빌드를 돌린 것도 부담을 키웠습니다.
+- 해결: 일주일(2025.11.24~12.01) 동안 서비스별 상한을 단계적으로 조정했습니다.
+  - MySQL: 컨테이너 메모리 1GB 제한, `innodb-buffer-pool-size=256M`, `max-connections=50`, `table-open-cache=250`
+  - Ollama: `OLLAMA_NUM_PARALLEL=1`로 동시 추론 1개로 제한
   - Spring Boot: `JAVA_TOOL_OPTIONS=-Xmx384m`로 힙 상한 지정
-  - MySQL: `innodb-buffer-pool-size=256M`, `max-connections=50`, `table-open-cache=250`으로 줄이고 컨테이너 메모리 1GB 제한
-  - Ollama: `OLLAMA_NUM_PARALLEL=1`로 동시 추론을 1개로 제한
-  - MySQL `healthcheck` + `depends_on: service_healthy`로 DB가 준비된 뒤 백엔드가 뜨도록 기동 순서 고정
-- 결과: [예: 메모리 사용률 OO% → OO%, 최종 발표까지 재시작 없이 운영]. 추가 비용 없이 단일 인스턴스에서 전체 서비스를 운영했습니다.
+  - 안정성: `healthcheck` + `depends_on: service_healthy`로 기동 순서 고정, `restart: always`로 장애 시 자동 복구
+- 결과: 평상시 메모리 사용률 75% → 43%로 낮췄고, 추가 비용 없이 단일 인스턴스에서 최종 발표까지 서비스를 운영했습니다.
+- 개선한다면: 빌드는 Jenkins 서버에서 하고 EC2에는 완성된 이미지만 배포하거나, 챗봇을 별도 서버로 분리하겠습니다.
 
 ---
 
