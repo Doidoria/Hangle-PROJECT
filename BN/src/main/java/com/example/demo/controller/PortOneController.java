@@ -29,15 +29,13 @@ public class PortOneController {
     private final RedisUtil redisUtil;
     private final UserRepository userRepository;
 
-//    @Value("${portone.api-key}")
-    private String PORTONE_APIKEY = "7125401617111610";;
+    @Value("${portone.api-key}")
+    private String PORTONE_APIKEY;
 
-//    @Value("${portone.api-secret}")
-    private String PORTONE_SECRET = "HPzom4PG2vUc7KG8WUn1RJSJEkL9QLh0yf6zNanfefU3LwcRGOABGrZ2iNSzPMp367L4HQeXhThdLRVD";
+    @Value("${portone.api-secret}")
+    private String PORTONE_SECRET;
 
     private final String HOSTNAME = "https://api.iamport.kr";
-    private final String APIKEY = PORTONE_APIKEY;
-    private final String SECRET = PORTONE_SECRET;
     private final String REDIS_TOKEN_KEY = "portone:access_token";
 
     // PORTONE ACCESSTOKEN 응답 구조를 위한 DTO
@@ -72,8 +70,8 @@ public class PortOneController {
         header.setContentType(MediaType.APPLICATION_JSON);
 
         JSONObject params = new JSONObject();
-        params.put("imp_key", APIKEY);
-        params.put("imp_secret", SECRET);
+        params.put("imp_key", PORTONE_APIKEY);
+        params.put("imp_secret", PORTONE_SECRET);
         HttpEntity<String> entity = new HttpEntity<>(params.toJSONString(), header);
 
         try {

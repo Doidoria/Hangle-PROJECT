@@ -31,7 +31,11 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hangledb
       SPRING_DATASOURCE_USERNAME: master
-      SPRING_DATASOURCE_PASSWORD: hangle1234!
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      PORTONE_API_KEY: ${PORTONE_API_KEY}
+      PORTONE_API_SECRET: ${PORTONE_API_SECRET}
+      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
+      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
       SPRING_REDIS_HOST: redis
       SERVER_PORT: 8090
       TZ: Asia/Seoul
@@ -81,10 +85,10 @@ services:
       # - ./DB/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db-data:/var/lib/mysql   # 
     environment:
-      MYSQL_ROOT_PASSWORD: hangle1234!
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: hangledb
       MYSQL_USER: master
-      MYSQL_PASSWORD: hangle1234!
+      MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_HOST: '%'
     deploy:
       resources:
